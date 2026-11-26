@@ -1,8 +1,9 @@
 import { getApp, getApps, initializeApp } from 'firebase/app';
-import {
-  getReactNativePersistence,
-  initializeAuth,
-} from 'firebase/auth';
+import { initializeAuth } from 'firebase/auth';
+// Firebase v13's React Native runtime entry exports this helper, but its shared
+// TypeScript declarations omit it. Metro resolves the React Native entry.
+// @ts-expect-error React Native-only runtime export missing from shared typings.
+import { getReactNativePersistence } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore } from 'firebase/firestore';
 
