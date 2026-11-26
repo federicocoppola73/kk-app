@@ -49,6 +49,12 @@ const english = {
   earnedXp: 'XP EARNED',
   playAgain: 'PLAY AGAIN',
   demoNotice: 'Practice build: portraits are for internal testing only. Points and XP are temporary and are not saved.',
+  settingsTitle: 'SETTINGS',
+  settingsBack: 'BACK',
+  languageSection: 'LANGUAGE',
+  languageDescription: 'Choose the app language. Automatic follows your device language.',
+  audioSection: 'AUDIO',
+  audioComingSoon: 'Background music and sound effects will be available in a future update.',
 };
 
 type Translation = { [Key in keyof typeof english]: string };
@@ -102,6 +108,12 @@ const italian: Translation = {
   earnedXp: 'XP GUADAGNATI',
   playAgain: 'GIOCA ANCORA',
   demoNotice: 'Build di test: le foto sono solo per prove interne. Punti e XP sono temporanei e non vengono salvati.',
+  settingsTitle: 'IMPOSTAZIONI',
+  settingsBack: 'INDIETRO',
+  languageSection: 'LINGUA',
+  languageDescription: 'Scegli la lingua dell’app. Automatica segue la lingua del dispositivo.',
+  audioSection: 'AUDIO',
+  audioComingSoon: 'Musica di sottofondo ed effetti sonori saranno disponibili in un prossimo aggiornamento.',
 };
 
 export const translations: Record<SupportedLocale, Translation> = {
