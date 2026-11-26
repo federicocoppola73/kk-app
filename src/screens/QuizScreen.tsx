@@ -128,7 +128,7 @@ export default function QuizScreen({ locale, onBack }: Props) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.midnightNavy} />
+      <StatusBar barStyle="light-content" />
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Pressable onPress={onBack} hitSlop={10} style={styles.backButton}>
