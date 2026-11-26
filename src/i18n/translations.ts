@@ -27,9 +27,11 @@ const english = {
   dailyText: 'One new challenge. Every day. Can you keep your streak?',
   slogan: 'KNOW THE GAME. OWN THE GAME.',
   preview: 'KIT & KICK  •  PREVIEW 0.1.0',
-} as const;
+};
 
-const italian: typeof english = {
+type Translation = { [Key in keyof typeof english]: string };
+
+const italian: Translation = {
   kicker: 'CALCIO • QUIZ & GAMING',
   overline: 'LA PARTITA INIZIA ORA',
   headline: 'QUANTO NE SAI\nDI CALCIO?',
@@ -58,7 +60,7 @@ const italian: typeof english = {
   preview: 'KIT & KICK  •  ANTEPRIMA 0.1.0',
 };
 
-export const translations: Record<SupportedLocale, typeof english> = {
+export const translations: Record<SupportedLocale, Translation> = {
   en: english,
   it: italian,
   es: english,
