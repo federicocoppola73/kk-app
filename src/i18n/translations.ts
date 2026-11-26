@@ -81,6 +81,10 @@ const english = {
   resultScore: 'YOUR SCORE',
   earnedXp: 'XP EARNED',
   playAgain: 'PLAY AGAIN',
+  leaveMatchTitle: 'Leave the match?',
+  leaveMatchMessage: 'If you leave now, you will lose all points and XP from this match.',
+  leaveMatch: 'Leave match',
+  continuePlaying: 'Continue playing',
   playerDemoNotice: 'Practice build: player biographies are draft content for internal testing. Points and XP are temporary and are not saved.',
   settingsTitle: 'SETTINGS',
   settingsBack: 'BACK',
@@ -173,6 +177,10 @@ const italian: Translation = {
   resultScore: 'IL TUO PUNTEGGIO',
   earnedXp: 'XP GUADAGNATI',
   playAgain: 'GIOCA ANCORA',
+  leaveMatchTitle: 'Vuoi abbandonare la partita?',
+  leaveMatchMessage: 'Se esci adesso, perderai tutti i punti e gli XP di questa partita.',
+  leaveMatch: 'Abbandona partita',
+  continuePlaying: 'Continua a giocare',
   playerDemoNotice: 'Build di test: le biografie dei calciatori sono contenuti provvisori per prove interne. Punti e XP sono temporanei e non vengono salvati.',
   settingsTitle: 'IMPOSTAZIONI',
   settingsBack: 'INDIETRO',
@@ -182,10 +190,31 @@ const italian: Translation = {
   audioComingSoon: 'Musica di sottofondo ed effetti sonori saranno disponibili in un prossimo aggiornamento.',
 };
 
+const spanish: Partial<Translation> = {
+  leaveMatchTitle: '¿Salir de la partida?',
+  leaveMatchMessage: 'Si sales ahora, perderás todos los puntos y XP de esta partida.',
+  leaveMatch: 'Salir de la partida',
+  continuePlaying: 'Seguir jugando',
+};
+
+const french: Partial<Translation> = {
+  leaveMatchTitle: 'Quitter la partie ?',
+  leaveMatchMessage: 'Si vous quittez maintenant, vous perdrez tous les points et XP de cette partie.',
+  leaveMatch: 'Quitter la partie',
+  continuePlaying: 'Continuer à jouer',
+};
+
+const german: Partial<Translation> = {
+  leaveMatchTitle: 'Spiel verlassen?',
+  leaveMatchMessage: 'Wenn du jetzt gehst, verlierst du alle Punkte und XP aus diesem Spiel.',
+  leaveMatch: 'Spiel verlassen',
+  continuePlaying: 'Weiterspielen',
+};
+
 export const translations: Record<SupportedLocale, Translation> = {
   en: english,
   it: italian,
-  es: english,
-  fr: english,
-  de: english,
+  es: { ...english, ...spanish },
+  fr: { ...english, ...french },
+  de: { ...english, ...german },
 };
