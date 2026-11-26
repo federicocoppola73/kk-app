@@ -95,6 +95,8 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
   useEffect(() => {
     if (!showResult) return;
 
+    console.log('[QUIZ SAVE] Result screen reached');
+    
     const user = auth.currentUser;
     if (!user) {
       console.warn('Quiz result was not saved because no authenticated user is available.');
