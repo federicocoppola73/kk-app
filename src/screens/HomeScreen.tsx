@@ -1,11 +1,11 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { getLocales } from 'expo-localization';
 import { colors } from '../theme/colors';
 import { resolveLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen() {
+export default function HomeScreen({ onStartPlayerQuiz }: { onStartPlayerQuiz: () => void }) {
   const deviceLanguage = getLocales()[0]?.languageCode;
   const locale = resolveLocale(deviceLanguage);
   const t = translations[locale];
@@ -60,7 +60,7 @@ export default function HomeScreen() {
 
         <View style={styles.modeGrid}>
           {modes.map((mode) => (
-            <View key={mode.number} style={styles.modeCard}>
+            <Pressable key={mode.number} disabled={mode.number !== '01'} onPress={onStartPlayerQuiz} style={({ pressed }) => [styles.modeCard, pressed && styles.modeCardPressed]}>
               <View style={styles.modeTop}>
                 <Text style={styles.modeNumber}>{mode.number}</Text>
                 <Text style={styles.modeTag}>{mode.tag}</Text>
@@ -72,6 +72,7 @@ export default function HomeScreen() {
                 <Text style={styles.arrow}>↗</Text>
               </View>
             </View>
+            </Pressable>
           ))}
         </View>
 
@@ -116,6 +117,7 @@ const styles = StyleSheet.create({
   sectionMeta: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 1 },
   modeGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 7 },
   modeCard: { width: '48.3%', minHeight: 122, backgroundColor: colors.surface, borderRadius: 14, borderWidth: 1, borderColor: '#25415F', padding: 10 },
+  modeCardPressed: { opacity: 0.78, borderColor: colors.iceBlue },
   modeTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   modeNumber: { color: colors.iceBlue, fontSize: 11, fontWeight: '900' },
   modeTag: { color: colors.muted, fontSize: 7, fontWeight: '800', letterSpacing: 0.6 },
