@@ -9,9 +9,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import { getLocales } from 'expo-localization';
 import { colors } from '../theme/colors';
-import { resolveLocale } from '../i18n/locales';
+import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 import { playerIdPlayers, type PlayerIdPlayer } from '../data/playerIdPlayers';
 
@@ -27,6 +26,7 @@ type QuizQuestion = {
 };
 
 type Props = {
+  locale: SupportedLocale;
   onBack: () => void;
 };
 
@@ -54,9 +54,7 @@ function createRound(): QuizQuestion[] {
     });
 }
 
-export default function QuizScreen({ onBack }: Props) {
-  const deviceLanguage = getLocales()[0]?.languageCode;
-  const locale = resolveLocale(deviceLanguage);
+export default function QuizScreen({ locale, onBack }: Props) {
   const t = translations[locale];
 
   const [questions, setQuestions] = useState<QuizQuestion[]>(createRound);
