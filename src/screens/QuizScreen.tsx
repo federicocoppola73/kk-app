@@ -125,7 +125,7 @@ export default function QuizScreen({ onBack }: Props) {
             <Text style={styles.question}>{t.questionPrompt}</Text>
 
             <View style={styles.photoPanel}>
-              {!imageError ? (
+              {!imageError && question.player.portraitUrl ? (
                 <Image
                   source={{ uri: question.player.portraitUrl }}
                   style={styles.photoImage}
