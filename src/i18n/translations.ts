@@ -45,7 +45,7 @@ const english = {
   resultScore: 'YOUR SCORE',
   earnedXp: 'XP EARNED',
   playAgain: 'PLAY AGAIN',
-  demoNotice: 'Practice round: points and XP are temporary and are not saved yet.',
+  demoNotice: 'Practice build: portraits are for internal testing only. Points and XP are temporary and are not saved.',
 };
 
 type Translation = { [Key in keyof typeof english]: string };
@@ -95,7 +95,7 @@ const italian: Translation = {
   resultScore: 'IL TUO PUNTEGGIO',
   earnedXp: 'XP GUADAGNATI',
   playAgain: 'GIOCA ANCORA',
-  demoNotice: 'Partita di prova: punti e XP sono temporanei e per ora non vengono salvati.',
+  demoNotice: 'Build di test: le foto sono solo per prove interne. Punti e XP sono temporanei e non vengono salvati.',
 };
 
 export const translations: Record<SupportedLocale, Translation> = {
