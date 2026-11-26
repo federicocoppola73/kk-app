@@ -12,6 +12,8 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 import { useQuizExitConfirmation } from '../hooks/useQuizExitConfirmation';
+import { auth } from '../services/firebase';
+import { createQuizResultId, recordCompletedQuiz } from '../services/quizResults';
 import { stadiums, type Stadium } from '../data/stadiums';
 
 const ROUND_LENGTH = 10;
@@ -87,7 +89,31 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
   const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const handleBack = useQuizExitConfirmation(locale, showResult, onBack);
+  const resultIdRef = useRef<string | null>(null);
   const [revealStage, setRevealStage] = useState(0);
+
+  useEffect(() => {
+    if (!showResult) return;
+
+    const user = auth.currentUser;
+    if (!user) {
+      console.warn('Quiz result was not saved because no authenticated user is available.');
+      return;
+    }
+
+    const resultId = resultIdRef.current ?? createQuizResultId(user.uid);
+    resultIdRef.current = resultId;
+
+    void recordCompletedQuiz(user.uid, resultId, {
+      mode: 'stadium',
+      points: totalPoints,
+      correctAnswers: correctCount,
+      totalQuestions: questions.length,
+    }).catch((error) => {
+      console.warn('Unable to save completed quiz result:', error);
+    });
+  }, [showResult, totalPoints, correctCount, questions.length]);
+
 
   const question = questions[questionIndex];
   const clues = useMemo(() => question ? getClues(question.stadium, t, locale) : [], [question, t, locale]);
@@ -107,6 +133,7 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
     const nextRound = createRound();
     if (nextRound.length !== ROUND_LENGTH) return;
     setQuestions(nextRound);
+    resultIdRef.current = null;
     setQuestionIndex(0);
     setSelectedAnswer(null);
     setCorrectCount(0);
