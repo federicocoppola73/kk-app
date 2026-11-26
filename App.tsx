@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Image, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { getLocales } from 'expo-localization';
@@ -49,6 +49,24 @@ export default function App() {
     });
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (screen === 'home') {
+        return false;
+      }
+
+      if (screen === 'settings' || screen === 'playerQuiz' || screen === 'clubQuiz' || screen === 'stadiumQuiz' || screen === 'careerQuiz') {
+        setScreen('home');
+        return true;
+      }
+
+      // Keep the system back button from closing the app on splash/auth screens.
+      return true;
+    });
+
+    return () => subscription.remove();
+  }, [screen]);
 
   useEffect(() => {
     if (!authUser) {
