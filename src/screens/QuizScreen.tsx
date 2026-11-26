@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Image,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -62,6 +63,7 @@ export default function QuizScreen({ onBack }: Props) {
   const [totalPoints, setTotalPoints] = useState(0);
   const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const question = questions[questionIndex];
   const isCorrect = selectedAnswer === question.player.id;
@@ -75,6 +77,7 @@ export default function QuizScreen({ onBack }: Props) {
     setTotalPoints(0);
     setTotalXp(0);
     setShowResult(false);
+    setImageError(false);
   };
 
   const continueRound = () => {
@@ -93,6 +96,7 @@ export default function QuizScreen({ onBack }: Props) {
 
     setQuestionIndex((value) => value + 1);
     setSelectedAnswer(null);
+    setImageError(false);
   };
 
   return (
@@ -121,11 +125,23 @@ export default function QuizScreen({ onBack }: Props) {
             <Text style={styles.question}>{t.questionPrompt}</Text>
 
             <View style={styles.photoPanel}>
-              <View style={styles.photoCircle}>
-                <Text style={styles.photoEmoji}>⚽</Text>
+              {!imageError ? (
+                <Image
+                  source={{ uri: question.player.portraitUrl }}
+                  style={styles.photoImage}
+                  resizeMode="cover"
+                  accessibilityLabel={question.player.displayName}
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <View style={styles.photoFallback}>
+                  <Text style={styles.photoEmoji}>⚽</Text>
+                  <Text style={styles.photoHint}>{t.photoComingSoon}</Text>
+                </View>
+              )}
+              <View style={styles.photoTag}>
+                <Text style={styles.photoTagText}>TEST IMAGE • RIGHTS PENDING</Text>
               </View>
-              <Text style={styles.photoLabel}>{t.photoPlaceholder}</Text>
-              <Text style={styles.photoHint}>{t.photoComingSoon}</Text>
             </View>
 
             <Text style={styles.instruction}>{t.selectAnswer}</Text>
@@ -225,7 +241,11 @@ const styles = StyleSheet.create({
   progressTrack: { flex: 1, height: 5, borderRadius: 5, backgroundColor: '#243A56', overflow: 'hidden' },
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
   question: { color: colors.white, fontSize: 24, lineHeight: 30, fontWeight: '900', marginBottom: 18 },
-  photoPanel: { height: 190, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 22 },
+  photoPanel: { height: 190, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 22, overflow: 'hidden' },
+  photoImage: { width: '100%', height: '100%' },
+  photoFallback: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 18 },
+  photoTag: { position: 'absolute', left: 10, bottom: 10, backgroundColor: 'rgba(11, 24, 48, 0.88)', borderRadius: 7, paddingHorizontal: 9, paddingVertical: 6 },
+  photoTagText: { color: colors.gold, fontSize: 8, fontWeight: '900', letterSpacing: 0.7 },
   photoCircle: { width: 82, height: 82, borderRadius: 41, backgroundColor: '#1B3A5B', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
   photoEmoji: { fontSize: 38 },
   photoLabel: { color: colors.white, fontSize: 12, fontWeight: '900', letterSpacing: 1.5 },
