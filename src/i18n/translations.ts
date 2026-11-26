@@ -41,7 +41,7 @@ const italian: Translation = {
   globalRank: 'POSIZIONE',
   chooseChallenge: 'SCEGLI LA SFIDA',
   gameModes: '4 MODALITÀ DI GIOCO',
-  playerTitle: 'INDOVINA IL PLAYER',
+  playerTitle: 'INDOVINA IL GIOCATORE',
   playerDetail: 'Riconosci il calciatore dalla foto',
   clubTitle: 'INDOVINA IL CLUB',
   clubDetail: 'Riconosci la squadra del calciatore',
