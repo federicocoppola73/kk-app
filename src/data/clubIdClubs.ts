@@ -1,17 +1,30 @@
 export type ClubDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
-export type ClubIdClub = { id: string; displayName: string; difficulty: ClubDifficulty; points: number; crestStatus: 'pending'; crestUrl: string | null; };
-// Temporary development references. Crest rights and asset approvals remain pending.
+
+export type ClubIdClub = {
+  id: string;
+  displayName: string;
+  difficulty: ClubDifficulty;
+  points: number;
+  city: string;
+  foundedYear: number;
+  colors: string;
+  stadium: string;
+  nickname?: string;
+};
+
+// Starter facts are for internal gameplay testing and should be fact-checked
+// against current official club sources before production publication.
 export const clubIdClubs: ClubIdClub[] = [
-  { id: 'real-madrid', displayName: 'Real Madrid', difficulty: 'easy', points: 100, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/512px-Real_Madrid_CF.svg.png' : null },
-  { id: 'barcelona', displayName: 'FC Barcelona', difficulty: 'easy', points: 100, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/512px-FC_Barcelona_%28crest%29.svg.png' : null },
-  { id: 'manchester-united', displayName: 'Manchester United', difficulty: 'easy', points: 100, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/512px-Manchester_United_FC_crest.svg.png' : null },
-  { id: 'liverpool', displayName: 'Liverpool FC', difficulty: 'easy', points: 100, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Liverpool_FC.svg/512px-Liverpool_FC.svg.png' : null },
-  { id: 'arsenal', displayName: 'Arsenal FC', difficulty: 'medium', points: 150, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Arsenal_FC.svg/512px-Arsenal_FC.svg.png' : null },
-  { id: 'chelsea', displayName: 'Chelsea FC', difficulty: 'medium', points: 150, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/c/cc/Chelsea_FC.svg/512px-Chelsea_FC.svg.png' : null },
-  { id: 'manchester-city', displayName: 'Manchester City', difficulty: 'medium', points: 150, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/e/eb/Manchester_City_FC_badge.svg/512px-Manchester_City_FC_badge.svg.png' : null },
-  { id: 'juventus', displayName: 'Juventus', difficulty: 'medium', points: 150, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Juventus_FC_2017_logo.svg/512px-Juventus_FC_2017_logo.svg.png' : null },
-  { id: 'inter', displayName: 'Inter', difficulty: 'hard', points: 200, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/FC_Internazionale_Milano_2021.svg/512px-FC_Internazionale_Milano_2021.svg.png' : null },
-  { id: 'ac-milan', displayName: 'AC Milan', difficulty: 'hard', points: 200, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_AC_Milan.svg/512px-Logo_of_AC_Milan.svg.png' : null },
-  { id: 'bayern-munich', displayName: 'Bayern Munich', difficulty: 'hard', points: 200, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/FC_Bayern_München_logo_%282017%29.svg/512px-FC_Bayern_München_logo_%282017%29.svg.png' : null },
-  { id: 'paris-saint-germain', displayName: 'Paris Saint-Germain', difficulty: 'expert', points: 250, crestStatus: 'pending', crestUrl: __DEV__ ? 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Paris_Saint-Germain_F.C..svg/512px-Paris_Saint-Germain_F.C..svg.png' : null },
+  { id: 'real-madrid', displayName: 'Real Madrid', difficulty: 'easy', points: 100, city: 'Madrid', foundedYear: 1902, colors: 'White', stadium: 'Santiago Bernabéu', nickname: 'Los Blancos' },
+  { id: 'barcelona', displayName: 'FC Barcelona', difficulty: 'easy', points: 100, city: 'Barcelona', foundedYear: 1899, colors: 'Blue and garnet', stadium: 'Spotify Camp Nou', nickname: 'Blaugrana' },
+  { id: 'manchester-united', displayName: 'Manchester United', difficulty: 'easy', points: 100, city: 'Manchester', foundedYear: 1878, colors: 'Red, white and black', stadium: 'Old Trafford', nickname: 'The Red Devils' },
+  { id: 'liverpool', displayName: 'Liverpool FC', difficulty: 'easy', points: 100, city: 'Liverpool', foundedYear: 1892, colors: 'Red', stadium: 'Anfield', nickname: 'The Reds' },
+  { id: 'arsenal', displayName: 'Arsenal FC', difficulty: 'medium', points: 150, city: 'London', foundedYear: 1886, colors: 'Red and white', stadium: 'Emirates Stadium', nickname: 'The Gunners' },
+  { id: 'chelsea', displayName: 'Chelsea FC', difficulty: 'medium', points: 150, city: 'London', foundedYear: 1905, colors: 'Blue and white', stadium: 'Stamford Bridge', nickname: 'The Blues' },
+  { id: 'manchester-city', displayName: 'Manchester City', difficulty: 'medium', points: 150, city: 'Manchester', foundedYear: 1880, colors: 'Sky blue and white', stadium: 'Etihad Stadium', nickname: 'The Citizens' },
+  { id: 'juventus', displayName: 'Juventus', difficulty: 'medium', points: 150, city: 'Turin', foundedYear: 1897, colors: 'Black and white', stadium: 'Allianz Stadium', nickname: 'La Vecchia Signora' },
+  { id: 'inter', displayName: 'Inter', difficulty: 'hard', points: 200, city: 'Milan', foundedYear: 1908, colors: 'Black and blue', stadium: 'San Siro', nickname: 'I Nerazzurri' },
+  { id: 'ac-milan', displayName: 'AC Milan', difficulty: 'hard', points: 200, city: 'Milan', foundedYear: 1899, colors: 'Red and black', stadium: 'San Siro', nickname: 'I Rossoneri' },
+  { id: 'bayern-munich', displayName: 'Bayern Munich', difficulty: 'hard', points: 200, city: 'Munich', foundedYear: 1900, colors: 'Red and white', stadium: 'Allianz Arena', nickname: 'Die Roten' },
+  { id: 'paris-saint-germain', displayName: 'Paris Saint-Germain', difficulty: 'expert', points: 250, city: 'Paris', foundedYear: 1970, colors: 'Blue, red and white', stadium: 'Parc des Princes', nickname: 'Les Rouge et Bleu' },
 ];
