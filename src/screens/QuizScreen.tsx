@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Image,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -12,51 +11,58 @@ import {
 import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
-import { playerIdPlayers, type PlayerIdPlayer } from '../data/playerIdPlayers';
+import { playerIdPlayers, type PlayerIdPlayer } from '../data/playerIdClues';
 
 const ROUND_LENGTH = 10;
 const XP_PER_CORRECT_ANSWER = 25;
 const REVEAL_INTERVAL_MS = 4000;
-const REVEAL_BLUR = [24, 16, 8, 0];
-const REVEAL_POINT_MULTIPLIERS = [1, 0.75, 0.5, 0.25];
+const POINTS_BY_CLUE = [200, 160, 120, 80, 40];
 
-type QuizQuestion = {
-  player: PlayerIdPlayer;
-  options: PlayerIdPlayer[];
-};
-
-type Props = {
-  locale: SupportedLocale;
-  onBack: () => void;
-};
+type QuizQuestion = { player: PlayerIdPlayer; options: PlayerIdPlayer[] };
+type Props = { locale: SupportedLocale; onBack: () => void };
 
 function shuffle<T>(items: T[]): T[] {
-  const shuffled = [...items];
-  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    [result[i], result[j]] = [result[j], result[i]];
   }
-  return shuffled;
+  return result;
+}
+
+function buildOptions(player: PlayerIdPlayer): PlayerIdPlayer[] {
+  const pool = playerIdPlayers.filter((candidate) => candidate.id !== player.id);
+  const selected: PlayerIdPlayer[] = [];
+  const addFrom = (candidates: PlayerIdPlayer[]) => {
+    for (const candidate of shuffle(candidates)) {
+      if (selected.length === 3) break;
+      if (!selected.some((item) => item.id === candidate.id)) selected.push(candidate);
+    }
+  };
+  // Prefer players sharing nationality, then playing role, then fill from the full roster.
+  addFrom(pool.filter((candidate) => candidate.nationality === player.nationality));
+  addFrom(pool.filter((candidate) => candidate.position === player.position));
+  addFrom(pool);
+  return shuffle([player, ...selected]);
 }
 
 function createRound(): QuizQuestion[] {
-  return shuffle(playerIdPlayers)
-    .slice(0, ROUND_LENGTH)
-    .map((player) => {
-      const distractors = shuffle(
-        playerIdPlayers.filter((candidate) => candidate.id !== player.id),
-      ).slice(0, 3);
-
-      return {
-        player,
-        options: shuffle([player, ...distractors]),
-      };
-    });
+  return shuffle(playerIdPlayers).slice(0, ROUND_LENGTH).map((player) => ({
+    player,
+    options: buildOptions(player),
+  }));
 }
+
+const clueLabelKeys = {
+  nationality: 'playerClueNationality',
+  birthplace: 'playerClueBirthplace',
+  role: 'playerClueRole',
+  era: 'playerClueEra',
+  fact: 'playerClueFact',
+} as const;
 
 export default function QuizScreen({ locale, onBack }: Props) {
   const t = translations[locale];
-
   const [questions, setQuestions] = useState<QuizQuestion[]>(createRound);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -64,19 +70,17 @@ export default function QuizScreen({ locale, onBack }: Props) {
   const [totalPoints, setTotalPoints] = useState(0);
   const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [imageError, setImageError] = useState(false);
   const [revealStage, setRevealStage] = useState(0);
 
   const question = questions[questionIndex];
   const isCorrect = selectedAnswer === question.player.id;
   const progress = ((questionIndex + 1) / ROUND_LENGTH) * 100;
-  const potentialPoints = Math.round(question.player.points * REVEAL_POINT_MULTIPLIERS[revealStage]);
+  const pointsAvailable = POINTS_BY_CLUE[revealStage];
+  const visibleClues = question.player.clues.slice(0, revealStage + 1);
 
   useEffect(() => {
-    if (selectedAnswer !== null || showResult || revealStage >= REVEAL_BLUR.length - 1) return;
-    const timeout = setTimeout(() => {
-      setRevealStage((stage) => Math.min(stage + 1, REVEAL_BLUR.length - 1));
-    }, REVEAL_INTERVAL_MS);
+    if (selectedAnswer !== null || showResult || revealStage >= POINTS_BY_CLUE.length - 1) return;
+    const timeout = setTimeout(() => setRevealStage((stage) => Math.min(stage + 1, 4)), REVEAL_INTERVAL_MS);
     return () => clearTimeout(timeout);
   }, [questionIndex, selectedAnswer, showResult, revealStage]);
 
@@ -88,38 +92,33 @@ export default function QuizScreen({ locale, onBack }: Props) {
     setTotalPoints(0);
     setTotalXp(0);
     setShowResult(false);
-    setImageError(false);
     setRevealStage(0);
   };
 
   const continueRound = () => {
     if (selectedAnswer === null) return;
-
     if (isCorrect) {
       setCorrectCount((value) => value + 1);
-      setTotalPoints((value) => value + potentialPoints);
+      setTotalPoints((value) => value + pointsAvailable);
       setTotalXp((value) => value + XP_PER_CORRECT_ANSWER);
     }
-
     if (questionIndex === ROUND_LENGTH - 1) {
       setShowResult(true);
       return;
     }
-
     setQuestionIndex((value) => value + 1);
     setSelectedAnswer(null);
-    setImageError(false);
     setRevealStage(0);
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={colors.midnightNavy} />
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Pressable onPress={onBack} hitSlop={10} style={styles.backButton}>
             <Text style={styles.backArrow}>‹</Text>
-            <Text style={styles.backText}>Home</Text>
+            <Text style={styles.backText}>{t.backHome}</Text>
           </Pressable>
           <Text style={styles.roundLabel}>{t.playerIdRound}</Text>
         </View>
@@ -127,53 +126,37 @@ export default function QuizScreen({ locale, onBack }: Props) {
         {!showResult ? (
           <>
             <View style={styles.progressRow}>
-              <Text style={styles.progressText}>
-                {String(questionIndex + 1).padStart(2, '0')} / {ROUND_LENGTH}
-              </Text>
-              <View style={styles.progressTrack}>
-                <View style={[styles.progressFill, { width: `${progress}%` }]} />
-              </View>
+              <Text style={styles.progressText}>{String(questionIndex + 1).padStart(2, '0')} / {ROUND_LENGTH}</Text>
+              <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${progress}%` }]} /></View>
+            </View>
+            <Text style={styles.question}>{t.playerQuestionPrompt}</Text>
+
+            <View style={styles.cluesHeader}>
+              <Text style={styles.cluesHeaderText}>{t.playerClueCounter} {revealStage + 1} / 5</Text>
+              <Text style={styles.pointsAvailable}>{t.pointsAvailable}: {pointsAvailable}</Text>
+            </View>
+            <View style={styles.cluesList}>
+              {visibleClues.map((clue, index) => {
+                const label = t[clueLabelKeys[clue.key] as keyof typeof t];
+                const value = locale === 'it' ? clue.it : clue.en;
+                return (
+                  <View key={clue.key} style={styles.clueCard}>
+                    <View style={styles.clueNumber}><Text style={styles.clueNumberText}>{index + 1}</Text></View>
+                    <View style={styles.clueCopy}>
+                      <Text style={styles.clueLabel}>{label}</Text>
+                      <Text style={styles.clueText}>{value}</Text>
+                    </View>
+                  </View>
+                );
+              })}
             </View>
 
-            <Text style={styles.question}>{t.questionPrompt}</Text>
-
-            <View style={styles.photoPanel}>
-              {!imageError && question.player.portraitUrl ? (
-                <>
-                  <Image
-                    source={{ uri: question.player.portraitUrl }}
-                    style={styles.photoImage}
-                    resizeMode="contain"
-                    blurRadius={REVEAL_BLUR[revealStage]}
-                    accessibilityLabel={question.player.displayName}
-                    onError={() => setImageError(true)}
-                  />
-                </>
-              ) : (
-                <View style={styles.photoFallback}>
-                  <Text style={styles.photoEmoji}>⚽</Text>
-                  <Text style={styles.photoHint}>{t.photoComingSoon}</Text>
-                </View>
-              )}
-              <View style={styles.photoTag}>
-                <Text style={styles.photoTagText}>TEST IMAGE • RIGHTS PENDING</Text>
-              </View>
-            </View>
-
-            {!imageError && question.player.portraitUrl ? (
-              <View style={styles.revealControls}>
-                <Text style={styles.revealPoints}> {t.pointsAvailable}: {potentialPoints}</Text>
-                {revealStage < REVEAL_BLUR.length - 1 ? (
-                  <Pressable
-                    onPress={() => setRevealStage((stage) => Math.min(stage + 1, REVEAL_BLUR.length - 1))}
-                    style={styles.revealButton}
-                  >
-                    <Text style={styles.revealButtonText}>{t.revealImage}</Text>
-                  </Pressable>
-                ) : (
-                  <Text style={styles.revealComplete}>{t.fullImage}</Text>
-                )}
-              </View>
+            {selectedAnswer === null && revealStage < 4 ? (
+              <Pressable onPress={() => setRevealStage((stage) => Math.min(stage + 1, 4))} style={styles.revealButton}>
+                <Text style={styles.revealButtonText}>{t.revealNextClue}</Text>
+              </Pressable>
+            ) : selectedAnswer === null ? (
+              <Text style={styles.allCluesText}>{t.allCluesRevealed}</Text>
             ) : null}
 
             <Text style={styles.instruction}>{t.selectAnswer}</Text>
@@ -182,18 +165,12 @@ export default function QuizScreen({ locale, onBack }: Props) {
                 const selected = selectedAnswer === answer.id;
                 const correct = selectedAnswer !== null && answer.id === question.player.id;
                 const wrongSelected = selected && !isCorrect;
-
                 return (
                   <Pressable
                     key={answer.id}
                     disabled={selectedAnswer !== null}
                     onPress={() => setSelectedAnswer(answer.id)}
-                    style={[
-                      styles.answerButton,
-                      selected && styles.answerSelected,
-                      correct && styles.answerCorrect,
-                      wrongSelected && styles.answerWrong,
-                    ]}
+                    style={[styles.answerButton, selected && styles.answerSelected, correct && styles.answerCorrect, wrongSelected && styles.answerWrong]}
                   >
                     <Text style={styles.answerIndex}>{String.fromCharCode(65 + index)}</Text>
                     <Text style={styles.answerText}>{answer.displayName}</Text>
@@ -206,22 +183,14 @@ export default function QuizScreen({ locale, onBack }: Props) {
 
             {selectedAnswer !== null ? (
               <View style={styles.feedback}>
-                <Text style={[styles.feedbackTitle, isCorrect ? styles.correctText : styles.wrongText]}>
-                  {isCorrect ? t.correct : t.incorrect}
-                </Text>
+                <Text style={[styles.feedbackTitle, isCorrect ? styles.correctText : styles.wrongText]}>{isCorrect ? t.correct : t.incorrect}</Text>
                 {!isCorrect ? (
-                  <Text style={styles.feedbackDetail}>
-                    {t.correctWas} {question.player.displayName}
-                  </Text>
+                  <Text style={styles.feedbackDetail}>{t.correctWas} {question.player.displayName}</Text>
                 ) : (
-                  <Text style={styles.feedbackDetail}>
-                    +{potentialPoints} {t.pointsLabel}  •  +{XP_PER_CORRECT_ANSWER} XP
-                  </Text>
+                  <Text style={styles.feedbackDetail}>+{pointsAvailable} {t.pointsLabel}  •  +{XP_PER_CORRECT_ANSWER} XP</Text>
                 )}
                 <Pressable onPress={continueRound} style={styles.primaryButton}>
-                  <Text style={styles.primaryButtonText}>
-                    {questionIndex === ROUND_LENGTH - 1 ? t.seeResults : t.continue}  →
-                  </Text>
+                  <Text style={styles.primaryButtonText}>{questionIndex === ROUND_LENGTH - 1 ? t.seeResults : t.continue}  →</Text>
                 </Pressable>
               </View>
             ) : null}
@@ -233,28 +202,15 @@ export default function QuizScreen({ locale, onBack }: Props) {
             <Text style={styles.resultScoreLabel}>{t.resultScore}</Text>
             <Text style={styles.resultScore}>{correctCount} / {ROUND_LENGTH}</Text>
             <View style={styles.statsRow}>
-              <View style={styles.statCard}>
-                <Text style={styles.statValue}>{totalPoints}</Text>
-                <Text style={styles.statLabel}>{t.pointsLabel}</Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.statValue}>+{totalXp}</Text>
-                <Text style={styles.statLabel}>XP</Text>
-              </View>
+              <View style={styles.statCard}><Text style={styles.statValue}>{totalPoints}</Text><Text style={styles.statLabel}>{t.pointsLabel}</Text></View>
+              <View style={styles.statCard}><Text style={styles.statValue}>+{totalXp}</Text><Text style={styles.statLabel}>XP</Text></View>
             </View>
-            <Text style={styles.resultHint}>
-              {t.correctAnswers}: {correctCount} / {ROUND_LENGTH}
-            </Text>
-            <Pressable onPress={restart} style={styles.primaryButton}>
-              <Text style={styles.primaryButtonText}>{t.playAgain}</Text>
-            </Pressable>
-            <Pressable onPress={onBack} style={styles.secondaryButton}>
-              <Text style={styles.secondaryButtonText}>{t.backHome}</Text>
-            </Pressable>
+            <Text style={styles.resultHint}>{t.correctAnswers}: {correctCount} / {ROUND_LENGTH}</Text>
+            <Pressable onPress={restart} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{t.playAgain}</Text></Pressable>
+            <Pressable onPress={onBack} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>{t.backHome}</Text></Pressable>
           </View>
         )}
-
-        <Text style={styles.demoNotice}>{t.demoNotice}</Text>
+        <Text style={styles.demoNotice}>{t.playerDemoNotice}</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -266,27 +222,26 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'column', alignItems: 'stretch', marginBottom: 12 },
   backButton: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', paddingVertical: 6 },
   backArrow: { color: colors.iceBlue, fontSize: 30, lineHeight: 30, marginRight: 5 },
-  backText: { color: colors.iceBlue, fontSize: 11, fontWeight: '800', letterSpacing: 0.6 },
+  backText: { color: colors.iceBlue, fontSize: 10, fontWeight: '800', letterSpacing: 0.5 },
   roundLabel: { color: colors.gold, fontSize: 11, fontWeight: '900', letterSpacing: 1, textAlign: 'center', marginTop: 2 },
   progressRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   progressText: { color: colors.muted, fontSize: 10, fontWeight: '900', marginRight: 12 },
   progressTrack: { flex: 1, height: 5, borderRadius: 5, backgroundColor: '#243A56', overflow: 'hidden' },
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
   question: { color: colors.white, fontSize: 22, lineHeight: 27, fontWeight: '900', marginBottom: 12 },
-  photoPanel: { height: 220, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 14, overflow: 'hidden' },
-  photoImage: { width: '100%', height: '100%' },
-  revealControls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -4, marginBottom: 12 },
-  revealPoints: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
-  revealButton: { backgroundColor: '#1B3A5B', borderWidth: 1, borderColor: '#3C6388', borderRadius: 9, paddingHorizontal: 12, paddingVertical: 8 },
-  revealButtonText: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 0.6 },
-  revealComplete: { color: '#55D9A2', fontSize: 9, fontWeight: '900', letterSpacing: 0.5 },
-  photoFallback: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 18 },
-  photoTag: { position: 'absolute', left: 10, bottom: 10, backgroundColor: 'rgba(11, 24, 48, 0.88)', borderRadius: 7, paddingHorizontal: 9, paddingVertical: 6 },
-  photoTagText: { color: colors.gold, fontSize: 8, fontWeight: '900', letterSpacing: 0.7 },
-  photoCircle: { width: 82, height: 82, borderRadius: 41, backgroundColor: '#1B3A5B', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  photoEmoji: { fontSize: 38 },
-  photoLabel: { color: colors.white, fontSize: 12, fontWeight: '900', letterSpacing: 1.5 },
-  photoHint: { color: colors.muted, fontSize: 9, marginTop: 6, textAlign: 'center', paddingHorizontal: 18 },
+  cluesHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  cluesHeaderText: { color: colors.iceBlue, fontSize: 10, fontWeight: '900', letterSpacing: 1 },
+  pointsAvailable: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
+  cluesList: { gap: 7 },
+  clueCard: { flexDirection: 'row', alignItems: 'center', minHeight: 58, borderRadius: 12, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', paddingHorizontal: 11, paddingVertical: 9 },
+  clueNumber: { width: 27, height: 27, borderRadius: 9, backgroundColor: '#1B3A5B', alignItems: 'center', justifyContent: 'center', marginRight: 10 },
+  clueNumberText: { color: colors.iceBlue, fontSize: 11, fontWeight: '900' },
+  clueCopy: { flex: 1 },
+  clueLabel: { color: colors.gold, fontSize: 8, fontWeight: '900', letterSpacing: 0.8, marginBottom: 3 },
+  clueText: { color: colors.white, fontSize: 12, lineHeight: 17, fontWeight: '600' },
+  revealButton: { alignSelf: 'center', marginTop: 10, marginBottom: 13, borderRadius: 10, borderWidth: 1, borderColor: '#3C6388', backgroundColor: '#1B3A5B', paddingHorizontal: 15, paddingVertical: 9 },
+  revealButtonText: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 0.7 },
+  allCluesText: { color: '#55D9A2', fontSize: 9, fontWeight: '900', textAlign: 'center', marginTop: 10, marginBottom: 13, letterSpacing: 0.6 },
   instruction: { color: colors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 1, marginBottom: 8 },
   answers: { gap: 7 },
   answerButton: { minHeight: 46, borderRadius: 12, borderWidth: 1, borderColor: '#29415D', backgroundColor: colors.surface, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12 },
