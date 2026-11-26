@@ -60,8 +60,6 @@ const english = {
   clueStadium: 'STADIUM',
   clueNickname: 'NICKNAME',
   clueCounter: 'CLUE',
-  revealNextClue: 'REVEAL NEXT CLUE',
-  allCluesRevealed: 'ALL CLUES REVEALED',
   
   
   clubDemoNotice: 'Practice build: club facts are for internal testing only. Points and XP are temporary and are not saved.',
@@ -131,8 +129,6 @@ const italian: Translation = {
   playerClueRole: 'RUOLO',
   playerClueEra: 'PERIODO DI ATTIVITÀ',
   playerClueFact: 'RECORD / CURIOSITÀ',
-  revealNextClue: 'RIVELA IL PROSSIMO INDIZIO',
-  allCluesRevealed: 'TUTTI GLI INDIZI RIVELATI',
   clubIdRound: 'INDOVINA IL CLUB • 10 DOMANDE',
   stadiumIdRound: 'STADIUM ID • 10 DOMANDE',
   stadiumQuestionPrompt: 'Quale stadio corrisponde a questi indizi?',
@@ -154,8 +150,6 @@ const italian: Translation = {
   clueStadium: 'STADIO',
   clueNickname: 'SOPRANNOME',
   clueCounter: 'INDIZIO',
-  revealNextClue: 'RIVELA IL PROSSIMO INDIZIO',
-  allCluesRevealed: 'TUTTI GLI INDIZI RIVELATI',
   
   
   clubDemoNotice: 'Build di test: le informazioni sui club sono solo per prove interne. Punti e XP sono temporanei e non vengono salvati.',
