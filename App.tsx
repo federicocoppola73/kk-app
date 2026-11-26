@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StatusBar, StyleSheet, View } from 'react-native';
+import { Image, StatusBar, StyleSheet, Text, View } from 'react-native';
+import appConfig from './app.json';
 import HomeScreen from './src/screens/HomeScreen';
 import QuizScreen from './src/screens/QuizScreen';
 
@@ -21,6 +22,7 @@ export default function App() {
           resizeMode="contain"
           accessibilityLabel="Kit & Kick"
         />
+        <Text style={styles.version}>VERSION {appConfig.expo.version}</Text>
       </View>
     );
   }
@@ -42,5 +44,13 @@ const styles = StyleSheet.create({
   splashImage: {
     width: '100%',
     height: '100%',
+  },
+  version: {
+    position: 'absolute',
+    bottom: 28,
+    color: '#8DA8C5',
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 1.5,
   },
 });
