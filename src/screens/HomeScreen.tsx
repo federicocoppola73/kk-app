@@ -4,14 +4,14 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz, onOpenSettings }: { locale: SupportedLocale; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onOpenSettings: () => void }) {
+export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onOpenSettings }: { locale: SupportedLocale; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onOpenSettings: () => void }) {
   const t = translations[locale];
 
   const modes = [
     { number: '01', title: t.playerTitle, detail: t.playerDetail, tag: t.photoQuiz },
     { number: '02', title: t.clubTitle, detail: t.clubDetail, tag: t.clubKnowledge },
     { number: '03', title: t.careerTitle, detail: t.careerDetail, tag: t.proChallenge },
-    { number: '04', title: t.badgeTitle, detail: t.badgeDetail, tag: t.clubKnowledge },
+    { number: '04', title: t.stadiumTitle, detail: t.stadiumDetail, tag: t.stadiumKnowledge },
   ];
 
   return (
@@ -57,7 +57,7 @@ export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz,
 
         <View style={styles.modeGrid}>
           {modes.map((mode) => (
-            <Pressable key={mode.number} disabled={mode.number !== '01' && mode.number !== '02'} onPress={mode.number === '01' ? onStartPlayerQuiz : onStartClubQuiz} style={({ pressed }) => [styles.modeCard, pressed && styles.modeCardPressed]}>
+            <Pressable key={mode.number} disabled={mode.number !== '01' && mode.number !== '02' && mode.number !== '04'} onPress={mode.number === '01' ? onStartPlayerQuiz : mode.number === '02' ? onStartClubQuiz : onStartStadiumQuiz} style={({ pressed }) => [styles.modeCard, pressed && styles.modeCardPressed]}>
               <View style={styles.modeTop}>
                 <Text style={styles.modeNumber}>{mode.number}</Text>
                 <Text style={styles.modeTag}>{mode.tag}</Text>
