@@ -25,7 +25,7 @@ export default function SettingsScreen({ locale, selectedLocale, onChangeLocale,
   const italian = locale === 'it';
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.midnightNavy} />
+      <StatusBar barStyle="light-content" />
       <View style={styles.container}>
         <Pressable onPress={onBack} style={styles.back}><Text style={styles.backText}>‹  {t.settingsBack}</Text></Pressable>
         <Text style={styles.eyebrow}>KIT & KICK</Text>
