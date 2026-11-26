@@ -90,7 +90,7 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.midnightNavy} />
+      <StatusBar barStyle="light-content" />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={onBack} hitSlop={10} style={styles.backButton}><Text style={styles.backArrow}>‹</Text><Text style={styles.backText}>{t.backHome}</Text></Pressable>
