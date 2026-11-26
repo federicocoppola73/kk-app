@@ -47,11 +47,11 @@ function createRound(): QuizQuestion[] {
     });
 }
 
-function getClues(club: ClubIdClub, t: typeof translations.en): Clue[] {
+function getClues(club: ClubIdClub, t: typeof translations.en, locale: SupportedLocale): Clue[] {
   const clues: Clue[] = [
-    { label: t.clueCity, value: club.city },
+    { label: t.clueCity, value: locale === 'it' ? club.cityIt : club.city },
     { label: t.clueFounded, value: String(club.foundedYear) },
-    { label: t.clueColors, value: club.colors },
+    { label: t.clueColors, value: locale === 'it' ? club.colorsIt : club.colors },
     { label: t.clueStadium, value: club.stadium },
   ];
   if (club.nickname?.trim()) clues.push({ label: t.clueNickname, value: club.nickname });
@@ -71,7 +71,7 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
   const [revealStage, setRevealStage] = useState(0);
 
   const question = questions[questionIndex];
-  const clues = getClues(question.club, t);
+  const clues = getClues(question.club, t, locale);
   const isCorrect = selectedAnswer === question.club.id;
   const progress = ((questionIndex + 1) / ROUND_LENGTH) * 100;
   const multipliers = clues.length === 5 ? [1, 0.8, 0.6, 0.4, 0.2] : [1, 0.75, 0.5, 0.25];
