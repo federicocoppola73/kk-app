@@ -69,5 +69,5 @@ const styles = StyleSheet.create({
   optionLabelSelected: { color: colors.iceBlue },
   radio: { color: colors.iceBlue, fontSize: 18 },
   comingSoon: { marginTop: 30, padding: 16, borderRadius: 14, backgroundColor: '#102746', borderWidth: 1, borderColor: '#294968' },
-  footer: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 1.2, textAlign: 'center', marginTop: 'auto', paddingVertical: 20 },
+  footer: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 1.2, textAlign: 'center', marginTop: 'auto', paddingTop: 20, paddingBottom: 40 },
 });
