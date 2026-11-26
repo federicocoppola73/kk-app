@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   Pressable,
@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { getLocales } from 'expo-localization';
+import { BlurTargetView, BlurView } from 'expo-blur';
 import { colors } from '../theme/colors';
 import { resolveLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
@@ -17,6 +18,9 @@ import { playerIdPlayers, type PlayerIdPlayer } from '../data/playerIdPlayers';
 
 const ROUND_LENGTH = 10;
 const XP_PER_CORRECT_ANSWER = 25;
+const REVEAL_INTERVAL_MS = 4000;
+const REVEAL_BLUR = [90, 60, 30, 0];
+const REVEAL_POINT_MULTIPLIERS = [1, 0.75, 0.5, 0.25];
 
 type QuizQuestion = {
   player: PlayerIdPlayer;
@@ -64,10 +68,21 @@ export default function QuizScreen({ onBack }: Props) {
   const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [revealStage, setRevealStage] = useState(0);
+  const blurTargetRef = useRef<React.ComponentRef<typeof View>>(null);
 
   const question = questions[questionIndex];
   const isCorrect = selectedAnswer === question.player.id;
   const progress = ((questionIndex + 1) / ROUND_LENGTH) * 100;
+  const potentialPoints = Math.round(question.player.points * REVEAL_POINT_MULTIPLIERS[revealStage]);
+
+  useEffect(() => {
+    if (selectedAnswer !== null || showResult || revealStage >= REVEAL_BLUR.length - 1) return;
+    const timeout = setTimeout(() => {
+      setRevealStage((stage) => Math.min(stage + 1, REVEAL_BLUR.length - 1));
+    }, REVEAL_INTERVAL_MS);
+    return () => clearTimeout(timeout);
+  }, [questionIndex, selectedAnswer, showResult, revealStage]);
 
   const restart = () => {
     setQuestions(createRound());
@@ -78,6 +93,7 @@ export default function QuizScreen({ onBack }: Props) {
     setTotalXp(0);
     setShowResult(false);
     setImageError(false);
+    setRevealStage(0);
   };
 
   const continueRound = () => {
@@ -85,7 +101,7 @@ export default function QuizScreen({ onBack }: Props) {
 
     if (isCorrect) {
       setCorrectCount((value) => value + 1);
-      setTotalPoints((value) => value + question.player.points);
+      setTotalPoints((value) => value + potentialPoints);
       setTotalXp((value) => value + XP_PER_CORRECT_ANSWER);
     }
 
@@ -97,6 +113,7 @@ export default function QuizScreen({ onBack }: Props) {
     setQuestionIndex((value) => value + 1);
     setSelectedAnswer(null);
     setImageError(false);
+    setRevealStage(0);
   };
 
   return (
@@ -126,13 +143,26 @@ export default function QuizScreen({ onBack }: Props) {
 
             <View style={styles.photoPanel}>
               {!imageError && question.player.portraitUrl ? (
-                <Image
-                  source={{ uri: question.player.portraitUrl }}
-                  style={styles.photoImage}
-                  resizeMode="contain"
-                  accessibilityLabel={question.player.displayName}
-                  onError={() => setImageError(true)}
-                />
+                <>
+                  <BlurTargetView ref={blurTargetRef} style={styles.photoImageTarget}>
+                    <Image
+                      source={{ uri: question.player.portraitUrl }}
+                      style={styles.photoImage}
+                      resizeMode="contain"
+                      accessibilityLabel={question.player.displayName}
+                      onError={() => setImageError(true)}
+                    />
+                  </BlurTargetView>
+                  {revealStage < REVEAL_BLUR.length - 1 ? (
+                    <BlurView
+                      blurTarget={blurTargetRef}
+                      blurMethod="dimezisBlurView"
+                      intensity={REVEAL_BLUR[revealStage]}
+                      tint="dark"
+                      style={styles.photoBlur}
+                    />
+                  ) : null}
+                </>
               ) : (
                 <View style={styles.photoFallback}>
                   <Text style={styles.photoEmoji}>⚽</Text>
@@ -143,6 +173,22 @@ export default function QuizScreen({ onBack }: Props) {
                 <Text style={styles.photoTagText}>TEST IMAGE • RIGHTS PENDING</Text>
               </View>
             </View>
+
+            {!imageError && question.player.portraitUrl ? (
+              <View style={styles.revealControls}>
+                <Text style={styles.revealPoints}> {t.pointsAvailable}: {potentialPoints}</Text>
+                {revealStage < REVEAL_BLUR.length - 1 ? (
+                  <Pressable
+                    onPress={() => setRevealStage((stage) => Math.min(stage + 1, REVEAL_BLUR.length - 1))}
+                    style={styles.revealButton}
+                  >
+                    <Text style={styles.revealButtonText}>{t.revealImage}</Text>
+                  </Pressable>
+                ) : (
+                  <Text style={styles.revealComplete}>{t.fullImage}</Text>
+                )}
+              </View>
+            ) : null}
 
             <Text style={styles.instruction}>{t.selectAnswer}</Text>
             <View style={styles.answers}>
@@ -183,7 +229,7 @@ export default function QuizScreen({ onBack }: Props) {
                   </Text>
                 ) : (
                   <Text style={styles.feedbackDetail}>
-                    +{question.player.points} {t.pointsLabel}  •  +{XP_PER_CORRECT_ANSWER} XP
+                    +{potentialPoints} {t.pointsLabel}  •  +{XP_PER_CORRECT_ANSWER} XP
                   </Text>
                 )}
                 <Pressable onPress={continueRound} style={styles.primaryButton}>
@@ -242,7 +288,14 @@ const styles = StyleSheet.create({
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
   question: { color: colors.white, fontSize: 22, lineHeight: 27, fontWeight: '900', marginBottom: 12 },
   photoPanel: { height: 220, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 14, overflow: 'hidden' },
+  photoImageTarget: { ...StyleSheet.absoluteFillObject },
   photoImage: { width: '100%', height: '100%' },
+  photoBlur: { ...StyleSheet.absoluteFillObject },
+  revealControls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -4, marginBottom: 12 },
+  revealPoints: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
+  revealButton: { backgroundColor: '#1B3A5B', borderWidth: 1, borderColor: '#3C6388', borderRadius: 9, paddingHorizontal: 12, paddingVertical: 8 },
+  revealButtonText: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 0.6 },
+  revealComplete: { color: '#55D9A2', fontSize: 9, fontWeight: '900', letterSpacing: 0.5 },
   photoFallback: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 18 },
   photoTag: { position: 'absolute', left: 10, bottom: 10, backgroundColor: 'rgba(11, 24, 48, 0.88)', borderRadius: 7, paddingHorizontal: 9, paddingVertical: 6 },
   photoTagText: { color: colors.gold, fontSize: 8, fontWeight: '900', letterSpacing: 0.7 },
