@@ -5,13 +5,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import appConfig from './app.json';
 import HomeScreen from './src/screens/HomeScreen';
 import QuizScreen from './src/screens/QuizScreen';
+import ClubQuizScreen from './src/screens/ClubQuizScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import { resolveLocale, type SupportedLocale } from './src/i18n/locales';
 
 const LANGUAGE_KEY = '@kit-and-kick/language';
 
 export default function App() {
-  const [screen, setScreen] = useState<'splash' | 'home' | 'playerQuiz' | 'settings'>('splash');
+  const [screen, setScreen] = useState<'splash' | 'home' | 'playerQuiz' | 'clubQuiz' | 'settings'>('splash');
   const [locale, setLocale] = useState<SupportedLocale | null>(null);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
@@ -57,7 +58,10 @@ export default function App() {
   if (screen === 'playerQuiz') {
     return <QuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
   }
-  return <HomeScreen locale={activeLocale} onStartPlayerQuiz={() => setScreen('playerQuiz')} onOpenSettings={() => setScreen('settings')} />;
+  if (screen === 'clubQuiz') {
+    return <ClubQuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
+  }
+  return <HomeScreen locale={activeLocale} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onOpenSettings={() => setScreen('settings')} />;
 }
 
 const styles = StyleSheet.create({
