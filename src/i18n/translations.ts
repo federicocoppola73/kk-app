@@ -29,6 +29,10 @@ const english = {
   preview: 'KIT & KICK  •  PREVIEW 0.1.0',
   backHome: 'BACK TO HOME',
   demoLabel: 'DEMO ROUND',
+  playerIdRound: 'PLAYER ID • 10 QUESTIONS',
+  pointsLabel: 'POINTS',
+  correctAnswers: 'CORRECT ANSWERS',
+  seeResults: 'SEE RESULTS',
   questionPrompt: 'Which player is shown?',
   photoPlaceholder: 'PLAYER PHOTO',
   photoComingSoon: 'Licensed player images will be connected here',
@@ -41,7 +45,7 @@ const english = {
   resultScore: 'YOUR SCORE',
   earnedXp: 'XP EARNED',
   playAgain: 'PLAY AGAIN',
-  demoNotice: 'Demo quiz: answer and XP are temporary and are not saved.',
+  demoNotice: 'Practice round: points and XP are temporary and are not saved yet.',
 };
 
 type Translation = { [Key in keyof typeof english]: string };
@@ -75,6 +79,10 @@ const italian: Translation = {
   preview: 'KIT & KICK  •  ANTEPRIMA 0.1.0',
   backHome: 'TORNA ALLA HOME',
   demoLabel: 'ROUND DIMOSTRATIVO',
+  playerIdRound: 'INDOVINA IL GIOCATORE • 10 DOMANDE',
+  pointsLabel: 'PUNTI',
+  correctAnswers: 'RISPOSTE CORRETTE',
+  seeResults: 'VEDI RISULTATO',
   questionPrompt: 'Quale giocatore è raffigurato?',
   photoPlaceholder: 'FOTO DEL GIOCATORE',
   photoComingSoon: 'Qui verranno inserite foto autorizzate dei calciatori',
@@ -87,7 +95,7 @@ const italian: Translation = {
   resultScore: 'IL TUO PUNTEGGIO',
   earnedXp: 'XP GUADAGNATI',
   playAgain: 'GIOCA ANCORA',
-  demoNotice: 'Quiz dimostrativo: risposta e XP sono temporanei e non vengono salvati.',
+  demoNotice: 'Partita di prova: punti e XP sono temporanei e per ora non vengono salvati.',
 };
 
 export const translations: Record<SupportedLocale, Translation> = {
