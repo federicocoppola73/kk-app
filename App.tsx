@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { getLocales } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import appConfig from './app.json';
 import HomeScreen from './src/screens/HomeScreen';
@@ -38,7 +39,7 @@ export default function App() {
     }
   };
 
-  const activeLocale = locale ?? resolveLocale(undefined);
+  const activeLocale = locale ?? resolveLocale(getLocales()[0]?.languageCode);
 
   if (screen === 'splash' || !settingsLoaded) {
     return (
