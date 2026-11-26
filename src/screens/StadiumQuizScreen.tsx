@@ -95,10 +95,7 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
   useEffect(() => {
     if (!showResult) return;
 
-    console.log('[QUIZ SAVE] Result screen reached');
-    
     const user = auth.currentUser;
-    console.log('[QUIZ SAVE] Current user:', user?.uid, 'Anonymous:', user?.isAnonymous);
     if (!user) {
       console.warn('Quiz result was not saved because no authenticated user is available.');
       return;
@@ -107,21 +104,16 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
     const resultId = resultIdRef.current ?? createQuizResultId(user.uid);
     resultIdRef.current = resultId;
 
-    console.log('[QUIZ SAVE] Starting Firestore write:', resultId);
-
     void recordCompletedQuiz(user.uid, resultId, {
       mode: 'stadium',
       points: totalPoints,
       correctAnswers: correctCount,
       totalQuestions: questions.length,
-    })
-      .then((outcome) => {
-        console.log('[QUIZ SAVE] Firestore outcome:', outcome);
-      })
-      .catch((error) => {
-        console.error('[QUIZ SAVE] Firestore error:', error);
-      });
+    }).catch((error) => {
+      console.warn('Unable to save completed quiz result:', error);
+    });
   }, [showResult, totalPoints, correctCount, questions.length]);
+
 
   const question = questions[questionIndex];
   const clues = useMemo(() => question ? getClues(question.stadium, t, locale) : [], [question, t, locale]);
