@@ -7,7 +7,7 @@ export default function App() {
   const [screen, setScreen] = useState<'splash' | 'home' | 'playerQuiz'>('splash');
 
   useEffect(() => {
-    const splashTimer = setTimeout(() => setScreen('home'), 3000);
+    const splashTimer = setTimeout(() => setScreen('home'), 5000);
     return () => clearTimeout(splashTimer);
   }, []);
 
