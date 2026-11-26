@@ -16,7 +16,7 @@ export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz,
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.midnightNavy} />
+      <StatusBar barStyle="light-content" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.topBar}>
           <View>
