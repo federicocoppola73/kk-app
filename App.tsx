@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 import { getLocales } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import appConfig from './app.json';
+import { auth } from './src/services/firebase';
 import HomeScreen from './src/screens/HomeScreen';
+import AuthScreen from './src/screens/AuthScreen';
 import QuizScreen from './src/screens/QuizScreen';
 import ClubQuizScreen from './src/screens/ClubQuizScreen';
 import StadiumQuizScreen from './src/screens/StadiumQuizScreen';
@@ -13,14 +16,33 @@ import { resolveLocale, type SupportedLocale } from './src/i18n/locales';
 
 const LANGUAGE_KEY = '@kit-and-kick/language';
 
+type Screen = 'splash' | 'gate' | 'home' | 'playerQuiz' | 'clubQuiz' | 'stadiumQuiz' | 'careerQuiz' | 'settings';
+
 export default function App() {
-  const [screen, setScreen] = useState<'splash' | 'home' | 'playerQuiz' | 'clubQuiz' | 'stadiumQuiz' | 'careerQuiz' | 'settings'>('splash');
+  const [screen, setScreen] = useState<Screen>('splash');
   const [locale, setLocale] = useState<SupportedLocale | null>(null);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [authUser, setAuthUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
-    const splashTimer = setTimeout(() => setScreen('home'), 5000);
+    const splashTimer = setTimeout(() => setScreen('gate'), 5000);
     return () => clearTimeout(splashTimer);
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setAuthUser(user);
+      setAuthReady(true);
+      setScreen((current) => {
+        if (current === 'splash') return current;
+        return user ? 'home' : current === 'home' ? 'gate' : current;
+      });
+    }, () => {
+      setAuthReady(true);
+      setAuthUser(null);
+    });
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -44,7 +66,7 @@ export default function App() {
 
   const activeLocale = locale ?? resolveLocale(getLocales()[0]?.languageCode);
 
-  if (screen === 'splash' || !settingsLoaded) {
+  if (screen === 'splash' || !settingsLoaded || !authReady) {
     return (
       <View style={styles.splash}>
         <StatusBar hidden />
@@ -52,6 +74,10 @@ export default function App() {
         <Text style={styles.version}>VERSION {appConfig.expo.version}</Text>
       </View>
     );
+  }
+
+  if (!authUser) {
+    return <AuthScreen locale={activeLocale} onAuthenticated={() => setScreen('home')} />;
   }
 
   if (screen === 'settings') {
