@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 import { useQuizExitConfirmation } from '../hooks/useQuizExitConfirmation';
+import { auth } from '../services/firebase';
+import { createQuizResultId, recordCompletedQuiz } from '../services/quizResults';
 import { careerPlayers, type CareerPlayer } from '../data/careerPaths';
 
 const ROUND_LENGTH = 10;
@@ -49,7 +51,31 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
   const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const handleBack = useQuizExitConfirmation(locale, showResult, onBack);
+  const resultIdRef = useRef<string | null>(null);
   const [revealStage, setRevealStage] = useState(1);
+
+  useEffect(() => {
+    if (!showResult) return;
+
+    const user = auth.currentUser;
+    if (!user) {
+      console.warn('Quiz result was not saved because no authenticated user is available.');
+      return;
+    }
+
+    const resultId = resultIdRef.current ?? createQuizResultId(user.uid);
+    resultIdRef.current = resultId;
+
+    void recordCompletedQuiz(user.uid, resultId, {
+      mode: 'career',
+      points: totalPoints,
+      correctAnswers: correctCount,
+      totalQuestions: ROUND_LENGTH,
+    }).catch((error) => {
+      console.warn('Unable to save completed quiz result:', error);
+    });
+  }, [showResult, totalPoints, correctCount]);
+
   const question = questions[questionIndex];
   const visibleClubs = question.player.clubs.slice(0, revealStage);
   const potentialPoints = POINTS[Math.min(revealStage - 1, POINTS.length - 1)];
@@ -78,6 +104,7 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
 
   const restart = () => {
     setQuestions(createRound());
+    resultIdRef.current = null;
     setQuestionIndex(0);
     setSelectedAnswer(null);
     setCorrectCount(0);
