@@ -28,8 +28,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Rosario, Argentina",
-        "it": "Rosario, Argentina"
+        "en": "Rosario, Argentina · 1987",
+        "it": "Rosario, Argentina · 1987"
       },
       {
         "key": "role",
@@ -62,8 +62,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Funchal, Madeira, Portugal",
-        "it": "Funchal, isola di Madeira, Portogallo"
+        "en": "Funchal, Madeira, Portugal · 1985",
+        "it": "Funchal, isola di Madeira, Portogallo · 1985"
       },
       {
         "key": "role",
@@ -96,8 +96,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Paris, France",
-        "it": "Parigi, Francia"
+        "en": "Paris, France · 1998",
+        "it": "Parigi, Francia · 1998"
       },
       {
         "key": "role",
@@ -130,8 +130,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Leeds, England",
-        "it": "Leeds, Inghilterra"
+        "en": "Leeds, England · 2000",
+        "it": "Leeds, Inghilterra · 2000"
       },
       {
         "key": "role",
@@ -164,8 +164,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Nagrig, Egypt",
-        "it": "Nagrig, Egitto"
+        "en": "Nagrig, Egypt · 1992",
+        "it": "Nagrig, Egitto · 1992"
       },
       {
         "key": "role",
@@ -198,8 +198,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Drongen, Belgium",
-        "it": "Drongen, Belgio"
+        "en": "Drongen, Belgium · 1991",
+        "it": "Drongen, Belgio · 1991"
       },
       {
         "key": "role",
@@ -232,8 +232,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "São Gonçalo, Brazil",
-        "it": "São Gonçalo, Brasile"
+        "en": "São Gonçalo, Brazil · 2000",
+        "it": "São Gonçalo, Brasile · 2000"
       },
       {
         "key": "role",
@@ -266,8 +266,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Stourbridge, England",
-        "it": "Stourbridge, Inghilterra"
+        "en": "Stourbridge, England · 2003",
+        "it": "Stourbridge, Inghilterra · 2003"
       },
       {
         "key": "role",
@@ -300,8 +300,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Walthamstow, London, England",
-        "it": "Walthamstow, Londra, Inghilterra"
+        "en": "Walthamstow, London, England · 1993",
+        "it": "Walthamstow, Londra, Inghilterra · 1993"
       },
       {
         "key": "role",
@@ -334,8 +334,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Warsaw, Poland",
-        "it": "Varsavia, Polonia"
+        "en": "Warsaw, Poland · 1988",
+        "it": "Varsavia, Polonia · 1988"
       },
       {
         "key": "role",
@@ -368,8 +368,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Mogi das Cruzes, Brazil",
-        "it": "Mogi das Cruzes, Brasile"
+        "en": "Mogi das Cruzes, Brazil · 1992",
+        "it": "Mogi das Cruzes, Brasile · 1992"
       },
       {
         "key": "role",
@@ -402,8 +402,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Zadar, Croatia",
-        "it": "Zara, Croazia"
+        "en": "Zadar, Croatia · 1985",
+        "it": "Zara, Croazia · 1985"
       },
       {
         "key": "role",
@@ -436,8 +436,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Fuentealbilla, Spain",
-        "it": "Fuentealbilla, Spagna"
+        "en": "Fuentealbilla, Spain · 1984",
+        "it": "Fuentealbilla, Spagna · 1984"
       },
       {
         "key": "role",
@@ -470,8 +470,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Terrassa, Spain",
-        "it": "Terrassa, Spagna"
+        "en": "Terrassa, Spain · 1980",
+        "it": "Terrassa, Spagna · 1980"
       },
       {
         "key": "role",
@@ -504,8 +504,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Marseille, France",
-        "it": "Marsiglia, Francia"
+        "en": "Marseille, France · 1972",
+        "it": "Marsiglia, Francia · 1972"
       },
       {
         "key": "role",
@@ -538,8 +538,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Porto Alegre, Brazil",
-        "it": "Porto Alegre, Brasile"
+        "en": "Porto Alegre, Brazil · 1980",
+        "it": "Porto Alegre, Brasile · 1980"
       },
       {
         "key": "role",
@@ -572,8 +572,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Les Ulis, France",
-        "it": "Les Ulis, Francia"
+        "en": "Les Ulis, France · 1977",
+        "it": "Les Ulis, Francia · 1977"
       },
       {
         "key": "role",
@@ -606,8 +606,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Carrara, Italy",
-        "it": "Carrara, Italia"
+        "en": "Carrara, Italy · 1978",
+        "it": "Carrara, Italia · 1978"
       },
       {
         "key": "role",
@@ -640,8 +640,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Milan, Italy",
-        "it": "Milano, Italia"
+        "en": "Milan, Italy · 1968",
+        "it": "Milano, Italia · 1968"
       },
       {
         "key": "role",
@@ -674,8 +674,8 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
       },
       {
         "key": "birthplace",
-        "en": "Lanús, Buenos Aires Province, Argentina",
-        "it": "Lanús, provincia di Buenos Aires, Argentina"
+        "en": "Lanús, Buenos Aires Province, Argentina · 1960",
+        "it": "Lanús, provincia di Buenos Aires, Argentina · 1960"
       },
       {
         "key": "role",
