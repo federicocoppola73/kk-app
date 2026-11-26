@@ -1,9 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Image, StatusBar, StyleSheet, View } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
 import QuizScreen from './src/screens/QuizScreen';
 
 export default function App() {
-  const [screen, setScreen] = useState<'home' | 'playerQuiz'>('home');
+  const [screen, setScreen] = useState<'splash' | 'home' | 'playerQuiz'>('splash');
+
+  useEffect(() => {
+    const splashTimer = setTimeout(() => setScreen('home'), 3000);
+    return () => clearTimeout(splashTimer);
+  }, []);
+
+  if (screen === 'splash') {
+    return (
+      <View style={styles.splash}>
+        <StatusBar hidden />
+        <Image
+          source={require('./assets/brand/splash.png')}
+          style={styles.splashImage}
+          resizeMode="contain"
+          accessibilityLabel="Kit & Kick"
+        />
+      </View>
+    );
+  }
 
   if (screen === 'playerQuiz') {
     return <QuizScreen onBack={() => setScreen('home')} />;
@@ -11,3 +31,16 @@ export default function App() {
 
   return <HomeScreen onStartPlayerQuiz={() => setScreen('playerQuiz')} />;
 }
+
+const styles = StyleSheet.create({
+  splash: {
+    flex: 1,
+    backgroundColor: '#0B1830',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  splashImage: {
+    width: '100%',
+    height: '100%',
+  },
+});
