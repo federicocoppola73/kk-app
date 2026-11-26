@@ -3,7 +3,7 @@
     "name": "Kit & Kick",
     "slug": "kit-and-kick",
     "scheme": "kitandkick",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "icon": "./assets/brand/icon.png",
