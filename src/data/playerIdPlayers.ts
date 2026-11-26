@@ -5,9 +5,9 @@ export type PlayerIdPlayer = {
   displayName: string;
   difficulty: PlayerDifficulty;
   points: number;
-  // Portraits will be connected only after image rights are approved.
+  // Test portraits are exposed only in development builds. Keep rights status pending until cleared.
   portraitStatus: 'pending';
-  portraitUrl: string;
+  portraitUrl: string | null;
 };
 
 // Bundled starter snapshot of kk-data/players/player-id-starter-20.json.
@@ -19,7 +19,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "easy",
     "points": 100,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/lionel-messi.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/lionel-messi.jpg" : null
   },
   {
     "id": "cristiano-ronaldo",
@@ -27,7 +27,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "easy",
     "points": 100,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/cristiano-ronaldo.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/cristiano-ronaldo.jpg" : null
   },
   {
     "id": "kylian-mbappe",
@@ -35,7 +35,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "easy",
     "points": 100,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/kylian-mbappe.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/kylian-mbappe.jpg" : null
   },
   {
     "id": "erling-haaland",
@@ -43,7 +43,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "easy",
     "points": 100,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/erling-haaland.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/erling-haaland.jpg" : null
   },
   {
     "id": "mohamed-salah",
@@ -51,7 +51,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "medium",
     "points": 150,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/mohamed-salah.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/mohamed-salah.jpg" : null
   },
   {
     "id": "kevin-de-bruyne",
@@ -59,7 +59,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "medium",
     "points": 150,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/kevin-de-bruyne.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/kevin-de-bruyne.jpg" : null
   },
   {
     "id": "vinicius-junior",
@@ -67,7 +67,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "medium",
     "points": 150,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/vinicius-junior.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/vinicius-junior.jpg" : null
   },
   {
     "id": "jude-bellingham",
@@ -75,7 +75,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "medium",
     "points": 150,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/jude-bellingham.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/jude-bellingham.jpg" : null
   },
   {
     "id": "harry-kane",
@@ -83,7 +83,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "medium",
     "points": 150,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/harry-kane.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/harry-kane.jpg" : null
   },
   {
     "id": "robert-lewandowski",
@@ -91,7 +91,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "medium",
     "points": 150,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/robert-lewandowski.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/robert-lewandowski.jpg" : null
   },
   {
     "id": "neymar-jr",
@@ -99,7 +99,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "hard",
     "points": 200,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/neymar-jr.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/neymar-jr.jpg" : null
   },
   {
     "id": "luka-modric",
@@ -107,7 +107,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "hard",
     "points": 200,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/luka-modric.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/luka-modric.jpg" : null
   },
   {
     "id": "andres-iniesta",
@@ -115,7 +115,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "hard",
     "points": 200,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/andres-iniesta.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/andres-iniesta.jpg" : null
   },
   {
     "id": "xavi-hernandez",
@@ -123,7 +123,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "hard",
     "points": 200,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/xavi-hernandez.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/xavi-hernandez.jpg" : null
   },
   {
     "id": "zinedine-zidane",
@@ -131,7 +131,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "hard",
     "points": 200,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/zinedine-zidane.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/zinedine-zidane.jpg" : null
   },
   {
     "id": "ronaldinho",
@@ -139,7 +139,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "hard",
     "points": 200,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/ronaldinho.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/ronaldinho.jpg" : null
   },
   {
     "id": "thierry-henry",
@@ -147,7 +147,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "expert",
     "points": 250,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/thierry-henry.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/thierry-henry.jpg" : null
   },
   {
     "id": "gianluigi-buffon",
@@ -155,7 +155,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "expert",
     "points": 250,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/gianluigi-buffon.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/gianluigi-buffon.jpg" : null
   },
   {
     "id": "paolo-maldini",
@@ -163,7 +163,7 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "expert",
     "points": 250,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/paolo-maldini.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/paolo-maldini.jpg" : null
   },
   {
     "id": "diego-maradona",
@@ -171,6 +171,6 @@ export const playerIdPlayers: PlayerIdPlayer[] = [
     "difficulty": "expert",
     "points": 250,
     "portraitStatus": "pending",
-    "portraitUrl": "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/diego-maradona.jpg"
+    "portraitUrl": __DEV__ ? "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/players/pending/diego-maradona.jpg" : null
   }
 ];
