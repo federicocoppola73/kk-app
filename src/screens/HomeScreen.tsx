@@ -9,7 +9,7 @@ export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz,
 
   const modes = [
     { number: '01', title: t.playerTitle, detail: t.playerDetail, tag: t.photoQuiz },
-    { number: '02', title: t.clubTitle, detail: t.clubDetail, tag: t.photoQuiz },
+    { number: '02', title: t.clubTitle, detail: t.clubDetail, tag: t.clubKnowledge },
     { number: '03', title: t.careerTitle, detail: t.careerDetail, tag: t.proChallenge },
     { number: '04', title: t.badgeTitle, detail: t.badgeDetail, tag: t.clubKnowledge },
   ];
