@@ -48,7 +48,7 @@ function createRound(): QuizQuestion[] {
     });
 }
 
-export default function QuizScreen({ locale, onBack }: Props) {
+export default function ClubQuizScreen({ locale, onBack }: Props) {
   const t = translations[locale];
 
   const [questions, setQuestions] = useState<QuizQuestion[]>(createRound);
@@ -277,9 +277,7 @@ const styles = StyleSheet.create({
   crestFallback: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 18 },
   crestTag: { position: 'absolute', left: 10, bottom: 10, backgroundColor: 'rgba(11, 24, 48, 0.88)', borderRadius: 7, paddingHorizontal: 9, paddingVertical: 6 },
   crestTagText: { color: colors.gold, fontSize: 8, fontWeight: '900', letterSpacing: 0.7 },
-  photoCircle: { width: 82, height: 82, borderRadius: 41, backgroundColor: '#1B3A5B', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
   crestEmoji: { fontSize: 38 },
-  photoLabel: { color: colors.white, fontSize: 12, fontWeight: '900', letterSpacing: 1.5 },
   crestHint: { color: colors.muted, fontSize: 9, marginTop: 6, textAlign: 'center', paddingHorizontal: 18 },
   instruction: { color: colors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 1, marginBottom: 8 },
   answers: { gap: 7 },
