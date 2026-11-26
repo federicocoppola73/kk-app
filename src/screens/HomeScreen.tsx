@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings }: { locale: SupportedLocale; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void }) {
+export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings }: { locale: SupportedLocale; xp: number | null; level: number | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void }) {
   const t = translations[locale];
 
   const modes = [
@@ -34,12 +34,12 @@ export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz,
           <Text style={styles.subhead}>{t.subhead}</Text>
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <Text style={styles.statValue}>LVL 01</Text>
+              <Text style={styles.statValue}>LVL {level === null ? '--' : String(level).padStart(2, '0')}</Text>
               <Text style={styles.statLabel}>{t.rookie}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
-              <Text style={styles.statValue}>0 XP</Text>
+              <Text style={styles.statValue}>{xp === null ? '—' : xp.toLocaleString()} XP</Text>
               <Text style={styles.statLabel}>{t.totalXp}</Text>
             </View>
             <View style={styles.statDivider} />
