@@ -36,7 +36,7 @@ Useful commands:
 - `App.tsx` — application entry point.
 - `src/screens/` — application screens.
 - `src/theme/` — shared design tokens.
-- `src/i18n/` — supported language configuration.
+- `src/i18n/` — supported language configuration and UI translations.\n- The Home screen detects the device language with `expo-localization`; Italian and English UI translations are currently implemented. Other supported locales temporarily fall back to English.
 - Game content lives in [kk-data](https://github.com/federicocoppola73/kk-data).
 
 ## Project rules
