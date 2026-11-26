@@ -7,13 +7,14 @@ import HomeScreen from './src/screens/HomeScreen';
 import QuizScreen from './src/screens/QuizScreen';
 import ClubQuizScreen from './src/screens/ClubQuizScreen';
 import StadiumQuizScreen from './src/screens/StadiumQuizScreen';
+import CareerQuizScreen from './src/screens/CareerQuizScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import { resolveLocale, type SupportedLocale } from './src/i18n/locales';
 
 const LANGUAGE_KEY = '@kit-and-kick/language';
 
 export default function App() {
-  const [screen, setScreen] = useState<'splash' | 'home' | 'playerQuiz' | 'clubQuiz' | 'stadiumQuiz' | 'settings'>('splash');
+  const [screen, setScreen] = useState<'splash' | 'home' | 'playerQuiz' | 'clubQuiz' | 'stadiumQuiz' | 'careerQuiz' | 'settings'>('splash');
   const [locale, setLocale] = useState<SupportedLocale | null>(null);
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
@@ -65,7 +66,10 @@ export default function App() {
   if (screen === 'stadiumQuiz') {
     return <StadiumQuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
   }
-  return <HomeScreen locale={activeLocale} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onOpenSettings={() => setScreen('settings')} />;
+  if (screen === 'careerQuiz') {
+    return <CareerQuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
+  }
+  return <HomeScreen locale={activeLocale} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} />;
 }
 
 const styles = StyleSheet.create({
