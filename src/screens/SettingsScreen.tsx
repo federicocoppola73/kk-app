@@ -93,7 +93,7 @@ export default function SettingsScreen({ locale, selectedLocale, authUser, onCha
         <Text style={styles.section}>{copy.account}</Text>
         <View style={styles.accountCard}>
           <Text style={styles.accountStatus}>{authUser.isAnonymous ? copy.guest : copy.registered}</Text>
-          <Text style={styles.description}>{authUser.isAnonymous ? copy.guestInfo : (authUser.email ?? authUser.displayName ?? '')}</Text>
+          <Text style={styles.description}>{authUser.isAnonymous ? copy.guestInfo : [authUser.displayName, authUser.email].filter(Boolean).join('\n')}</Text>
           {authUser.isAnonymous && !linked && !showRegistration && (
             <Pressable onPress={() => { setError(''); setShowRegistration(true); }} style={styles.primaryButton}>
               <Text style={styles.primaryButtonText}>{copy.create}</Text>
