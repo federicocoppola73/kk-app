@@ -106,7 +106,7 @@ export default function QuizScreen({ onBack }: Props) {
         <View style={styles.header}>
           <Pressable onPress={onBack} hitSlop={10} style={styles.backButton}>
             <Text style={styles.backArrow}>‹</Text>
-            <Text style={styles.backText}>{t.backHome}</Text>
+            <Text style={styles.backText}>Home</Text>
           </Pressable>
           <Text style={styles.roundLabel}>{t.playerIdRound}</Text>
         </View>
@@ -230,12 +230,12 @@ export default function QuizScreen({ onBack }: Props) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.midnightNavy },
-  container: { flexGrow: 1, paddingHorizontal: 20, paddingTop: (StatusBar.currentHeight ?? 0) + 12, paddingBottom: 20 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-  backButton: { flexDirection: 'row', alignItems: 'center', paddingVertical: 6 },
+  container: { flexGrow: 1, paddingHorizontal: 20, paddingTop: (StatusBar.currentHeight ?? 0) + 12, paddingBottom: 110 },
+  header: { flexDirection: 'column', alignItems: 'stretch', marginBottom: 24 },
+  backButton: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', paddingVertical: 6 },
   backArrow: { color: colors.iceBlue, fontSize: 30, lineHeight: 30, marginRight: 5 },
   backText: { color: colors.iceBlue, fontSize: 11, fontWeight: '800', letterSpacing: 0.6 },
-  roundLabel: { color: colors.gold, fontSize: 9, fontWeight: '900', letterSpacing: 1 },
+  roundLabel: { color: colors.gold, fontSize: 11, fontWeight: '900', letterSpacing: 1, textAlign: 'center', marginTop: 8 },
   progressRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 18 },
   progressText: { color: colors.muted, fontSize: 10, fontWeight: '900', marginRight: 12 },
   progressTrack: { flex: 1, height: 5, borderRadius: 5, backgroundColor: '#243A56', overflow: 'hidden' },
