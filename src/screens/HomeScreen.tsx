@@ -1,6 +1,5 @@
 import React from 'react';
 import { Image, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { getLocales } from 'expo-localization';
 import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
