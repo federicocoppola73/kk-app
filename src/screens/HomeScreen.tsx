@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onOpenSettings }: { locale: SupportedLocale; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onOpenSettings: () => void }) {
+export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings }: { locale: SupportedLocale; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void }) {
   const t = translations[locale];
 
   const modes = [
@@ -57,7 +57,7 @@ export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz,
 
         <View style={styles.modeGrid}>
           {modes.map((mode) => (
-            <Pressable key={mode.number} disabled={mode.number !== '01' && mode.number !== '02' && mode.number !== '04'} onPress={mode.number === '01' ? onStartPlayerQuiz : mode.number === '02' ? onStartClubQuiz : onStartStadiumQuiz} style={({ pressed }) => [styles.modeCard, pressed && styles.modeCardPressed]}>
+            <Pressable key={mode.number} onPress={mode.number === '01' ? onStartPlayerQuiz : mode.number === '02' ? onStartClubQuiz : mode.number === '03' ? onStartCareerQuiz : onStartStadiumQuiz} style={({ pressed }) => [styles.modeCard, pressed && styles.modeCardPressed]}>
               <View style={styles.modeTop}>
                 <Text style={styles.modeNumber}>{mode.number}</Text>
                 <Text style={styles.modeTag}>{mode.tag}</Text>
