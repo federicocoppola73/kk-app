@@ -162,15 +162,17 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
               </View>
             </View>
 
-            <View style={styles.revealControls}>
-              {revealStage < clues.length - 1 ? (
-                <Pressable onPress={revealNextClue} style={styles.revealButton}>
-                  <Text style={styles.revealButtonText}>{t.revealNextClue}</Text>
-                </Pressable>
-              ) : (
-                <Text style={styles.revealComplete}>{t.allCluesRevealed}</Text>
-              )}
-            </View>
+            {selectedAnswer === null ? (
+              <View style={styles.revealControls}>
+                {revealStage < clues.length - 1 ? (
+                  <Pressable onPress={revealNextClue} style={styles.revealButton}>
+                    <Text style={styles.revealButtonText}>{t.revealNextClue}</Text>
+                  </Pressable>
+                ) : (
+                  <Text style={styles.revealComplete}>{t.allCluesRevealed}</Text>
+                )}
+              </View>
+            ) : null}
 
             <Text style={styles.instruction}>{t.selectAnswer}</Text>
             <View style={styles.answers}>
