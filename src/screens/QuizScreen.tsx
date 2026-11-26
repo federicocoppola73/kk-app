@@ -230,7 +230,7 @@ export default function QuizScreen({ onBack }: Props) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.midnightNavy },
-  container: { flexGrow: 1, paddingHorizontal: 20, paddingTop: (StatusBar.currentHeight ?? 0) + 12, paddingBottom: 110 },
+  container: { flexGrow: 1, paddingHorizontal: 20, paddingTop: (StatusBar.currentHeight ?? 0) + 12, paddingBottom: 220 },
   header: { flexDirection: 'column', alignItems: 'stretch', marginBottom: 24 },
   backButton: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', paddingVertical: 6 },
   backArrow: { color: colors.iceBlue, fontSize: 30, lineHeight: 30, marginRight: 5 },
