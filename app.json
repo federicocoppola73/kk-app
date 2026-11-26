@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Kit & Kick",
+    "slug": "kit-and-kick",
+    "scheme": "kitandkick",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.kitandkick"
+    },
+    "android": {
+      "package": "com.example.kitandkick"
+    }
+  }
+}
