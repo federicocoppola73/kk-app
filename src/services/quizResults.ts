@@ -68,6 +68,7 @@ export async function recordCompletedQuiz(
       points,
       correctAnswers,
       totalQuestions,
+      verification: 'unverified',
       completedAt: serverTimestamp(),
     });
 
