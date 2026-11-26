@@ -98,6 +98,7 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
     console.log('[QUIZ SAVE] Result screen reached');
     
     const user = auth.currentUser;
+    console.log('[QUIZ SAVE] Current user:', user?.uid, 'Anonymous:', user?.isAnonymous);
     if (!user) {
       console.warn('Quiz result was not saved because no authenticated user is available.');
       return;
