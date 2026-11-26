@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Image, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { onAuthStateChanged, type User } from 'firebase/auth';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { getLocales } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import appConfig from './app.json';
-import { auth } from './src/services/firebase';
+import { auth, db } from './src/services/firebase';
+import { ensureUserProfile, type UserProfile } from './src/services/userProfile';
 import HomeScreen from './src/screens/HomeScreen';
 import AuthScreen from './src/screens/AuthScreen';
 import QuizScreen from './src/screens/QuizScreen';
@@ -24,6 +26,7 @@ export default function App() {
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     const splashTimer = setTimeout(() => setScreen('gate'), 5000);
@@ -46,6 +49,36 @@ export default function App() {
     });
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (!authUser) {
+      setUserProfile(null);
+      return;
+    }
+
+    const profileRef = doc(db, 'users', authUser.uid);
+    const unsubscribe = onSnapshot(profileRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        setUserProfile(null);
+        return;
+      }
+      const data = snapshot.data();
+      setUserProfile({
+        nickname: typeof data.nickname === 'string' ? data.nickname : (authUser.displayName ?? 'Player'),
+        xp: typeof data.xp === 'number' ? data.xp : 0,
+        level: typeof data.level === 'number' ? data.level : 1,
+      });
+    }, (error) => {
+      console.warn('Unable to load user profile from Firestore:', error);
+      setUserProfile(null);
+    });
+
+    void ensureUserProfile(authUser).catch((error) => {
+      console.warn('Unable to initialize user profile in Firestore:', error);
+    });
+
+    return unsubscribe;
+  }, [authUser]);
 
   useEffect(() => {
     AsyncStorage.getItem(LANGUAGE_KEY)
@@ -97,7 +130,7 @@ export default function App() {
   if (screen === 'careerQuiz') {
     return <CareerQuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
   }
-  return <HomeScreen locale={activeLocale} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} />;
+  return <HomeScreen locale={activeLocale} xp={userProfile?.xp ?? null} level={userProfile?.level ?? null} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} />;
 }
 
 const styles = StyleSheet.create({
