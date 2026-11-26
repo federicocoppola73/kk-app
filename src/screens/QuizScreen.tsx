@@ -61,6 +61,20 @@ const clueLabelKeys = {
   fact: 'playerClueFact',
 } as const;
 
+type Clue = { key: keyof typeof clueLabelKeys; icon: string; label: string; value: string };
+
+function getClues(player: PlayerIdPlayer, t: typeof translations.en, locale: SupportedLocale): Clue[] {
+  const icons: Record<keyof typeof clueLabelKeys, string> = {
+    nationality: '🌍', birthplace: '📍', role: '⚽', era: '⏳', fact: '🏆',
+  };
+  return player.clues.map((clue) => ({
+    key: clue.key,
+    icon: icons[clue.key],
+    label: t[clueLabelKeys[clue.key]],
+    value: locale === 'it' ? clue.it : clue.en,
+  }));
+}
+
 export default function QuizScreen({ locale, onBack }: Props) {
   const t = translations[locale];
   const [questions, setQuestions] = useState<QuizQuestion[]>(createRound);
@@ -76,7 +90,8 @@ export default function QuizScreen({ locale, onBack }: Props) {
   const isCorrect = selectedAnswer === question.player.id;
   const progress = ((questionIndex + 1) / ROUND_LENGTH) * 100;
   const pointsAvailable = POINTS_BY_CLUE[revealStage];
-  const visibleClues = question.player.clues.slice(0, revealStage + 1);
+  const clues = getClues(question.player, t, locale);
+  const visibleClues = clues.slice(0, revealStage + 1);
 
   useEffect(() => {
     if (selectedAnswer !== null || showResult || revealStage >= POINTS_BY_CLUE.length - 1) return;
@@ -135,20 +150,14 @@ export default function QuizScreen({ locale, onBack }: Props) {
               <Text style={styles.cluesHeaderText}>{t.playerClueCounter} {revealStage + 1} / 5</Text>
               <Text style={styles.pointsAvailable}>{t.pointsAvailable}: {pointsAvailable}</Text>
             </View>
-            <View style={styles.cluesList}>
-              {visibleClues.map((clue, index) => {
-                const label = t[clueLabelKeys[clue.key] as keyof typeof t];
-                const value = locale === 'it' ? clue.it : clue.en;
-                return (
-                  <View key={clue.key} style={styles.clueCard}>
-                    <View style={styles.clueNumber}><Text style={styles.clueNumberText}>{index + 1}</Text></View>
-                    <View style={styles.clueCopy}>
-                      <Text style={styles.clueLabel}>{label}</Text>
-                      <Text style={styles.clueText}>{value}</Text>
-                    </View>
-                  </View>
-                );
-              })}
+            <View style={styles.cluesPanel}>
+              {visibleClues.map((clue, index) => (
+                <View key={clue.key} style={[styles.clueRow, index === visibleClues.length - 1 && styles.clueRowLast]}>
+                  <Text style={styles.clueIcon}>{clue.icon}</Text>
+                  <Text style={styles.clueLabel}>{clue.label}</Text>
+                  <Text style={styles.clueValue} numberOfLines={2}>{clue.value}</Text>
+                </View>
+              ))}
             </View>
 
             {selectedAnswer === null && revealStage < 4 ? (
@@ -232,13 +241,12 @@ const styles = StyleSheet.create({
   cluesHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
   cluesHeaderText: { color: colors.iceBlue, fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   pointsAvailable: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
-  cluesList: { gap: 7 },
-  clueCard: { flexDirection: 'row', alignItems: 'center', minHeight: 58, borderRadius: 12, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', paddingHorizontal: 11, paddingVertical: 9 },
-  clueNumber: { width: 27, height: 27, borderRadius: 9, backgroundColor: '#1B3A5B', alignItems: 'center', justifyContent: 'center', marginRight: 10 },
-  clueNumberText: { color: colors.iceBlue, fontSize: 11, fontWeight: '900' },
-  clueCopy: { flex: 1 },
-  clueLabel: { color: colors.gold, fontSize: 8, fontWeight: '900', letterSpacing: 0.8, marginBottom: 3 },
-  clueText: { color: colors.white, fontSize: 12, lineHeight: 17, fontWeight: '600' },
+  cluesPanel: { borderRadius: 15, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', paddingHorizontal: 10, paddingVertical: 4, marginBottom: 7 },
+  clueRow: { minHeight: 32, flexDirection: 'row', alignItems: 'center', paddingVertical: 3, borderBottomWidth: 1, borderBottomColor: '#29415D' },
+  clueRowLast: { borderBottomWidth: 0 },
+  clueIcon: { width: 28, fontSize: 16, textAlign: 'center', marginRight: 5 },
+  clueLabel: { color: colors.muted, fontSize: 8, fontWeight: '900', letterSpacing: 0.3, width: 104 },
+  clueValue: { color: colors.white, fontSize: 10, fontWeight: '800', flex: 1, textAlign: 'right' },
   revealButton: { alignSelf: 'center', marginTop: 10, marginBottom: 13, borderRadius: 10, borderWidth: 1, borderColor: '#3C6388', backgroundColor: '#1B3A5B', paddingHorizontal: 15, paddingVertical: 9 },
   revealButtonText: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 0.7 },
   allCluesText: { color: '#55D9A2', fontSize: 9, fontWeight: '900', textAlign: 'center', marginTop: 10, marginBottom: 13, letterSpacing: 0.6 },
