@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, onStartPlayerQuiz, onOpenSettings }: { locale: SupportedLocale; onStartPlayerQuiz: () => void; onOpenSettings: () => void }) {
+export default function HomeScreen({ locale, onStartPlayerQuiz, onStartClubQuiz, onOpenSettings }: { locale: SupportedLocale; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onOpenSettings: () => void }) {
   const t = translations[locale];
 
   const modes = [
@@ -57,7 +57,7 @@ export default function HomeScreen({ locale, onStartPlayerQuiz, onOpenSettings }
 
         <View style={styles.modeGrid}>
           {modes.map((mode) => (
-            <Pressable key={mode.number} disabled={mode.number !== '01'} onPress={onStartPlayerQuiz} style={({ pressed }) => [styles.modeCard, pressed && styles.modeCardPressed]}>
+            <Pressable key={mode.number} disabled={mode.number !== '01' && mode.number !== '02'} onPress={mode.number === '01' ? onStartPlayerQuiz : onStartClubQuiz} style={({ pressed }) => [styles.modeCard, pressed && styles.modeCardPressed]}>
               <View style={styles.modeTop}>
                 <Text style={styles.modeNumber}>{mode.number}</Text>
                 <Text style={styles.modeTag}>{mode.tag}</Text>
