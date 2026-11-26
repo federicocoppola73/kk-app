@@ -71,7 +71,6 @@ export default function HomeScreen({ onStartPlayerQuiz }: { onStartPlayerQuiz: (
                 <Text style={styles.playLabel}>{t.playMode}</Text>
                 <Text style={styles.arrow}>↗</Text>
               </View>
-            </View>
             </Pressable>
           ))}
         </View>
