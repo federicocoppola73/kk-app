@@ -1,15 +1,22 @@
 import React from 'react';
 import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { getLocales } from 'expo-localization';
 import { colors } from '../theme/colors';
-
-const modes = [
-  { number: '01', title: 'PLAYER ID', detail: 'Name the player from the photo', tag: 'PHOTO QUIZ' },
-  { number: '02', title: 'CLUB ID', detail: 'Recognise the club behind the player', tag: 'PHOTO QUIZ' },
-  { number: '03', title: 'CAREER PATH', detail: 'Follow the clubs. Guess the player.', tag: 'PRO CHALLENGE' },
-  { number: '04', title: 'BADGE QUIZ', detail: 'Identify the club from its crest', tag: 'CLUB KNOWLEDGE' },
-];
+import { resolveLocale } from '../i18n/locales';
+import { translations } from '../i18n/translations';
 
 export default function HomeScreen() {
+  const deviceLanguage = getLocales()[0]?.languageCode;
+  const locale = resolveLocale(deviceLanguage);
+  const t = translations[locale];
+
+  const modes = [
+    { number: '01', title: t.playerTitle, detail: t.playerDetail, tag: t.photoQuiz },
+    { number: '02', title: t.clubTitle, detail: t.clubDetail, tag: t.photoQuiz },
+    { number: '03', title: t.careerTitle, detail: t.careerDetail, tag: t.proChallenge },
+    { number: '04', title: t.badgeTitle, detail: t.badgeDetail, tag: t.clubKnowledge },
+  ];
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" backgroundColor={colors.midnightNavy} />
@@ -17,7 +24,7 @@ export default function HomeScreen() {
         <View style={styles.topBar}>
           <View>
             <Text style={styles.brand}>KIT <Text style={styles.brandAccent}>&</Text> KICK</Text>
-            <Text style={styles.kicker}>FOOTBALL QUIZ & GAMING</Text>
+            <Text style={styles.kicker}>{t.kicker}</Text>
           </View>
           <View style={styles.profile}>
             <Text style={styles.profileText}>K&K</Text>
@@ -25,30 +32,30 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.hero}>
-          <Text style={styles.overline}>THE GAME STARTS NOW</Text>
-          <Text style={styles.headline}>HOW WELL DO YOU{ '\n' }KNOW FOOTBALL?</Text>
-          <Text style={styles.subhead}>Prove your knowledge. Climb the ranks. Own the game.</Text>
+          <Text style={styles.overline}>{t.overline}</Text>
+          <Text style={styles.headline}>{t.headline}</Text>
+          <Text style={styles.subhead}>{t.subhead}</Text>
           <View style={styles.statsRow}>
             <View style={styles.stat}>
               <Text style={styles.statValue}>LVL 01</Text>
-              <Text style={styles.statLabel}>ROOKIE</Text>
+              <Text style={styles.statLabel}>{t.rookie}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValue}>0 XP</Text>
-              <Text style={styles.statLabel}>TOTAL XP</Text>
+              <Text style={styles.statLabel}>{t.totalXp}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValue}>—</Text>
-              <Text style={styles.statLabel}>GLOBAL RANK</Text>
+              <Text style={styles.statLabel}>{t.globalRank}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.sectionHeading}>
-          <Text style={styles.sectionTitle}>CHOOSE YOUR CHALLENGE</Text>
-          <Text style={styles.sectionMeta}>4 GAME MODES</Text>
+          <Text style={styles.sectionTitle}>{t.chooseChallenge}</Text>
+          <Text style={styles.sectionMeta}>{t.gameModes}</Text>
         </View>
 
         <View style={styles.modeGrid}>
@@ -61,7 +68,7 @@ export default function HomeScreen() {
               <Text style={styles.modeTitle}>{mode.title}</Text>
               <Text style={styles.modeDetail}>{mode.detail}</Text>
               <View style={styles.modeFooter}>
-                <Text style={styles.playLabel}>PLAY MODE</Text>
+                <Text style={styles.playLabel}>{t.playMode}</Text>
                 <Text style={styles.arrow}>↗</Text>
               </View>
             </View>
@@ -69,17 +76,17 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.dailyCard}>
-          <View style={styles.dailyBadge}><Text style={styles.dailyBadgeText}>DAILY</Text></View>
+          <View style={styles.dailyBadge}><Text style={styles.dailyBadgeText}>{t.daily}</Text></View>
           <View style={styles.dailyCopy}>
-            <Text style={styles.dailyTitle}>DAILY CHALLENGE</Text>
-            <Text style={styles.dailyText}>One new challenge. Every day. Can you keep your streak?</Text>
+            <Text style={styles.dailyTitle}>{t.dailyChallenge}</Text>
+            <Text style={styles.dailyText}>{t.dailyText}</Text>
           </View>
           <Text style={styles.dailyArrow}>→</Text>
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>KNOW THE GAME. OWN THE GAME.</Text>
-          <Text style={styles.version}>KIT & KICK  •  PREVIEW 0.1.0</Text>
+          <Text style={styles.footerText}>{t.slogan}</Text>
+          <Text style={styles.version}>{t.preview}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
