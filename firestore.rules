@@ -1,0 +1,34 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      // A user can read only their own profile.
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // The client may create a new profile, but cannot grant itself XP.
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasAll(['nickname', 'xp', 'level', 'createdAt', 'updatedAt'])
+        && request.resource.data.keys().hasOnly(['nickname', 'xp', 'level', 'createdAt', 'updatedAt'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.nickname.size() <= 24
+        && request.resource.data.xp == 0
+        && request.resource.data.level == 1
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      // The client may change the nickname, but XP and level remain protected.
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nickname', 'updatedAt'])
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() > 0
+        && request.resource.data.nickname.size() <= 24
+        && request.resource.data.updatedAt == request.time;
+
+      allow delete: if false;
+    }
+  }
+}
