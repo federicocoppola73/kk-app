@@ -129,6 +129,8 @@ const italian: Translation = {
   playerClueRole: 'RUOLO',
   playerClueEra: 'PERIODO DI ATTIVITÀ',
   playerClueFact: 'RECORD / CURIOSITÀ',
+  revealNextClue: 'RIVELA IL PROSSIMO INDIZIO',
+  allCluesRevealed: 'TUTTI GLI INDIZI RIVELATI',
   clubIdRound: 'INDOVINA IL CLUB • 10 DOMANDE',
   stadiumIdRound: 'STADIUM ID • 10 DOMANDE',
   stadiumQuestionPrompt: 'Quale stadio corrisponde a questi indizi?',
