@@ -36,7 +36,9 @@ export default function App() {
       setAuthReady(true);
       setScreen((current) => {
         if (current === 'splash') return current;
-        return user ? 'home' : current === 'home' ? 'gate' : current;
+        if (user && current === 'gate') return 'home';
+        if (!user && current === 'home') return 'gate';
+        return current;
       });
     }, () => {
       setAuthReady(true);
@@ -81,7 +83,7 @@ export default function App() {
   }
 
   if (screen === 'settings') {
-    return <SettingsScreen locale={activeLocale} selectedLocale={locale} onChangeLocale={changeLocale} onBack={() => setScreen('home')} />;
+    return <SettingsScreen locale={activeLocale} selectedLocale={locale} authUser={authUser} onChangeLocale={changeLocale} onBack={() => setScreen('home')} />;
   }
   if (screen === 'playerQuiz') {
     return <QuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
