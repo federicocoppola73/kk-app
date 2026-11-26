@@ -2,12 +2,10 @@ import React from 'react';
 import { Image, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { getLocales } from 'expo-localization';
 import { colors } from '../theme/colors';
-import { resolveLocale } from '../i18n/locales';
+import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ onStartPlayerQuiz }: { onStartPlayerQuiz: () => void }) {
-  const deviceLanguage = getLocales()[0]?.languageCode;
-  const locale = resolveLocale(deviceLanguage);
+export default function HomeScreen({ locale, onStartPlayerQuiz, onOpenSettings }: { locale: SupportedLocale; onStartPlayerQuiz: () => void; onOpenSettings: () => void }) {
   const t = translations[locale];
 
   const modes = [
@@ -26,9 +24,9 @@ export default function HomeScreen({ onStartPlayerQuiz }: { onStartPlayerQuiz: (
             <Text style={styles.brand}>KIT <Text style={styles.brandAccent}>&</Text> KICK</Text>
             <Text style={styles.kicker}>{t.kicker}</Text>
           </View>
-          <View style={styles.profile}>
-            <Image source={{ uri: "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/assets/brand/icon.png" }} style={styles.profileImage} resizeMode="contain" accessibilityLabel="Kit & Kick" />
-          </View>
+          <Pressable onPress={onOpenSettings} accessibilityRole="button" accessibilityLabel={t.settingsTitle} style={styles.profile}>
+            <Image source={{ uri: "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/assets/brand/icon.png" }} style={styles.profileImage} resizeMode="contain" accessibilityLabel="Kit & Kick settings" />
+          </Pressable>
         </View>
 
         <View style={styles.hero}>
