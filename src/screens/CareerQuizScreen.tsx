@@ -3,6 +3,7 @@ import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View 
 import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
+import { useQuizExitConfirmation } from '../hooks/useQuizExitConfirmation';
 import { careerPlayers, type CareerPlayer } from '../data/careerPaths';
 
 const ROUND_LENGTH = 10;
@@ -47,6 +48,7 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
   const [totalPoints, setTotalPoints] = useState(0);
   const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const handleBack = useQuizExitConfirmation(locale, showResult, onBack);
   const [revealStage, setRevealStage] = useState(1);
   const question = questions[questionIndex];
   const visibleClubs = question.player.clubs.slice(0, revealStage);
@@ -93,7 +95,7 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
       <StatusBar barStyle="light-content" />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={onBack} hitSlop={10} style={styles.backButton}><Text style={styles.backArrow}>‹</Text><Text style={styles.backText}>{t.backHome}</Text></Pressable>
+          <Pressable onPress={handleBack} hitSlop={10} style={styles.backButton}><Text style={styles.backArrow}>‹</Text><Text style={styles.backText}>{t.backHome}</Text></Pressable>
           <Text style={styles.roundLabel}>{t.careerIdRound}</Text>
         </View>
         {!showResult ? (
@@ -150,7 +152,7 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
             <View style={styles.statsRow}><View style={styles.statCard}><Text style={styles.statValue}>{totalPoints}</Text><Text style={styles.statLabel}>{t.pointsLabel}</Text></View><View style={styles.statCard}><Text style={styles.statValue}>+{totalXp}</Text><Text style={styles.statLabel}>XP</Text></View></View>
             <Text style={styles.resultHint}>{t.correctAnswers}: {correctCount} / {ROUND_LENGTH}</Text>
             <Pressable onPress={restart} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{t.playAgain}</Text></Pressable>
-            <Pressable onPress={onBack} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>{t.backHome}</Text></Pressable>
+            <Pressable onPress={handleBack} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>{t.backHome}</Text></Pressable>
           </View>
         )}
         <Text style={styles.notice}>{t.careerDemoNotice}</Text>
