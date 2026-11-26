@@ -14,10 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.example.kitandkick"
+      "bundleIdentifier": "com.kitkick.app"
     },
     "android": {
-      "package": "com.example.kitandkick",
+      "package": "com.kitkick.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/brand/icon.png",
         "backgroundColor": "#0B1830"
