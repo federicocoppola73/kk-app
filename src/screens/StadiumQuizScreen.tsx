@@ -11,6 +11,7 @@ import {
 import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
+import { useQuizExitConfirmation } from '../hooks/useQuizExitConfirmation';
 import { stadiums, type Stadium } from '../data/stadiums';
 
 const ROUND_LENGTH = 10;
@@ -85,6 +86,7 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
   const [totalPoints, setTotalPoints] = useState(0);
   const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
+  const handleBack = useQuizExitConfirmation(locale, showResult, onBack);
   const [revealStage, setRevealStage] = useState(0);
 
   const question = questions[questionIndex];
@@ -137,7 +139,7 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
       <StatusBar barStyle="light-content" />
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Pressable onPress={onBack} hitSlop={10} style={styles.backButton}>
+          <Pressable onPress={handleBack} hitSlop={10} style={styles.backButton}>
             <Text style={styles.backArrow}>‹</Text>
             <Text style={styles.backText}>{t.backHome}</Text>
           </Pressable>
@@ -226,7 +228,7 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
             </View>
             <Text style={styles.resultHint}>{t.correctAnswers}: {correctCount} / {questions.length}</Text>
             <Pressable onPress={restart} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{t.playAgain}</Text></Pressable>
-            <Pressable onPress={onBack} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>{t.backHome}</Text></Pressable>
+            <Pressable onPress={handleBack} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>{t.backHome}</Text></Pressable>
           </View>
         )}
 
