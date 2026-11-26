@@ -56,7 +56,12 @@ export default function App() {
         return false;
       }
 
-      if (screen === 'settings' || screen === 'playerQuiz' || screen === 'clubQuiz' || screen === 'stadiumQuiz' || screen === 'careerQuiz') {
+      // Quiz screens own their exit confirmation and handle this event first.
+      if (screen === 'playerQuiz' || screen === 'clubQuiz' || screen === 'stadiumQuiz' || screen === 'careerQuiz') {
+        return false;
+      }
+
+      if (screen === 'settings') {
         setScreen('home');
         return true;
       }
