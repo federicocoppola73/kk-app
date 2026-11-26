@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Pressable,
@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import { getLocales } from 'expo-localization';
-import { BlurTargetView, BlurView } from 'expo-blur';
 import { colors } from '../theme/colors';
 import { resolveLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
@@ -19,7 +18,7 @@ import { playerIdPlayers, type PlayerIdPlayer } from '../data/playerIdPlayers';
 const ROUND_LENGTH = 10;
 const XP_PER_CORRECT_ANSWER = 25;
 const REVEAL_INTERVAL_MS = 4000;
-const REVEAL_BLUR = [100, 75, 40, 0];
+const REVEAL_BLUR = [24, 16, 8, 0];
 const REVEAL_POINT_MULTIPLIERS = [1, 0.75, 0.5, 0.25];
 
 type QuizQuestion = {
@@ -69,7 +68,6 @@ export default function QuizScreen({ onBack }: Props) {
   const [showResult, setShowResult] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [revealStage, setRevealStage] = useState(0);
-  const blurTargetRef = useRef<React.ComponentRef<typeof View>>(null);
 
   const question = questions[questionIndex];
   const isCorrect = selectedAnswer === question.player.id;
@@ -144,25 +142,14 @@ export default function QuizScreen({ onBack }: Props) {
             <View style={styles.photoPanel}>
               {!imageError && question.player.portraitUrl ? (
                 <>
-                  <BlurTargetView ref={blurTargetRef} style={styles.photoImageTarget}>
-                    <Image
-                      source={{ uri: question.player.portraitUrl }}
-                      style={styles.photoImage}
-                      resizeMode="contain"
-                      accessibilityLabel={question.player.displayName}
-                      onError={() => setImageError(true)}
-                    />
-                  </BlurTargetView>
-                  {revealStage < REVEAL_BLUR.length - 1 ? (
-                    <BlurView
-                      blurTarget={blurTargetRef}
-                      blurMethod="dimezisBlurView"
-                      blurReductionFactor={1}
-                      intensity={REVEAL_BLUR[revealStage]}
-                      tint="dark"
-                      style={styles.photoBlur}
-                    />
-                  ) : null}
+                  <Image
+                    source={{ uri: question.player.portraitUrl }}
+                    style={styles.photoImage}
+                    resizeMode="contain"
+                    blurRadius={REVEAL_BLUR[revealStage]}
+                    accessibilityLabel={question.player.displayName}
+                    onError={() => setImageError(true)}
+                  />
                 </>
               ) : (
                 <View style={styles.photoFallback}>
@@ -289,9 +276,7 @@ const styles = StyleSheet.create({
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
   question: { color: colors.white, fontSize: 22, lineHeight: 27, fontWeight: '900', marginBottom: 12 },
   photoPanel: { height: 220, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 14, overflow: 'hidden' },
-  photoImageTarget: { width: '100%', height: '100%', alignSelf: 'stretch' },
   photoImage: { width: '100%', height: '100%' },
-  photoBlur: { ...StyleSheet.absoluteFillObject },
   revealControls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -4, marginBottom: 12 },
   revealPoints: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
   revealButton: { backgroundColor: '#1B3A5B', borderWidth: 1, borderColor: '#3C6388', borderRadius: 9, paddingHorizontal: 12, paddingVertical: 8 },
