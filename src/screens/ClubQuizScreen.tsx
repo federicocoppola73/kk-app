@@ -27,7 +27,7 @@ type Props = {
   onBack: () => void;
 };
 
-type Clue = { label: string; value: string };
+type Clue = { icon: string; label: string; value: string };
 
 function shuffle<T>(items: T[]): T[] {
   const shuffled = [...items];
@@ -42,19 +42,25 @@ function createRound(): QuizQuestion[] {
   return shuffle(clubIdClubs)
     .slice(0, ROUND_LENGTH)
     .map((club) => {
-      const distractors = shuffle(clubIdClubs.filter((candidate) => candidate.id !== club.id)).slice(0, 3);
+      const otherClubs = clubIdClubs.filter((candidate) => candidate.id !== club.id);
+      const sameCity = shuffle(otherClubs.filter((candidate) => candidate.city === club.city));
+      const sameCountry = shuffle(otherClubs.filter(
+        (candidate) => candidate.country === club.country && candidate.city !== club.city,
+      ));
+      const otherCountries = shuffle(otherClubs.filter((candidate) => candidate.country !== club.country));
+      const distractors = [...sameCity, ...sameCountry, ...otherCountries].slice(0, 3);
       return { club, options: shuffle([club, ...distractors]) };
     });
 }
 
 function getClues(club: ClubIdClub, t: typeof translations.en, locale: SupportedLocale): Clue[] {
   const clues: Clue[] = [
-    { label: t.clueCity, value: locale === 'it' ? club.cityIt : club.city },
-    { label: t.clueFounded, value: String(club.foundedYear) },
-    { label: t.clueColors, value: locale === 'it' ? club.colorsIt : club.colors },
-    { label: t.clueStadium, value: club.stadium },
+    { icon: '📅', label: t.clueFounded, value: String(club.foundedYear) },
+    { icon: '🎨', label: t.clueColors, value: locale === 'it' ? club.colorsIt : club.colors },
+    { icon: '🏟️', label: t.clueStadium, value: club.stadium },
   ];
-  if (club.nickname?.trim()) clues.push({ label: t.clueNickname, value: club.nickname });
+  if (club.nickname?.trim()) clues.push({ icon: '🏷️', label: t.clueNickname, value: club.nickname });
+  clues.push({ icon: '📍', label: t.clueCity, value: locale === 'it' ? club.cityIt : club.city });
   return clues;
 }
 
@@ -145,15 +151,11 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
             <Text style={styles.question}>{t.clubQuestionPrompt}</Text>
 
             <View style={styles.cluesPanel}>
-              {clues.slice(0, revealStage + 1).map((clue, index) => (
+              {clues.slice(0, revealStage + 1).map((clue) => (
                 <View key={clue.label} style={styles.clueRow}>
-                  <View style={styles.clueNumber}>
-                    <Text style={styles.clueNumberText}>{index + 1}</Text>
-                  </View>
-                  <View style={styles.clueContent}>
-                    <Text style={styles.clueLabel}>{clue.label}</Text>
-                    <Text style={styles.clueValue}>{clue.value}</Text>
-                  </View>
+                  <Text style={styles.clueIcon}>{clue.icon}</Text>
+                  <Text style={styles.clueLabel}>{clue.label}</Text>
+                  <Text style={styles.clueValue} numberOfLines={1}>{clue.value}</Text>
                 </View>
               ))}
               <View style={styles.clueFooter}>
@@ -260,7 +262,7 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.midnightNavy },
-  container: { flexGrow: 1, paddingHorizontal: 20, paddingTop: (StatusBar.currentHeight ?? 0) + 12, paddingBottom: 36 },
+  container: { flexGrow: 1, paddingHorizontal: 20, paddingTop: (StatusBar.currentHeight ?? 0) + 8, paddingBottom: 22 },
   header: { flexDirection: 'column', alignItems: 'stretch', marginBottom: 12 },
   backButton: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', paddingVertical: 6 },
   backArrow: { color: colors.iceBlue, fontSize: 30, lineHeight: 30, marginRight: 5 },
@@ -270,17 +272,15 @@ const styles = StyleSheet.create({
   progressText: { color: colors.muted, fontSize: 10, fontWeight: '900', marginRight: 12 },
   progressTrack: { flex: 1, height: 5, borderRadius: 5, backgroundColor: '#243A56', overflow: 'hidden' },
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
-  question: { color: colors.white, fontSize: 22, lineHeight: 27, fontWeight: '900', marginBottom: 12 },
-  cluesPanel: { borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', padding: 14, marginBottom: 10 },
-  clueRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#29415D' },
-  clueNumber: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#1B3A5B', alignItems: 'center', justifyContent: 'center', marginRight: 11 },
-  clueNumberText: { color: colors.iceBlue, fontSize: 11, fontWeight: '900' },
-  clueContent: { flex: 1 },
-  clueLabel: { color: colors.muted, fontSize: 9, fontWeight: '900', letterSpacing: 1, marginBottom: 3 },
-  clueValue: { color: colors.white, fontSize: 15, fontWeight: '800' },
-  clueFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12 },
+  question: { color: colors.white, fontSize: 20, lineHeight: 24, fontWeight: '900', marginBottom: 8 },
+  cluesPanel: { borderRadius: 16, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', paddingHorizontal: 12, paddingVertical: 5, marginBottom: 8 },
+  clueRow: { minHeight: 34, flexDirection: 'row', alignItems: 'center', paddingVertical: 4, borderBottomWidth: 1, borderBottomColor: '#29415D' },
+  clueIcon: { width: 30, fontSize: 17, textAlign: 'center', marginRight: 7 },
+  clueLabel: { color: colors.muted, fontSize: 9, fontWeight: '900', letterSpacing: 0.4, width: 112 },
+  clueValue: { color: colors.white, fontSize: 12, fontWeight: '800', flex: 1, textAlign: 'right' },
+  clueFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 7, paddingBottom: 3 },
   clueCount: { color: colors.muted, fontSize: 9, fontWeight: '800' },
-  revealControls: { alignItems: 'center', marginBottom: 13 },
+  revealControls: { alignItems: 'center', marginBottom: 8 },
   revealPoints: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.4 },
   revealButton: { backgroundColor: '#1B3A5B', borderWidth: 1, borderColor: '#3C6388', borderRadius: 9, paddingHorizontal: 16, paddingVertical: 10 },
   revealButtonText: { color: colors.iceBlue, fontSize: 10, fontWeight: '900', letterSpacing: 0.6 },
