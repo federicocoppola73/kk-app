@@ -129,7 +129,7 @@ export default function QuizScreen({ onBack }: Props) {
                 <Image
                   source={{ uri: question.player.portraitUrl }}
                   style={styles.photoImage}
-                  resizeMode="cover"
+                  resizeMode="contain"
                   accessibilityLabel={question.player.displayName}
                   onError={() => setImageError(true)}
                 />
