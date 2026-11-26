@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Image,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -17,8 +16,6 @@ import { clubIdClubs, type ClubIdClub } from '../data/clubIdClubs';
 const ROUND_LENGTH = 10;
 const XP_PER_CORRECT_ANSWER = 25;
 const REVEAL_INTERVAL_MS = 4000;
-const REVEAL_BLUR = [24, 16, 8, 0];
-const REVEAL_POINT_MULTIPLIERS = [1, 0.75, 0.5, 0.25];
 
 type QuizQuestion = {
   club: ClubIdClub;
@@ -29,6 +26,8 @@ type Props = {
   locale: SupportedLocale;
   onBack: () => void;
 };
+
+type Clue = { label: string; value: string };
 
 function shuffle<T>(items: T[]): T[] {
   const shuffled = [...items];
@@ -48,6 +47,17 @@ function createRound(): QuizQuestion[] {
     });
 }
 
+function getClues(club: ClubIdClub, t: typeof translations.en): Clue[] {
+  const clues: Clue[] = [
+    { label: t.clueCity, value: club.city },
+    { label: t.clueFounded, value: String(club.foundedYear) },
+    { label: t.clueColors, value: club.colors },
+    { label: t.clueStadium, value: club.stadium },
+  ];
+  if (club.nickname?.trim()) clues.push({ label: t.clueNickname, value: club.nickname });
+  return clues;
+}
+
 export default function ClubQuizScreen({ locale, onBack }: Props) {
   const t = translations[locale];
 
@@ -58,21 +68,26 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
   const [totalPoints, setTotalPoints] = useState(0);
   const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
-  const [imageError, setImageError] = useState(false);
   const [revealStage, setRevealStage] = useState(0);
 
   const question = questions[questionIndex];
+  const clues = getClues(question.club, t);
   const isCorrect = selectedAnswer === question.club.id;
   const progress = ((questionIndex + 1) / ROUND_LENGTH) * 100;
-  const potentialPoints = Math.round(question.club.points * REVEAL_POINT_MULTIPLIERS[revealStage]);
+  const multipliers = clues.length === 5 ? [1, 0.8, 0.6, 0.4, 0.2] : [1, 0.75, 0.5, 0.25];
+  const potentialPoints = Math.round(question.club.points * multipliers[Math.min(revealStage, clues.length - 1)]);
 
   useEffect(() => {
-    if (selectedAnswer !== null || showResult || revealStage >= REVEAL_BLUR.length - 1) return;
+    if (selectedAnswer !== null || showResult || revealStage >= clues.length - 1) return;
     const timeout = setTimeout(() => {
-      setRevealStage((stage) => Math.min(stage + 1, REVEAL_BLUR.length - 1));
+      setRevealStage((stage) => Math.min(stage + 1, clues.length - 1));
     }, REVEAL_INTERVAL_MS);
     return () => clearTimeout(timeout);
-  }, [questionIndex, selectedAnswer, showResult, revealStage]);
+  }, [questionIndex, selectedAnswer, showResult, revealStage, clues.length]);
+
+  const revealNextClue = () => {
+    setRevealStage((stage) => Math.min(stage + 1, clues.length - 1));
+  };
 
   const restart = () => {
     setQuestions(createRound());
@@ -82,7 +97,6 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
     setTotalPoints(0);
     setTotalXp(0);
     setShowResult(false);
-    setImageError(false);
     setRevealStage(0);
   };
 
@@ -102,7 +116,6 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
 
     setQuestionIndex((value) => value + 1);
     setSelectedAnswer(null);
-    setImageError(false);
     setRevealStage(0);
   };
 
@@ -131,44 +144,33 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
 
             <Text style={styles.question}>{t.clubQuestionPrompt}</Text>
 
-            <View style={styles.crestPanel}>
-              {!imageError && question.club.crestUrl ? (
-                <>
-                  <Image
-                    source={{ uri: question.club.crestUrl }}
-                    style={styles.crestImage}
-                    resizeMode="contain"
-                    blurRadius={REVEAL_BLUR[revealStage]}
-                    accessibilityLabel={question.club.displayName}
-                    onError={() => setImageError(true)}
-                  />
-                </>
-              ) : (
-                <View style={styles.crestFallback}>
-                  <Text style={styles.crestEmoji}>⚽</Text>
-                  <Text style={styles.crestHint}>{t.crestComingSoon}</Text>
+            <View style={styles.cluesPanel}>
+              {clues.slice(0, revealStage + 1).map((clue, index) => (
+                <View key={clue.label} style={styles.clueRow}>
+                  <View style={styles.clueNumber}>
+                    <Text style={styles.clueNumberText}>{index + 1}</Text>
+                  </View>
+                  <View style={styles.clueContent}>
+                    <Text style={styles.clueLabel}>{clue.label}</Text>
+                    <Text style={styles.clueValue}>{clue.value}</Text>
+                  </View>
                 </View>
-              )}
-              <View style={styles.crestTag}>
-                <Text style={styles.crestTagText}>TEST CREST • RIGHTS PENDING</Text>
+              ))}
+              <View style={styles.clueFooter}>
+                <Text style={styles.clueCount}>{t.clueCounter} {revealStage + 1}/{clues.length}</Text>
+                <Text style={styles.revealPoints}>{t.pointsAvailable}: {potentialPoints}</Text>
               </View>
             </View>
 
-            {!imageError && question.club.crestUrl ? (
-              <View style={styles.revealControls}>
-                <Text style={styles.revealPoints}> {t.pointsAvailable}: {potentialPoints}</Text>
-                {revealStage < REVEAL_BLUR.length - 1 ? (
-                  <Pressable
-                    onPress={() => setRevealStage((stage) => Math.min(stage + 1, REVEAL_BLUR.length - 1))}
-                    style={styles.revealButton}
-                  >
-                    <Text style={styles.revealButtonText}>{t.revealCrest}</Text>
-                  </Pressable>
-                ) : (
-                  <Text style={styles.revealComplete}>{t.fullCrest}</Text>
-                )}
-              </View>
-            ) : null}
+            <View style={styles.revealControls}>
+              {revealStage < clues.length - 1 ? (
+                <Pressable onPress={revealNextClue} style={styles.revealButton}>
+                  <Text style={styles.revealButtonText}>{t.revealNextClue}</Text>
+                </Pressable>
+              ) : (
+                <Text style={styles.revealComplete}>{t.allCluesRevealed}</Text>
+              )}
+            </View>
 
             <Text style={styles.instruction}>{t.selectAnswer}</Text>
             <View style={styles.answers}>
@@ -267,18 +269,20 @@ const styles = StyleSheet.create({
   progressTrack: { flex: 1, height: 5, borderRadius: 5, backgroundColor: '#243A56', overflow: 'hidden' },
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
   question: { color: colors.white, fontSize: 22, lineHeight: 27, fontWeight: '900', marginBottom: 12 },
-  crestPanel: { height: 220, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 14, overflow: 'hidden' },
-  crestImage: { width: '100%', height: '100%' },
-  revealControls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -4, marginBottom: 12 },
-  revealPoints: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
-  revealButton: { backgroundColor: '#1B3A5B', borderWidth: 1, borderColor: '#3C6388', borderRadius: 9, paddingHorizontal: 12, paddingVertical: 8 },
-  revealButtonText: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 0.6 },
+  cluesPanel: { borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', padding: 14, marginBottom: 10 },
+  clueRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#29415D' },
+  clueNumber: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#1B3A5B', alignItems: 'center', justifyContent: 'center', marginRight: 11 },
+  clueNumberText: { color: colors.iceBlue, fontSize: 11, fontWeight: '900' },
+  clueContent: { flex: 1 },
+  clueLabel: { color: colors.muted, fontSize: 9, fontWeight: '900', letterSpacing: 1, marginBottom: 3 },
+  clueValue: { color: colors.white, fontSize: 15, fontWeight: '800' },
+  clueFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12 },
+  clueCount: { color: colors.muted, fontSize: 9, fontWeight: '800' },
+  revealControls: { alignItems: 'center', marginBottom: 13 },
+  revealPoints: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.4 },
+  revealButton: { backgroundColor: '#1B3A5B', borderWidth: 1, borderColor: '#3C6388', borderRadius: 9, paddingHorizontal: 16, paddingVertical: 10 },
+  revealButtonText: { color: colors.iceBlue, fontSize: 10, fontWeight: '900', letterSpacing: 0.6 },
   revealComplete: { color: '#55D9A2', fontSize: 9, fontWeight: '900', letterSpacing: 0.5 },
-  crestFallback: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 18 },
-  crestTag: { position: 'absolute', left: 10, bottom: 10, backgroundColor: 'rgba(11, 24, 48, 0.88)', borderRadius: 7, paddingHorizontal: 9, paddingVertical: 6 },
-  crestTagText: { color: colors.gold, fontSize: 8, fontWeight: '900', letterSpacing: 0.7 },
-  crestEmoji: { fontSize: 38 },
-  crestHint: { color: colors.muted, fontSize: 9, marginTop: 6, textAlign: 'center', paddingHorizontal: 18 },
   instruction: { color: colors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 1, marginBottom: 8 },
   answers: { gap: 7 },
   answerButton: { minHeight: 46, borderRadius: 12, borderWidth: 1, borderColor: '#29415D', backgroundColor: colors.surface, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12 },
