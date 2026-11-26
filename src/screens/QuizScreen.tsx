@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   progressTrack: { flex: 1, height: 5, borderRadius: 5, backgroundColor: '#243A56', overflow: 'hidden' },
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
   question: { color: colors.white, fontSize: 24, lineHeight: 30, fontWeight: '900', marginBottom: 18 },
-  photoPanel: { height: 190, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 22, overflow: 'hidden' },
+  photoPanel: { height: 250, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 22, overflow: 'hidden' },
   photoImage: { width: '100%', height: '100%' },
   photoFallback: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 18 },
   photoTag: { position: 'absolute', left: 10, bottom: 10, backgroundColor: 'rgba(11, 24, 48, 0.88)', borderRadius: 7, paddingHorizontal: 9, paddingVertical: 6 },
