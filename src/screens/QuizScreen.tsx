@@ -19,7 +19,7 @@ import { playerIdPlayers, type PlayerIdPlayer } from '../data/playerIdPlayers';
 const ROUND_LENGTH = 10;
 const XP_PER_CORRECT_ANSWER = 25;
 const REVEAL_INTERVAL_MS = 4000;
-const REVEAL_BLUR = [90, 60, 30, 0];
+const REVEAL_BLUR = [100, 75, 40, 0];
 const REVEAL_POINT_MULTIPLIERS = [1, 0.75, 0.5, 0.25];
 
 type QuizQuestion = {
@@ -157,6 +157,7 @@ export default function QuizScreen({ onBack }: Props) {
                     <BlurView
                       blurTarget={blurTargetRef}
                       blurMethod="dimezisBlurView"
+                      blurReductionFactor={1}
                       intensity={REVEAL_BLUR[revealStage]}
                       tint="dark"
                       style={styles.photoBlur}
