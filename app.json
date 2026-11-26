@@ -6,12 +6,22 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
+    "icon": "./assets/brand/icon.png",
+    "splash": {
+      "image": "./assets/brand/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B1830"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.example.kitandkick"
     },
     "android": {
-      "package": "com.example.kitandkick"
+      "package": "com.example.kitandkick",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/brand/icon.png",
+        "backgroundColor": "#0B1830"
+      }
     }
   }
 }
