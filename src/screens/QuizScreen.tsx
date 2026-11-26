@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
   question: { color: colors.white, fontSize: 22, lineHeight: 27, fontWeight: '900', marginBottom: 12 },
   photoPanel: { height: 220, borderRadius: 20, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', alignItems: 'center', justifyContent: 'center', marginBottom: 14, overflow: 'hidden' },
-  photoImageTarget: { ...StyleSheet.absoluteFillObject },
+  photoImageTarget: { width: '100%', height: '100%', alignSelf: 'stretch' },
   photoImage: { width: '100%', height: '100%' },
   photoBlur: { ...StyleSheet.absoluteFillObject },
   revealControls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: -4, marginBottom: 12 },
