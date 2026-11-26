@@ -27,6 +27,21 @@ const english = {
   dailyText: 'One new challenge. Every day. Can you keep your streak?',
   slogan: 'KNOW THE GAME. OWN THE GAME.',
   preview: 'KIT & KICK  •  PREVIEW 0.1.0',
+  backHome: 'BACK TO HOME',
+  demoLabel: 'DEMO ROUND',
+  questionPrompt: 'Which player is shown?',
+  photoPlaceholder: 'PLAYER PHOTO',
+  photoComingSoon: 'Licensed player images will be connected here',
+  selectAnswer: 'SELECT THE CORRECT ANSWER',
+  correct: 'CORRECT ANSWER!',
+  incorrect: 'NOT QUITE!',
+  correctWas: 'Correct answer:',
+  continue: 'CONTINUE',
+  resultTitle: 'ROUND COMPLETE',
+  resultScore: 'YOUR SCORE',
+  earnedXp: 'XP EARNED',
+  playAgain: 'PLAY AGAIN',
+  demoNotice: 'Demo quiz: answer and XP are temporary and are not saved.',
 };
 
 type Translation = { [Key in keyof typeof english]: string };
@@ -58,6 +73,21 @@ const italian: Translation = {
   dailyText: 'Una nuova sfida ogni giorno. Riesci a mantenere la serie?',
   slogan: 'CONOSCI IL GIOCO. DOMINA IL GIOCO.',
   preview: 'KIT & KICK  •  ANTEPRIMA 0.1.0',
+  backHome: 'TORNA ALLA HOME',
+  demoLabel: 'ROUND DIMOSTRATIVO',
+  questionPrompt: 'Quale giocatore è raffigurato?',
+  photoPlaceholder: 'FOTO DEL GIOCATORE',
+  photoComingSoon: 'Qui verranno inserite foto autorizzate dei calciatori',
+  selectAnswer: 'SELEZIONA LA RISPOSTA CORRETTA',
+  correct: 'RISPOSTA CORRETTA!',
+  incorrect: 'NON PROPRIO!',
+  correctWas: 'La risposta corretta è:',
+  continue: 'CONTINUA',
+  resultTitle: 'ROUND COMPLETATO',
+  resultScore: 'IL TUO PUNTEGGIO',
+  earnedXp: 'XP GUADAGNATI',
+  playAgain: 'GIOCA ANCORA',
+  demoNotice: 'Quiz dimostrativo: risposta e XP sono temporanei e non vengono salvati.',
 };
 
 export const translations: Record<SupportedLocale, Translation> = {
