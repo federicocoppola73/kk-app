@@ -107,16 +107,21 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
     const resultId = resultIdRef.current ?? createQuizResultId(user.uid);
     resultIdRef.current = resultId;
 
-    void recordCompletedQuiz(user.uid, resultId, {
-      mode: 'stadium',
-      points: totalPoints,
-      correctAnswers: correctCount,
-      totalQuestions: questions.length,
-    }).catch((error) => {
-      console.warn('Unable to save completed quiz result:', error);
-    });
-  }, [showResult, totalPoints, correctCount, questions.length]);
+console.log('[QUIZ SAVE] Starting Firestore write:', resultId);
 
+void recordCompletedQuiz(user.uid, resultId, {
+  mode: 'stadium',
+  points: totalPoints,
+  correctAnswers: correctCount,
+  totalQuestions: questions.length,
+})
+  .then((outcome) => {
+    console.log('[QUIZ SAVE] Firestore outcome:', outcome);
+  })
+  .catch((error) => {
+    console.error('[QUIZ SAVE] Firestore error:', error);
+  });
+    
 
   const question = questions[questionIndex];
   const clues = useMemo(() => question ? getClues(question.stadium, t, locale) : [], [question, t, locale]);
