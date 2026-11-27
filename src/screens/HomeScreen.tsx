@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile, onOpenLeaderboard, rank, nationalRank, countryCode }: { locale: SupportedLocale; xp: number | null; level: number | null; rank: number | null; nationalRank: number | null; countryCode: string | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void; onOpenLeaderboard: () => void }) {
+export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile, onOpenLeaderboard, rank, nationalRank, countryCode }: { locale: SupportedLocale; xp: number | null; level: number | null; rank: number | null; nationalRank: number | null; countryCode: string | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void; onOpenLeaderboard: (scope: 'global' | 'national') => void }) {
   const t = translations[locale];
 
   const modes = [
