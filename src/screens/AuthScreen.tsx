@@ -169,7 +169,7 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.midnightNavy },
   flex: { flex: 1 },
-  content: { flexGrow: 1, paddingHorizontal: 24, paddingTop: (StatusBar.currentHeight ?? 0) + 22, paddingBottom: 26, justifyContent: 'space-between' },
+  content: { flexGrow: 1, paddingHorizontal: 24, paddingTop: (StatusBar.currentHeight ?? 0) + 22, paddingBottom: 46, justifyContent: 'space-between' },
   brandRow: { alignItems: 'center' },
   brand: { color: colors.white, fontSize: 25, fontWeight: '900', letterSpacing: 2 },
   brandAccent: { color: colors.iceBlue },
