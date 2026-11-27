@@ -51,6 +51,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
     const existingXp = typeof existing?.xp === 'number' ? existing.xp : 0;
     const existingLevel = typeof existing?.level === 'number' ? existing.level : 1;
     await syncLeaderboardEntry(transaction, user.uid, { nickname, nicknameKey, countryCode: existingCountry, xp: existingXp, level: existingLevel });
+    if (snapshot.exists() && !reservation.exists()) transaction.set(reservationRef, { uid: user.uid, nickname, createdAt: serverTimestamp() });
 
     if (!snapshot.exists()) {
       if (!reservation.exists()) transaction.set(reservationRef, { uid: user.uid, nickname, createdAt: serverTimestamp() });
@@ -114,13 +115,13 @@ export async function prepareGuestIdentity(
       throw new Error('nickname-already-taken');
     }
 
+    await syncLeaderboardEntry(transaction, uid, { nickname, nicknameKey, countryCode: typeof profile.countryCode === 'string' ? profile.countryCode : null, xp: typeof profile.xp === 'number' ? profile.xp : 0, level: typeof profile.level === 'number' ? profile.level : 1 });
+
     if (!newReservation.exists()) {
       transaction.set(newReservationRef, { uid, nickname, createdAt: serverTimestamp() });
     } else if (newReservation.data().nickname !== nickname) {
       transaction.update(newReservationRef, { nickname });
     }
-
-    await syncLeaderboardEntry(transaction, uid, { nickname, nicknameKey, countryCode: typeof profile.countryCode === 'string' ? profile.countryCode : null, xp: typeof profile.xp === 'number' ? profile.xp : 0, level: typeof profile.level === 'number' ? profile.level : 1 });
 
     if (oldReservationRef && oldReservation?.exists() && oldReservation.data().uid === uid) {
       transaction.delete(oldReservationRef);
