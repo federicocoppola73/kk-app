@@ -188,7 +188,7 @@ export default function App() {
       <View style={styles.splash}>
         <StatusBar hidden />
         <Image source={require('./assets/brand/splash.png')} style={styles.splashImage} resizeMode="contain" accessibilityLabel="Kit & Kick" />
-        <Text style={styles.version}>VERSION {appConfig.expo.version}</Text>
+        <Text style={styles.version}>{({it:'VERSIONE',en:'VERSION',es:'VERSIÓN',fr:'VERSION',de:'VERSION'} as const)[activeLocale]} {appConfig.expo.version}</Text>
       </View>
     );
   }
