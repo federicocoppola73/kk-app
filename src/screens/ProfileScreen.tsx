@@ -40,8 +40,8 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
   const [historyLoading, setHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false);
-  const [nickname, setNickname] = useState(authUser.displayName?.startsWith('Guest_') ? '' : authUser.displayName ?? '');
-  const [email, setEmail] = useState('');
+  const [registrationNickname, setRegistrationNickname] = useState(authUser.displayName?.startsWith('Guest_') ? '' : authUser.displayName ?? '');
+  const [registrationEmail, setRegistrationEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [registrationError, setRegistrationError] = useState('');
@@ -126,7 +126,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
 
   const submitRegistration = async () => {
     setRegistrationError('');
-    if (!nickname.trim() || !email.trim() || !password || !confirmPassword) {
+    if (!registrationNickname.trim() || !registrationEmail.trim() || !password || !confirmPassword) {
       setRegistrationError(labels.required);
       return;
     }
@@ -136,7 +136,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
     }
     setRegistrationBusy(true);
     try {
-      await registerWithEmail(email, nickname, password);
+      await registerWithEmail(registrationEmail, registrationNickname, password);
       setRegistrationSuccess(true);
       setShowRegistration(false);
       setPassword('');
@@ -249,9 +249,9 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
               ) : (
                 <View style={styles.registrationForm}>
                   <Text style={styles.fieldLabel}>{labels.nicknameLabel}</Text>
-                  <TextInput value={nickname} onChangeText={setNickname} placeholder={labels.nicknameLabel} placeholderTextColor="#7186A1" autoCapitalize="words" maxLength={24} style={styles.input} />
+                  <TextInput value={registrationNickname} onChangeText={setRegistrationNickname} placeholder={labels.nicknameLabel} placeholderTextColor="#7186A1" autoCapitalize="words" maxLength={24} style={styles.input} />
                   <Text style={styles.fieldLabel}>{labels.emailLabel}</Text>
-                  <TextInput value={email} onChangeText={setEmail} placeholder="name@example.com" placeholderTextColor="#7186A1" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} style={styles.input} />
+                  <TextInput value={registrationEmail} onChangeText={setRegistrationEmail} placeholder="name@example.com" placeholderTextColor="#7186A1" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} style={styles.input} />
                   <Text style={styles.fieldLabel}>{labels.passwordLabel}</Text>
                   <TextInput value={password} onChangeText={setPassword} placeholder="••••••••" placeholderTextColor="#7186A1" secureTextEntry style={styles.input} />
                   <Text style={styles.fieldLabel}>{labels.confirmLabel}</Text>
