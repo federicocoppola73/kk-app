@@ -183,45 +183,7 @@ service cloud.firestore {
           && request.resource.data.uid == userId
           && request.resource.data.nickname is string
           && request.resource.data.nicknameKey is string
-          && (request.resource.data.countryCode == null || request.resource.data.countryCode.matches('^[A-Z]{2}
-      function userProfileMatchesAfter() {
-        let profilePath = /databases/$(database)/documents/users/$(request.auth.uid);
-        return existsAfter(profilePath)
-          && getAfter(profilePath).data.nicknameKey == nicknameKey
-          && getAfter(profilePath).data.nickname == request.resource.data.nickname;
-      }
-
-      allow get: if request.auth != null;
-      allow list: if false;
-
-      allow create: if request.auth != null
-        && request.resource.data.keys().hasAll(['uid', 'nickname', 'createdAt'])
-        && request.resource.data.keys().hasOnly(['uid', 'nickname', 'createdAt'])
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.nickname is string
-        && request.resource.data.nickname.size() >= 3
-        && request.resource.data.nickname.size() <= 24
-        && request.resource.data.nickname == request.resource.data.nickname.trim()
-        && nicknameKey == request.resource.data.nickname.lower()
-        && request.resource.data.createdAt == request.time
-        && userProfileMatchesAfter();
-
-      allow update: if request.auth != null
-        && resource.data.uid == request.auth.uid
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nickname'])
-        && request.resource.data.nickname is string
-        && nicknameKey == request.resource.data.nickname.lower()
-        && userProfileMatchesAfter();
-
-      allow delete: if request.auth != null
-        && resource.data.uid == request.auth.uid
-        && existsAfter(/databases/$(database)/documents/users/$(request.auth.uid))
-        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.nicknameKey != nicknameKey;
-    }
-  }
-}
-))
+          && (request.resource.data.countryCode == null || (request.resource.data.countryCode is string && request.resource.data.countryCode.size() == 2 && request.resource.data.countryCode.matches('^[A-Z]{2}$')))
           && request.resource.data.xp is int && request.resource.data.xp >= 0
           && request.resource.data.level is int && request.resource.data.level >= 1
           && request.resource.data.updatedAt == request.time
