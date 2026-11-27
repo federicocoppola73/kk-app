@@ -68,7 +68,7 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
     if (message === 'nickname-invalid-length') return italian ? 'Il nickname deve contenere da 3 a 24 caratteri.' : 'Nickname must contain 3 to 24 characters.';
     if (code.includes('invalid-email')) return italian ? 'Indirizzo email non valido.' : 'Invalid email address.';
     if (code.includes('user-not-found') || code.includes('invalid-credential') || code.includes('wrong-password')) return italian ? 'Email o password non corretti.' : 'Incorrect email or password.';
-    if (code.includes('email-already-in-use')) return italian ? 'Questa email è già associata a un account.' : 'This email is already in use.';
+    if (code.includes('email-already-in-use') || code.includes('credential-already-in-use')) return italian ? 'Questa email è già associata a un account.' : 'This email is already in use.';
     if (code.includes('weak-password')) return italian ? 'La password deve contenere almeno 6 caratteri.' : 'Password must be at least 6 characters.';
     if (code.includes('network-request-failed')) return italian ? 'Connessione assente. Controlla Internet.' : 'Network error. Check your connection.';
     if (code.includes('operation-not-allowed')) return italian ? 'Questo metodo di accesso non è attivo in Firebase.' : 'This sign-in method is not enabled in Firebase.';
