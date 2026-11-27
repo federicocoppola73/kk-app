@@ -47,7 +47,7 @@ export default function QuizCountdown({ locale, onComplete }: Props) {
 
 const styles = StyleSheet.create({
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     zIndex: 100,
     elevation: 100,
     alignItems: 'center',
