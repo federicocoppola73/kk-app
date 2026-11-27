@@ -42,7 +42,6 @@ const MODE_LABELS: Record<string, Record<SupportedLocale, string>> = {
 };
 
 export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory, onViewStatistics, rank, nationalRank, onOpenLeaderboard }: Props) {
-  const italian = locale === 'it';
   const [results, setResults] = useState<MatchResult[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState(false);
