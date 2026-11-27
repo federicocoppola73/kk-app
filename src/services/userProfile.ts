@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth';
-import { doc, runTransaction, serverTimestamp, type Transaction } from 'firebase/firestore';
+import { collection, doc, getDocs, runTransaction, serverTimestamp, type Transaction } from 'firebase/firestore';
 import { db } from './firebase';
 
 export type UserProfile = {
@@ -7,6 +7,7 @@ export type UserProfile = {
   nicknameKey: string;
   countryCode: string | null;
   xp: number;
+  points: number;
   level: number;
 };
 
@@ -31,6 +32,12 @@ export async function ensureUserProfile(user: User): Promise<void> {
   const profileRef = doc(db, 'users', user.uid);
   const fallbackNickname = user.displayName?.trim() || (user.isAnonymous ? 'Guest' : 'Player');
 
+  const historicalResults = await getDocs(collection(db, 'users', user.uid, 'results'));
+  const historicalPoints = historicalResults.docs.reduce((sum, item) => {
+    const value = item.data().points;
+    return sum + (typeof value === 'number' && Number.isFinite(value) ? value : 0);
+  }, 0);
+
   await runTransaction(db, async (transaction) => {
     const snapshot = await transaction.get(profileRef);
     const existing = snapshot.exists() ? snapshot.data() : null;
@@ -50,7 +57,8 @@ export async function ensureUserProfile(user: User): Promise<void> {
     const existingCountry = typeof existing?.countryCode === 'string' ? existing.countryCode : null;
     const existingXp = typeof existing?.xp === 'number' ? existing.xp : 0;
     const existingLevel = typeof existing?.level === 'number' ? existing.level : 1;
-    await syncLeaderboardEntry(transaction, user.uid, { nickname, nicknameKey, countryCode: existingCountry, xp: existingXp, level: existingLevel });
+    const existingPoints = typeof existing?.points === 'number' ? existing.points : historicalPoints;
+    await syncLeaderboardEntry(transaction, user.uid, { nickname, nicknameKey, countryCode: existingCountry, xp: existingXp, points: existingPoints, level: existingLevel });
     if (snapshot.exists() && !reservation.exists()) transaction.set(reservationRef, { uid: user.uid, nickname, createdAt: serverTimestamp() });
 
     if (!snapshot.exists()) {
@@ -61,6 +69,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
         countryCode: null,
         identityLocked: !user.isAnonymous,
         xp: 0,
+        points: historicalPoints,
         level: 1,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -75,6 +84,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
     if (currentProfile.nickname !== nickname) updates.nickname = nickname;
     if (currentProfile.nicknameKey !== nicknameKey) updates.nicknameKey = nicknameKey;
     if (!Object.prototype.hasOwnProperty.call(currentProfile, 'countryCode')) updates.countryCode = null;
+    if (typeof currentProfile.points !== 'number') updates.points = historicalPoints;
     if (typeof currentProfile.identityLocked !== 'boolean') updates.identityLocked = !user.isAnonymous;
     else if (!user.isAnonymous && currentProfile.identityLocked === false) updates.identityLocked = true;
 
@@ -115,7 +125,7 @@ export async function prepareGuestIdentity(
       throw new Error('nickname-already-taken');
     }
 
-    await syncLeaderboardEntry(transaction, uid, { nickname, nicknameKey, countryCode: typeof profile.countryCode === 'string' ? profile.countryCode : null, xp: typeof profile.xp === 'number' ? profile.xp : 0, level: typeof profile.level === 'number' ? profile.level : 1 });
+    await syncLeaderboardEntry(transaction, uid, { nickname, nicknameKey, countryCode: typeof profile.countryCode === 'string' ? profile.countryCode : null, xp: typeof profile.xp === 'number' ? profile.xp : 0, points: typeof profile.points === 'number' ? profile.points : 0, level: typeof profile.level === 'number' ? profile.level : 1 });
 
     if (!newReservation.exists()) {
       transaction.set(newReservationRef, { uid, nickname, createdAt: serverTimestamp() });
@@ -149,7 +159,7 @@ export async function setUserCountry(uid: string, countryCode: string): Promise<
       throw new Error('country-already-set');
     }
 
-    await syncLeaderboardEntry(transaction, uid, { nickname: String(snapshot.data().nickname), nicknameKey: String(snapshot.data().nicknameKey), countryCode: normalizedCountryCode, xp: typeof snapshot.data().xp === 'number' ? snapshot.data().xp : 0, level: typeof snapshot.data().level === 'number' ? snapshot.data().level : 1 });
+    await syncLeaderboardEntry(transaction, uid, { nickname: String(snapshot.data().nickname), nicknameKey: String(snapshot.data().nicknameKey), countryCode: normalizedCountryCode, xp: typeof snapshot.data().xp === 'number' ? snapshot.data().xp : 0, points: typeof snapshot.data().points === 'number' ? snapshot.data().points : 0, level: typeof snapshot.data().level === 'number' ? snapshot.data().level : 1 });
     transaction.update(profileRef, {
       countryCode: normalizedCountryCode,
       updatedAt: serverTimestamp(),
@@ -159,7 +169,7 @@ export async function setUserCountry(uid: string, countryCode: string): Promise<
 
 
 /** Keeps the public leaderboard projection in the same transaction as the private profile. */
-export async function syncLeaderboardEntry(transaction: Transaction, uid: string, profile: Pick<UserProfile, 'nickname' | 'nicknameKey' | 'countryCode' | 'xp' | 'level'>): Promise<void> {
+export async function syncLeaderboardEntry(transaction: Transaction, uid: string, profile: Pick<UserProfile, 'nickname' | 'nicknameKey' | 'countryCode' | 'xp' | 'points' | 'level'>): Promise<void> {
   const leaderboardRef = doc(db, 'leaderboard', uid);
   const snapshot = await transaction.get(leaderboardRef);
   const current = snapshot.exists() ? snapshot.data() : null;
@@ -168,6 +178,7 @@ export async function syncLeaderboardEntry(transaction: Transaction, uid: string
     || current.nicknameKey !== profile.nicknameKey
     || current.countryCode !== profile.countryCode
     || current.xp !== profile.xp
+    || current.points !== profile.points
     || current.level !== profile.level;
 
   if (changed) {
@@ -177,6 +188,7 @@ export async function syncLeaderboardEntry(transaction: Transaction, uid: string
       nicknameKey: profile.nicknameKey,
       countryCode: profile.countryCode,
       xp: profile.xp,
+      points: profile.points,
       level: profile.level,
       updatedAt: serverTimestamp(),
     });
