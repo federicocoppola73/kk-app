@@ -19,6 +19,8 @@ type Props = {
   onSignOut: () => void;
   onViewAllHistory: () => void;
   onViewStatistics: () => void;
+  rank: number | null;
+  onOpenLeaderboard: () => void;
 };
 
 type MatchResult = {
@@ -38,7 +40,7 @@ const MODE_LABELS: Record<string, { it: string; en: string }> = {
   stadium: { it: 'Stadium Quiz', en: 'Stadium Quiz' },
 };
 
-export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory, onViewStatistics }: Props) {
+export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory, onViewStatistics, rank, onOpenLeaderboard }: Props) {
   const italian = locale === 'it';
   const [results, setResults] = useState<MatchResult[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -264,10 +266,10 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
             <Text style={styles.statValue}>{accuracy}%</Text>
             <Text style={styles.statLabel}>{labels.accuracy}</Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>—</Text>
-            <Text style={styles.statLabel}>{labels.rank}</Text>
-          </View>
+          <Pressable onPress={onOpenLeaderboard} style={styles.statCard} accessibilityRole="button">
+            <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
+            <Text style={styles.statLabel}>{labels.rank}  ›</Text>
+          </Pressable>
         </View>
 
         <Text style={styles.section}>{labels.history}</Text>
