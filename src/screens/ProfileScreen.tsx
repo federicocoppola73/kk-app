@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { User } from 'firebase/auth';
 import { collection, onSnapshot, orderBy, query, Timestamp } from 'firebase/firestore';
 import { colors } from '../theme/colors';
@@ -105,8 +105,13 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
     unverified: italian ? 'NON VERIFICATO' : 'UNVERIFIED',
     correct: italian ? 'corrette' : 'correct',
     account: italian ? 'ACCOUNT' : 'ACCOUNT',
-    signOut: italian ? 'ESCI DALL’ACCOUNT' : 'SIGN OUT',
-    signOutHint: italian ? 'Uscendo da un account ospite, non potrai recuperare questa identità automaticamente.' : 'If you sign out from a guest account, you will not be able to restore this identity automatically.',
+    signOut: ({ it: 'ESCI DALL’ACCOUNT', en: 'SIGN OUT', es: 'CERRAR SESIÓN', fr: 'SE DÉCONNECTER', de: 'ABMELDEN' } as const)[locale],
+    signOutConfirmTitle: ({ it: 'Conferma disconnessione', en: 'Confirm sign out', es: 'Confirmar cierre de sesión', fr: 'Confirmer la déconnexion', de: 'Abmelden bestätigen' } as const)[locale],
+    signOutConfirmMessage: ({ it: 'Vuoi davvero uscire dal tuo account?', en: 'Are you sure you want to sign out of your account?', es: '¿Seguro que quieres cerrar sesión en tu cuenta?', fr: 'Voulez-vous vraiment vous déconnecter de votre compte ?', de: 'Möchtest du dich wirklich von deinem Konto abmelden?' } as const)[locale],
+    guestSignOutConfirmMessage: ({ it: 'Stai usando un account ospite. Se esci, potresti non riuscire a recuperare questa identità e i relativi progressi. Vuoi continuare?', en: 'You are using a guest account. If you sign out, you may not be able to recover this identity and its progress. Do you want to continue?', es: 'Estás usando una cuenta de invitado. Si cierras sesión, es posible que no puedas recuperar esta identidad ni su progreso. ¿Quieres continuar?', fr: 'Vous utilisez un compte invité. Si vous vous déconnectez, vous risquez de ne pas pouvoir récupérer cette identité et sa progression. Voulez-vous continuer ?', de: 'Du verwendest ein Gastkonto. Wenn du dich abmeldest, kannst du diese Identität und deinen Fortschritt möglicherweise nicht wiederherstellen. Möchtest du fortfahren?' } as const)[locale],
+    cancel: ({ it: 'ANNULLA', en: 'CANCEL', es: 'CANCELAR', fr: 'ANNULER', de: 'ABBRECHEN' } as const)[locale],
+    confirmSignOut: ({ it: 'ESCI', en: 'SIGN OUT', es: 'CERRAR SESIÓN', fr: 'SE DÉCONNECTER', de: 'ABMELDEN' } as const)[locale],
+    signOutHint: ({ it: 'Uscendo da un account ospite, non potrai recuperare questa identità automaticamente.', en: 'If you sign out from a guest account, you will not be able to restore this identity automatically.', es: 'Si cierras sesión en una cuenta de invitado, no podrás recuperar esta identidad automáticamente.', fr: 'Si vous vous déconnectez d’un compte invité, vous ne pourrez pas récupérer automatiquement cette identité.', de: 'Wenn du dich von einem Gastkonto abmeldest, kannst du diese Identität nicht automatisch wiederherstellen.' } as const)[locale],
     player: italian ? 'Giocatore' : 'Player',
     createAccount: italian ? 'CREA ACCOUNT E CONSERVA L’IDENTITÀ' : 'CREATE ACCOUNT & KEEP IDENTITY',
     guestInfo: italian ? 'Collega un’email e una password alla tua identità ospite. Il collegamento mantiene lo stesso UID Firebase e i tuoi risultati.' : 'Link an email and password to your guest identity. Linking preserves the same Firebase UID and your results.',
@@ -287,7 +292,18 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
               <Text style={styles.hint}>{labels.signOutHint}</Text>
             </>
           )}
-          <Pressable onPress={onSignOut} style={styles.signOutButton}>
+          <Pressable
+            onPress={() => Alert.alert(
+              labels.signOutConfirmTitle,
+              authUser.isAnonymous ? labels.guestSignOutConfirmMessage : labels.signOutConfirmMessage,
+              [
+                { text: labels.cancel, style: 'cancel' },
+                { text: labels.confirmSignOut, style: 'destructive', onPress: onSignOut },
+              ],
+              { cancelable: true },
+            )}
+            style={styles.signOutButton}
+          >
             <Text style={styles.signOutText}>{labels.signOut}</Text>
           </Pressable>
         </View>
