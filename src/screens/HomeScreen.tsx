@@ -105,7 +105,7 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.midnightNavy },
-  content: { paddingHorizontal: 16, paddingTop: (StatusBar.currentHeight ?? 0) + 8, paddingBottom: 28 },
+  content: { paddingHorizontal: 16, paddingTop: (StatusBar.currentHeight ?? 0) + 8, paddingBottom: 48 },
   topBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   brand: { color: colors.white, fontSize: 22, fontWeight: '900', letterSpacing: 1.5 },
   brandAccent: { color: colors.iceBlue },
