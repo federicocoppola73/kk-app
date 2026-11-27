@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Image, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getCountFromServer, onSnapshot, query, where } from 'firebase/firestore';
 import { getLocales } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import appConfig from './app.json';
@@ -127,7 +127,6 @@ export default function App() {
     let active = true;
     void (async () => {
       try {
-        const { collection, getCountFromServer, query, where } = await import('firebase/firestore');
         const higherXp = query(collection(db, 'leaderboard'), where('xp', '>', userProfile.xp));
         const count = await getCountFromServer(higherXp);
         if (active) setGlobalRank(count.data().count + 1);
