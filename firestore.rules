@@ -45,7 +45,7 @@ service cloud.firestore {
       }
 
       function validGuestNicknameChange() {
-        return !(request.auth.token.email is string)
+        return !(request.auth.token.get('email', null) is string)
           && resource.data.identityLocked == false
           && request.resource.data.identityLocked == false
           && request.resource.data.diff(resource.data).affectedKeys()
@@ -62,7 +62,7 @@ service cloud.firestore {
       function validIdentityLock() {
         return resource.data.identityLocked == false
           && request.resource.data.identityLocked == true
-          && request.auth.token.email is string
+          && request.auth.token.get('email', null) is string
           && request.resource.data.diff(resource.data).affectedKeys()
             .hasOnly(['identityLocked', 'updatedAt'])
           && request.resource.data.updatedAt == request.time;
@@ -91,7 +91,7 @@ service cloud.firestore {
           && request.resource.data.identityLocked is bool
           && request.resource.data.identityLocked == (
             resource.data.get('identityLocked', false)
-            || request.auth.token.email is string
+            || request.auth.token.get('email', null) is string
           )
           && nicknameReservationMatches()
           && request.resource.data.updatedAt == request.time;
@@ -117,7 +117,7 @@ service cloud.firestore {
         && request.resource.data.countryCode == null
         && request.resource.data.identityLocked is bool
         && request.resource.data.identityLocked == (
-          request.auth.token.email is string
+          request.auth.token.get('email', null) is string
         )
         && request.resource.data.xp == 0
         && request.resource.data.level == 1
