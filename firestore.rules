@@ -2,72 +2,137 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function xpFor(correctAnswers) {
-      return correctAnswers <= 2 ? 5
-        : correctAnswers <= 4 ? 10
-        : correctAnswers <= 6 ? 20
-        : correctAnswers <= 8 ? 30
-        : correctAnswers == 9 ? 40
-        : 50;
-    }
 
     match /users/{userId} {
-      // A user can read only their own profile.
+
+      function xpFor(correctAnswers) {
+        return correctAnswers <= 2 ? 5 :
+          correctAnswers <= 4 ? 10 :
+          correctAnswers <= 6 ? 20 :
+          correctAnswers <= 8 ? 30 :
+          correctAnswers == 9 ? 40 : 50;
+      }
+
+      function nicknameReservationMatches() {
+        let reservationPath = /databases/$(database)/documents/nicknames/$(request.resource.data.nicknameKey);
+        return existsAfter(reservationPath)
+          && getAfter(reservationPath).data.uid == userId
+          && getAfter(reservationPath).data.nickname == request.resource.data.nickname;
+      }
+
+      function validXpAward() {
+        let resultPath = /databases/$(database)/documents/users/$(userId)/results/$(request.resource.data.lastAwardedResultId);
+        let result = getAfter(resultPath).data;
+
+        return request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['xp', 'level', 'lastAwardedResultId', 'updatedAt'])
+          && request.resource.data.lastAwardedResultId is string
+          && request.resource.data.lastAwardedResultId.size() > 0
+          && !exists(resultPath)
+          && existsAfter(resultPath)
+          && result.verification == 'unverified'
+          && result.totalQuestions == 10
+          && result.correctAnswers is int
+          && result.correctAnswers >= 0
+          && result.correctAnswers <= 10
+          && request.resource.data.xp is int
+          && request.resource.data.xp == resource.data.xp + xpFor(result.correctAnswers)
+          && request.resource.data.level is int
+          && request.resource.data.level >= 1
+          && request.resource.data.xp >= (request.resource.data.level - 1) * 100
+          && request.resource.data.xp < request.resource.data.level * 100
+          && request.resource.data.updatedAt == request.time;
+      }
+
+      function validGuestNicknameChange() {
+        return request.auth.token.firebase.sign_in_provider == 'anonymous'
+          && resource.data.identityLocked == false
+          && request.resource.data.identityLocked == false
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['nickname', 'nicknameKey', 'updatedAt'])
+          && request.resource.data.nickname is string
+          && request.resource.data.nickname.size() >= 3
+          && request.resource.data.nickname.size() <= 24
+          && request.resource.data.nickname == request.resource.data.nickname.trim()
+          && request.resource.data.nicknameKey == request.resource.data.nickname.lower()
+          && nicknameReservationMatches()
+          && request.resource.data.updatedAt == request.time;
+      }
+
+      function validIdentityLock() {
+        return resource.data.identityLocked == false
+          && request.resource.data.identityLocked == true
+          && request.auth.token.firebase.sign_in_provider != 'anonymous'
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['identityLocked', 'updatedAt'])
+          && request.resource.data.updatedAt == request.time;
+      }
+
+      function validCountrySelection() {
+        return resource.data.get('countryCode', null) == null
+          && request.resource.data.countryCode is string
+          && request.resource.data.countryCode.matches('^[A-Z]{2}$')
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['countryCode', 'updatedAt'])
+          && request.resource.data.identityLocked == resource.data.identityLocked
+          && request.resource.data.updatedAt == request.time;
+      }
+
+      function validLegacyProfileMigration() {
+        return !resource.data.keys().hasAny(['nicknameKey'])
+          && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['nickname', 'nicknameKey', 'countryCode', 'identityLocked', 'updatedAt'])
+          && request.resource.data.nickname is string
+          && request.resource.data.nickname.size() >= 3
+          && request.resource.data.nickname.size() <= 24
+          && request.resource.data.nickname == request.resource.data.nickname.trim()
+          && request.resource.data.nicknameKey == request.resource.data.nickname.lower()
+          && request.resource.data.countryCode == resource.data.get('countryCode', null)
+          && request.resource.data.identityLocked is bool
+          && request.resource.data.identityLocked == (
+            resource.data.get('identityLocked', false)
+            || request.auth.token.firebase.sign_in_provider != 'anonymous'
+          )
+          && nicknameReservationMatches()
+          && request.resource.data.updatedAt == request.time;
+      }
+
       allow read: if request.auth != null && request.auth.uid == userId;
 
-      // A new profile always starts with zero XP and level 1.
       allow create: if request.auth != null
         && request.auth.uid == userId
-        && request.resource.data.keys().hasAll(['nickname', 'xp', 'level', 'createdAt', 'updatedAt'])
-        && request.resource.data.keys().hasOnly(['nickname', 'xp', 'level', 'createdAt', 'updatedAt'])
+        && request.resource.data.keys().hasAll([
+          'nickname', 'nicknameKey', 'countryCode', 'identityLocked',
+          'xp', 'level', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'nickname', 'nicknameKey', 'countryCode', 'identityLocked',
+          'xp', 'level', 'createdAt', 'updatedAt'
+        ])
         && request.resource.data.nickname is string
-        && request.resource.data.nickname.size() > 0
+        && request.resource.data.nickname.size() >= 3
         && request.resource.data.nickname.size() <= 24
+        && request.resource.data.nickname == request.resource.data.nickname.trim()
+        && request.resource.data.nicknameKey == request.resource.data.nickname.lower()
+        && request.resource.data.countryCode == null
+        && request.resource.data.identityLocked is bool
+        && request.resource.data.identityLocked == (
+          request.auth.token.firebase.sign_in_provider != 'anonymous'
+        )
         && request.resource.data.xp == 0
         && request.resource.data.level == 1
         && request.resource.data.createdAt == request.time
-        && request.resource.data.updatedAt == request.time;
-
-      // XP can increase only in the same atomic transaction that creates
-      // the corresponding quiz result. The result ID is recorded on profile
-      // to make the award auditable and prevent reusing an existing result.
-      function hasValidXpAward() {
-        let resultId = request.resource.data.lastAwardedResultId;
-        let resultPath = /databases/$(database)/documents/users/$(userId)/results/$(resultId);
-        return resultId is string
-          && !exists(resultPath)
-          && existsAfter(resultPath)
-          && getAfter(resultPath).data.mode in ['player', 'club', 'career', 'stadium']
-          && getAfter(resultPath).data.verification == 'unverified'
-          && getAfter(resultPath).data.correctAnswers is int
-          && getAfter(resultPath).data.correctAnswers >= 0
-          && getAfter(resultPath).data.correctAnswers <= 10
-          && getAfter(resultPath).data.totalQuestions == 10
-          && request.resource.data.xp == resource.data.xp + xpFor(getAfter(resultPath).data.correctAnswers)
-          && request.resource.data.level is int
-          && (
-            request.resource.data.level == resource.data.level
-            || (
-              request.resource.data.level == resource.data.level + 1
-              && request.resource.data.xp >= (request.resource.data.level - 1) * 100
-            )
-          );
-      }
+        && request.resource.data.updatedAt == request.time
+        && nicknameReservationMatches();
 
       allow update: if request.auth != null
         && request.auth.uid == userId
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'nickname', 'xp', 'level', 'updatedAt', 'lastAwardedResultId'
-        ])
-        && request.resource.data.nickname is string
-        && request.resource.data.nickname.size() > 0
-        && request.resource.data.nickname.size() <= 24
-        && request.resource.data.updatedAt == request.time
         && (
-          !request.resource.data.diff(resource.data).affectedKeys().hasAny([
-            'xp', 'level', 'lastAwardedResultId'
-          ])
-          || hasValidXpAward()
+          validXpAward()
+          || validGuestNicknameChange()
+          || validIdentityLock()
+          || validCountrySelection()
+          || validLegacyProfileMigration()
         );
 
       allow delete: if false;
@@ -78,12 +143,16 @@ service cloud.firestore {
         allow create: if request.auth != null
           && request.auth.uid == userId
           && request.resource.data.keys().hasAll([
-            'mode', 'points', 'correctAnswers', 'totalQuestions', 'verification', 'completedAt'
+            'mode', 'points', 'correctAnswers',
+            'totalQuestions', 'verification', 'completedAt'
           ])
           && request.resource.data.keys().hasOnly([
-            'mode', 'points', 'correctAnswers', 'totalQuestions', 'verification', 'completedAt'
+            'mode', 'points', 'correctAnswers',
+            'totalQuestions', 'verification', 'completedAt'
           ])
-          && request.resource.data.mode in ['player', 'club', 'career', 'stadium']
+          && request.resource.data.mode in [
+            'player', 'club', 'career', 'stadium'
+          ]
           && request.resource.data.points is int
           && request.resource.data.points >= 0
           && request.resource.data.points <= 2000
@@ -96,6 +165,43 @@ service cloud.firestore {
 
         allow update, delete: if false;
       }
+    }
+
+    match /nicknames/{nicknameKey} {
+      function userProfileMatchesAfter() {
+        let profilePath = /databases/$(database)/documents/users/$(request.auth.uid);
+        return existsAfter(profilePath)
+          && getAfter(profilePath).data.nicknameKey == nicknameKey
+          && getAfter(profilePath).data.nickname == request.resource.data.nickname;
+      }
+
+      allow get: if request.auth != null;
+      allow list: if false;
+
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasAll(['uid', 'nickname', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['uid', 'nickname', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() >= 3
+        && request.resource.data.nickname.size() <= 24
+        && request.resource.data.nickname == request.resource.data.nickname.trim()
+        && nicknameKey == request.resource.data.nickname.lower()
+        && request.resource.data.createdAt == request.time
+        && userProfileMatchesAfter();
+
+      allow update: if request.auth != null
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nickname'])
+        && request.resource.data.nickname is string
+        && nicknameKey == request.resource.data.nickname.lower()
+        && userProfileMatchesAfter();
+
+      allow delete: if request.auth != null
+        && resource.data.uid == request.auth.uid
+        && existsAfter(/databases/$(database)/documents/users/$(request.auth.uid))
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.nicknameKey != nicknameKey;
     }
   }
 }
