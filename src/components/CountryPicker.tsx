@@ -14,7 +14,7 @@ type Props = {
 export default function CountryPicker({ locale, value, onChange, placeholder }: Props) {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
-  const language = locale === 'auto' ? 'en' : locale;
+  const language = locale;
   const countries = useMemo(() => COUNTRY_CODES
     .map((code) => ({ code, name: getCountryName(code, language) }))
     .sort((a, b) => a.name.localeCompare(b.name, language)), [language]);
