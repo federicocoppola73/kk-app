@@ -13,11 +13,10 @@ import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 import { useQuizExitConfirmation } from '../hooks/useQuizExitConfirmation';
 import { auth } from '../services/firebase';
-import { createQuizResultId, recordCompletedQuiz } from '../services/quizResults';
+import { calculateQuizXp, createQuizResultId, recordCompletedQuiz } from '../services/quizResults';
 import { clubIdClubs, type ClubIdClub } from '../data/clubIdClubs';
 
 const ROUND_LENGTH = 10;
-const XP_PER_CORRECT_ANSWER = 25;
 const REVEAL_INTERVAL_MS = 4000;
 
 type QuizQuestion = {
@@ -75,7 +74,6 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
-  const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const handleBack = useQuizExitConfirmation(locale, showResult, onBack);
   const resultIdRef = useRef<string | null>(null);
@@ -130,7 +128,6 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
     setSelectedAnswer(null);
     setCorrectCount(0);
     setTotalPoints(0);
-    setTotalXp(0);
     setShowResult(false);
     setRevealStage(0);
   };
@@ -141,7 +138,6 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
     if (isCorrect) {
       setCorrectCount((value) => value + 1);
       setTotalPoints((value) => value + potentialPoints);
-      setTotalXp((value) => value + XP_PER_CORRECT_ANSWER);
     }
 
     if (questionIndex === ROUND_LENGTH - 1) {
@@ -244,7 +240,7 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
                   </Text>
                 ) : (
                   <Text style={styles.feedbackDetail}>
-                    +{potentialPoints} {t.pointsLabel}  •  +{XP_PER_CORRECT_ANSWER} XP
+                    +{potentialPoints} {t.pointsLabel}
                   </Text>
                 )}
                 <Pressable onPress={continueRound} style={styles.primaryButton}>
@@ -267,7 +263,7 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
                 <Text style={styles.statLabel}>{t.pointsLabel}</Text>
               </View>
               <View style={styles.statCard}>
-                <Text style={styles.statValue}>+{totalXp}</Text>
+                <Text style={styles.statValue}>+{calculateQuizXp(correctCount)}</Text>
                 <Text style={styles.statLabel}>XP</Text>
               </View>
             </View>
