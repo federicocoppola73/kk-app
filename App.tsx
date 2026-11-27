@@ -152,7 +152,7 @@ export default function App() {
     return <ProfileScreen locale={activeLocale} authUser={authUser} userProfile={userProfile} onBack={() => setScreen('home')} onViewAllHistory={() => setScreen('matchHistory')} onSignOut={() => { void signOut(auth).catch((error) => console.warn('Unable to sign out:', error)); }} />;
   }
   if (screen === 'settings') {
-    return <SettingsScreen locale={activeLocale} selectedLocale={locale} authUser={authUser} onChangeLocale={changeLocale} onBack={() => setScreen('home')} />;
+    return <SettingsScreen locale={activeLocale} selectedLocale={locale} onChangeLocale={changeLocale} onBack={() => setScreen('home')} />;
   }
   if (screen === 'playerQuiz') {
     return <QuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
