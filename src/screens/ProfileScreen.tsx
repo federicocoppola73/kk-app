@@ -183,7 +183,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
       const message = reason instanceof Error ? reason.message : '';
       if (message === 'nickname-already-taken') setRegistrationError(italian ? 'Questo nickname è già utilizzato. Scegline un altro.' : 'This nickname is already taken. Choose another one.');
       else if (message === 'nickname-invalid-length') setRegistrationError(italian ? 'Il nickname deve contenere da 3 a 24 caratteri.' : 'Nickname must contain 3 to 24 characters.');
-      else if (code.includes('email-already-in-use')) setRegistrationError(italian ? 'Questa email è già associata a un account.' : 'This email is already in use.');
+      else if (code.includes('email-already-in-use') || code.includes('credential-already-in-use')) setRegistrationError(italian ? 'Questa email è già associata a un account.' : 'This email is already in use.');
       else if (code.includes('invalid-email')) setRegistrationError(italian ? 'Indirizzo email non valido.' : 'Invalid email address.');
       else if (code.includes('weak-password')) setRegistrationError(italian ? 'La password deve contenere almeno 6 caratteri.' : 'Password must contain at least 6 characters.');
       else if (code.includes('network-request-failed')) setRegistrationError(italian ? 'Connessione assente. Controlla Internet.' : 'Network error. Check your connection.');
