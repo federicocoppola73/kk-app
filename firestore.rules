@@ -49,7 +49,7 @@ service cloud.firestore {
             request.resource.data.level == resource.data.level
             || (
               request.resource.data.level == resource.data.level + 1
-              && request.resource.data.xp >= request.resource.data.level * 100
+              && request.resource.data.xp >= (request.resource.data.level - 1) * 100
             )
           );
       }
