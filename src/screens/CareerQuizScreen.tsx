@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
  timeline:{backgroundColor:'#102746',borderWidth:1,borderColor:'#294968',borderRadius:16,paddingHorizontal:12,paddingTop:12,paddingBottom:8,marginBottom:10},
  clubRow:{flexDirection:'row',minHeight:43},timelineMarker:{width:18,alignItems:'center'},dot:{width:8,height:8,borderRadius:4,backgroundColor:colors.iceBlue,marginTop:6},line:{width:2,flex:1,backgroundColor:'#41617F',marginTop:2},
  clubCopy:{flex:1,paddingBottom:8,borderBottomWidth:1,borderBottomColor:'#29415D',marginLeft:7},clubTop:{flexDirection:'row',alignItems:'center',minHeight:23},
- flag:{fontSize:16,width:25},clubName:{color:colors.white,fontSize:12,fontWeight:'800',flex:1},years:{color:colors.iceBlue,fontSize:11,fontWeight:'900',fontVariant:['tabular-nums']},
+ flag:{fontSize:16,width:25},clubName:{color:colors.white,fontSize:13,fontWeight:'800',flex:1},years:{color:colors.iceBlue,fontSize:11,fontWeight:'900',fontVariant:['tabular-nums']},
  loan:{color:colors.gold,fontSize:8,fontWeight:'900',letterSpacing:0.8,marginTop:2},
  timelineFooter:{flexDirection:'row',justifyContent:'space-between',paddingTop:9},counter:{color:colors.muted,fontSize:9,fontWeight:'800'},points:{color:colors.gold,fontSize:10,fontWeight:'900'},
  revealButton:{alignSelf:'center',backgroundColor:'#1B3A5B',borderWidth:1,borderColor:'#3C6388',borderRadius:9,paddingHorizontal:16,paddingVertical:10,marginBottom:10},
