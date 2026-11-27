@@ -33,6 +33,7 @@ export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [globalRank, setGlobalRank] = useState<number | null>(null);
   const [nationalRank, setNationalRank] = useState<number | null>(null);
+  const [leaderboardScope, setLeaderboardScope] = useState<'global' | 'national'>('global');
 
   useEffect(() => {
     const splashTimer = setTimeout(() => {
@@ -179,6 +180,7 @@ export default function App() {
   };
 
   const activeLocale = locale ?? resolveLocale(getLocales()[0]?.languageCode);
+  const openLeaderboard = (scope: 'global' | 'national') => { setLeaderboardScope(scope); setScreen('leaderboard'); };
 
   if (screen === 'splash' || !settingsLoaded || !authReady) {
     return (
@@ -194,12 +196,12 @@ export default function App() {
     return <AuthScreen locale={activeLocale} onAuthenticated={() => setScreen('home')} />;
   }
 
-  if (screen === 'leaderboard') return <LeaderboardScreen locale={activeLocale} uid={authUser.uid} xp={userProfile?.xp ?? 0} countryCode={userProfile?.countryCode ?? null} onBack={() => setScreen('home')} />;
+  if (screen === 'leaderboard') return <LeaderboardScreen locale={activeLocale} uid={authUser.uid} xp={userProfile?.xp ?? 0} countryCode={userProfile?.countryCode ?? null} initialScope={leaderboardScope} onBack={() => setScreen('home')} />;
   if (screen === 'matchHistory') {
     return <MatchHistoryScreen locale={activeLocale} authUser={authUser} onBack={() => setScreen('profile')} />;
   }
   if (screen === 'profile') {
-    return <ProfileScreen locale={activeLocale} authUser={authUser} userProfile={userProfile} onBack={() => setScreen('home')} onViewAllHistory={() => setScreen('matchHistory')} onViewStatistics={() => setScreen('statistics')} rank={globalRank} nationalRank={nationalRank} onOpenLeaderboard={() => setScreen('leaderboard')} onSignOut={() => { void signOut(auth).catch((error) => console.warn('Unable to sign out:', error)); }} />;
+    return <ProfileScreen locale={activeLocale} authUser={authUser} userProfile={userProfile} onBack={() => setScreen('home')} onViewAllHistory={() => setScreen('matchHistory')} onViewStatistics={() => setScreen('statistics')} rank={globalRank} nationalRank={nationalRank} onOpenLeaderboard={openLeaderboard} onSignOut={() => { void signOut(auth).catch((error) => console.warn('Unable to sign out:', error)); }} />;
   }
   if (screen === 'statistics') {
     return <StatisticsScreen locale={activeLocale} authUser={authUser} onBack={() => setScreen('profile')} />;
@@ -219,7 +221,7 @@ export default function App() {
   if (screen === 'careerQuiz') {
     return <CareerQuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
   }
-  return <HomeScreen locale={activeLocale} xp={userProfile?.xp ?? null} level={userProfile?.level ?? null} rank={globalRank} nationalRank={nationalRank} countryCode={userProfile?.countryCode ?? null} onOpenLeaderboard={() => setScreen('leaderboard')} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} onOpenProfile={() => setScreen('profile')} />;
+  return <HomeScreen locale={activeLocale} xp={userProfile?.xp ?? null} level={userProfile?.level ?? null} rank={globalRank} nationalRank={nationalRank} countryCode={userProfile?.countryCode ?? null} onOpenLeaderboard={openLeaderboard} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} onOpenProfile={() => setScreen('profile')} />;
 }
 
 const styles = StyleSheet.create({
