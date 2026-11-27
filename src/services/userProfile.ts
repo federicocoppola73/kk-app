@@ -1,10 +1,10 @@
 import type { User } from 'firebase/auth';
 import {
-  deleteField,
   doc,
   runTransaction,
   serverTimestamp,
-  type Transaction,
+  type DocumentReference,
+  type DocumentSnapshot,
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -37,28 +37,6 @@ function nicknameRef(nicknameKey: string) {
   return doc(db, 'nicknames', nicknameKey);
 }
 
-async function reserveNickname(
-  transaction: Transaction,
-  uid: string,
-  nickname: string,
-  nicknameKey: string,
-) {
-  const reservationRef = nicknameRef(nicknameKey);
-  const reservation = await transaction.get(reservationRef);
-
-  if (reservation.exists() && reservation.data().uid !== uid) {
-    throw new Error('nickname-already-taken');
-  }
-
-  if (!reservation.exists()) {
-    transaction.set(reservationRef, {
-      uid,
-      nickname,
-      createdAt: serverTimestamp(),
-    });
-  }
-}
-
 export async function ensureUserProfile(user: User): Promise<void> {
   const profileRef = doc(db, 'users', user.uid);
   const fallbackNickname = user.displayName?.trim() || (user.isAnonymous ? 'Guest' : 'Player');
@@ -74,7 +52,27 @@ export async function ensureUserProfile(user: User): Promise<void> {
       ? existing.nicknameKey
       : null;
 
-    await reserveNickname(transaction, user.uid, nickname, nicknameKey);
+    const reservationRef = nicknameRef(nicknameKey);
+    const reservation = await transaction.get(reservationRef);
+    let oldReservationRef: DocumentReference | null = null;
+    let oldReservation: DocumentSnapshot | null = null;
+
+    if (oldNicknameKey && oldNicknameKey !== nicknameKey) {
+      oldReservationRef = nicknameRef(oldNicknameKey);
+      oldReservation = await transaction.get(oldReservationRef);
+    }
+
+    if (reservation.exists() && reservation.data().uid !== user.uid) {
+      throw new Error('nickname-already-taken');
+    }
+
+    if (!reservation.exists()) {
+      transaction.set(reservationRef, {
+        uid: user.uid,
+        nickname,
+        createdAt: serverTimestamp(),
+      });
+    }
 
     if (!snapshot.exists()) {
       transaction.set(profileRef, {
@@ -91,7 +89,6 @@ export async function ensureUserProfile(user: User): Promise<void> {
 
     const updates: Record<string, unknown> = {};
     if (existing.nicknameKey !== nicknameKey) updates.nicknameKey = nicknameKey;
-    if (typeof existing.countryCode !== 'string' && existing.countryCode !== null) updates.countryCode = null;
     if (!Object.prototype.hasOwnProperty.call(existing, 'countryCode')) updates.countryCode = null;
 
     if (Object.keys(updates).length > 0) {
@@ -99,12 +96,8 @@ export async function ensureUserProfile(user: User): Promise<void> {
       transaction.update(profileRef, updates);
     }
 
-    if (oldNicknameKey && oldNicknameKey !== nicknameKey) {
-      const oldReservationRef = nicknameRef(oldNicknameKey);
-      const oldReservation = await transaction.get(oldReservationRef);
-      if (oldReservation.exists() && oldReservation.data().uid === user.uid) {
-        transaction.delete(oldReservationRef);
-      }
+    if (oldReservationRef && oldReservation?.exists() && oldReservation.data().uid === user.uid) {
+      transaction.delete(oldReservationRef);
     }
   });
 }
@@ -135,8 +128,8 @@ export async function updateUserIdentity(
 
     const newReservationRef = nicknameRef(nicknameKey);
     const newReservation = await transaction.get(newReservationRef);
-    let oldReservationRef = null;
-    let oldReservation = null;
+    let oldReservationRef: DocumentReference | null = null;
+    let oldReservation: DocumentSnapshot | null = null;
 
     if (oldNicknameKey && oldNicknameKey !== nicknameKey) {
       oldReservationRef = nicknameRef(oldNicknameKey);
