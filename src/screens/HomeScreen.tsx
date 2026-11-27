@@ -60,7 +60,7 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
             </Pressable>
             <Pressable onPress={() => onOpenLeaderboard('national')} accessibilityRole="button" style={styles.stat}>
               <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
-              <Text style={styles.statLabel}>{countryCode ?? (locale === 'it' ? 'NAZIONALE' : 'NATIONAL')}  ›</Text>
+              <Text style={styles.statLabel}>{(locale === 'it' ? 'NAZIONALE' : 'NATIONAL')}  ›</Text>
             </Pressable>
           </View>
         </View>
