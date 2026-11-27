@@ -25,7 +25,10 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
           </View>
           <View style={styles.actions}>
             <Pressable onPress={onOpenProfile} accessibilityRole="button" accessibilityLabel={locale === 'it' ? 'Profilo' : 'Profile'} style={styles.profile}>
-              <Text style={styles.profileGlyph}>P</Text>
+              <View style={styles.personIcon}>
+                <View style={styles.personHead} />
+                <View style={styles.personBody} />
+              </View>
             </Pressable>
             <Pressable onPress={onOpenSettings} accessibilityRole="button" accessibilityLabel={t.settingsTitle} style={styles.settings}>
               <Text style={styles.settingsGlyph}>⚙</Text>
@@ -104,7 +107,9 @@ const styles = StyleSheet.create({
   kicker: { color: colors.muted, fontSize: 9, fontWeight: '800', letterSpacing: 1.8, marginTop: 3 },
   actions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   profile: { width: 42, height: 42, borderRadius: 14, borderWidth: 1, borderColor: colors.electricBlue, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
-  profileGlyph: { color: colors.iceBlue, fontSize: 18, fontWeight: '900' },
+  personIcon: { width: 24, height: 24, alignItems: 'center', justifyContent: 'flex-end' },
+  personHead: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.iceBlue, marginBottom: 2 },
+  personBody: { width: 17, height: 10, borderTopLeftRadius: 9, borderTopRightRadius: 9, backgroundColor: colors.iceBlue },
   settings: { width: 42, height: 42, borderRadius: 14, borderWidth: 1, borderColor: '#294968', backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
   settingsGlyph: { color: colors.white, fontSize: 22 },
   hero: { backgroundColor: '#102746', borderRadius: 22, borderWidth: 1, borderColor: '#1D4268', padding: 14, marginBottom: 13 },
