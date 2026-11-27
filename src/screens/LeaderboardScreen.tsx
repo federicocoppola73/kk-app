@@ -22,7 +22,7 @@ export default function LeaderboardScreen({ locale, uid, xp, points, countryCode
     de:{back:'ZURÜCK',globalTitle:'WELTRANGLISTE',nationalTitle:'NATIONALE RANGLISTE',globalSubtitle:'Die besten 50 Spieler · Gesamt-XP',nationalSubtitle:'Die besten 50 Spieler deines Landes · Gesamt-XP',noCountrySubtitle:'Lege deine Nationalität im Profil fest, um teilzunehmen',globalTab:'WELTWEIT',nationalTab:'NATIONAL',yourRank:'DEIN RANG',setCountry:'lege deine Nationalität im Profil fest',outside:'außerhalb der Top 50',rank:'RANG',player:'SPIELER',error:'Rangliste konnte nicht geladen werden. Bitte erneut versuchen.',noCountry:'Füge deine Nationalität im Profil hinzu, um an der nationalen Rangliste teilzunehmen.',empty:'Die Rangliste ist noch leer. Spiele ein Quiz, um zu starten!',you:'Du',footer:'Die Gesamtwerte werden in allen Modi gesammelt und nie zurückgesetzt.',xpTab:'XP',pointsTab:'PUNKTE',pointsTitle:'PUNKTE-RANGLISTE',pointsSubtitle:'Die besten 50 Spieler · Gesamtpunkte',pointsFooter:'Diese Rangliste summiert Punkte aus allen Spielmodi.'}
   } as const)[locale];
   const [scope, setScope] = useState<Scope>(initialScope);
-  const [metric, setMetric] = useState<Metric>('xp');
+  const [metric, setMetric] = useState<Metric>(initialMetric);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
