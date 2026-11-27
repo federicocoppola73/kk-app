@@ -87,9 +87,10 @@ export async function ensureUserProfile(user: User): Promise<void> {
       return;
     }
 
+    const profileData = snapshot.data();
     const updates: Record<string, unknown> = {};
-    if (existing.nicknameKey !== nicknameKey) updates.nicknameKey = nicknameKey;
-    if (!Object.prototype.hasOwnProperty.call(existing, 'countryCode')) updates.countryCode = null;
+    if (profileData.nicknameKey !== nicknameKey) updates.nicknameKey = nicknameKey;
+    if (!Object.prototype.hasOwnProperty.call(profileData, 'countryCode')) updates.countryCode = null;
 
     if (Object.keys(updates).length > 0) {
       updates.updatedAt = serverTimestamp();
