@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth';
-import { doc, runTransaction, serverTimestamp } from 'firebase/firestore';
+import { doc, runTransaction, serverTimestamp, type Transaction } from 'firebase/firestore';
 import { db } from './firebase';
 
 export type UserProfile = {
@@ -47,11 +47,13 @@ export async function ensureUserProfile(user: User): Promise<void> {
       throw new Error('nickname-already-taken');
     }
 
-    if (!reservation.exists()) {
-      transaction.set(reservationRef, { uid: user.uid, nickname, createdAt: serverTimestamp() });
-    }
+    const existingCountry = typeof existing?.countryCode === 'string' ? existing.countryCode : null;
+    const existingXp = typeof existing?.xp === 'number' ? existing.xp : 0;
+    const existingLevel = typeof existing?.level === 'number' ? existing.level : 1;
+    await syncLeaderboardEntry(transaction, user.uid, { nickname, nicknameKey, countryCode: existingCountry, xp: existingXp, level: existingLevel });
 
     if (!snapshot.exists()) {
+      if (!reservation.exists()) transaction.set(reservationRef, { uid: user.uid, nickname, createdAt: serverTimestamp() });
       transaction.set(profileRef, {
         nickname,
         nicknameKey,
@@ -118,6 +120,8 @@ export async function prepareGuestIdentity(
       transaction.update(newReservationRef, { nickname });
     }
 
+    await syncLeaderboardEntry(transaction, uid, { nickname, nicknameKey, countryCode: typeof profile.countryCode === 'string' ? profile.countryCode : null, xp: typeof profile.xp === 'number' ? profile.xp : 0, level: typeof profile.level === 'number' ? profile.level : 1 });
+
     if (oldReservationRef && oldReservation?.exists() && oldReservation.data().uid === uid) {
       transaction.delete(oldReservationRef);
     }
@@ -144,9 +148,18 @@ export async function setUserCountry(uid: string, countryCode: string): Promise<
       throw new Error('country-already-set');
     }
 
+    await syncLeaderboardEntry(transaction, uid, { nickname: String(snapshot.data().nickname), nicknameKey: String(snapshot.data().nicknameKey), countryCode: normalizedCountryCode, xp: typeof snapshot.data().xp === 'number' ? snapshot.data().xp : 0, level: typeof snapshot.data().level === 'number' ? snapshot.data().level : 1 });
     transaction.update(profileRef, {
       countryCode: normalizedCountryCode,
       updatedAt: serverTimestamp(),
     });
   });
+}
+
+
+/** Keeps the public leaderboard projection in the same transaction as the private profile. */
+export async function syncLeaderboardEntry(transaction: Transaction, uid: string, profile: Pick<UserProfile, 'nickname' | 'nicknameKey' | 'countryCode' | 'xp' | 'level'>): Promise<void> {
+  const leaderboardRef = doc(db, 'leaderboard', uid);
+  await transaction.get(leaderboardRef);
+  transaction.set(leaderboardRef, { uid, nickname: profile.nickname, nicknameKey: profile.nicknameKey, countryCode: profile.countryCode, xp: profile.xp, level: profile.level, updatedAt: serverTimestamp() });
 }
