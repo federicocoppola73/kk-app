@@ -97,8 +97,10 @@ export async function recordCompletedQuiz(
     const profile = profileSnapshot.data();
     const currentXp = typeof profile.xp === 'number' ? profile.xp : 0;
     const nextXp = currentXp + xpAwarded;
+    const currentPoints = typeof profile.points === 'number' ? profile.points : 0;
+    const nextPoints = currentPoints + points;
 
-    await syncLeaderboardEntry(transaction, uid, { nickname: String(profile.nickname), nicknameKey: String(profile.nicknameKey), countryCode: typeof profile.countryCode === 'string' ? profile.countryCode : null, xp: nextXp, level: calculateLevel(nextXp) });
+    await syncLeaderboardEntry(transaction, uid, { nickname: String(profile.nickname), nicknameKey: String(profile.nicknameKey), countryCode: typeof profile.countryCode === 'string' ? profile.countryCode : null, xp: nextXp, points: nextPoints, level: calculateLevel(nextXp) });
 
     transaction.set(resultRef, {
       mode,
@@ -111,6 +113,7 @@ export async function recordCompletedQuiz(
 
     transaction.update(profileRef, {
       xp: nextXp,
+      points: nextPoints,
       level: calculateLevel(nextXp),
       lastAwardedResultId: resultId,
       updatedAt: serverTimestamp(),
