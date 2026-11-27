@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   formSubmit: { marginTop: 12 },
   switchButton: { alignItems: 'center', paddingVertical: 10 },
   switchText: { color: colors.iceBlue, fontSize: 12, fontWeight: '700' },
-  error: { color: '#FF8D8D', backgroundColor: '#3A202A', borderRadius: 10, padding: 11, fontSize: 12, textAlign: 'center', marginTop: 14 },
+  error: { color: '#7A3212', backgroundColor: '#FFF0D6', borderWidth: 1, borderColor: '#E8B96A', borderRadius: 10, padding: 11, fontSize: 12, fontWeight: '700', textAlign: 'center', marginTop: 14 },
   footer: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 1.4, textAlign: 'center', marginTop: 30 },
   pressed: { opacity: 0.82 },
   disabled: { opacity: 0.6 },
