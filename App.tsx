@@ -87,10 +87,8 @@ export default function App() {
       return;
     }
 
-    // Anonymous sign-in briefly exposes a user before continueAsGuest assigns
-    // its generated display name and creates the corresponding Firestore profile.
-    if (authUser.isAnonymous && !authUser.displayName) return;
-
+    // Keep the profile listener active while guest sign-in assigns its generated nickname.
+    const shouldInitializeProfile = !(authUser.isAnonymous && !authUser.displayName);
     const profileRef = doc(db, 'users', authUser.uid);
     const unsubscribe = onSnapshot(profileRef, (snapshot) => {
       if (!snapshot.exists()) {
@@ -110,9 +108,11 @@ export default function App() {
       setUserProfile(null);
     });
 
-    void ensureUserProfile(authUser).catch((error) => {
-      console.warn('Unable to initialize user profile in Firestore:', error);
-    });
+    if (shouldInitializeProfile) {
+      void ensureUserProfile(authUser).catch((error) => {
+        console.warn('Unable to initialize user profile in Firestore:', error);
+      });
+    }
 
     return unsubscribe;
   }, [authUser]);
