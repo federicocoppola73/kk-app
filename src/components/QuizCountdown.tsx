@@ -39,7 +39,7 @@ export default function QuizCountdown({ locale, onComplete }: Props) {
   return (
     <View style={styles.overlay}>
       <Text style={styles.ready}>{copy[locale].ready}</Text>
-      <Text style={styles.count}>{count === 'go' ? copy[locale].go : count}</Text>
+      <Text style={[styles.count, count === 'go' && styles.go]} numberOfLines={1} adjustsFontSizeToFit>{count === 'go' ? copy[locale].go : count}</Text>
       <Text style={styles.caption}>KIT & KICK</Text>
     </View>
   );
@@ -67,6 +67,12 @@ const styles = StyleSheet.create({
     lineHeight: 104,
     fontWeight: '900',
     textAlign: 'center',
+  },
+  go: {
+    fontSize: 54,
+    lineHeight: 68,
+    letterSpacing: 0,
+    paddingHorizontal: 20,
   },
   caption: {
     color: colors.muted,
