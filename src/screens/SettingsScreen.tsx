@@ -38,7 +38,7 @@ export default function SettingsScreen({ locale, selectedLocale, onChangeLocale,
             const selected = selectedLocale === language.code;
             return (
               <Pressable key={language.code ?? 'auto'} onPress={() => onChangeLocale(language.code)} style={[styles.option, selected && styles.optionSelected]}>
-                <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>{italian ? language.nativeLabel : language.label}</Text>
+                <Text style={[styles.optionLabel, selected && styles.optionLabelSelected]}>{language.code === null ? ({it:'Automatica',en:'Automatic',es:'Automático',fr:'Automatique',de:'Automatisch'} as const)[locale] : language.nativeLabel}</Text>
                 <Text style={styles.radio}>{selected ? '●' : '○'}</Text>
               </Pressable>
             );
@@ -48,7 +48,7 @@ export default function SettingsScreen({ locale, selectedLocale, onChangeLocale,
           <Text style={styles.section}>{t.audioSection}</Text>
           <Text style={styles.description}>{t.audioComingSoon}</Text>
         </View>
-        <Text style={styles.footer}>KNOW THE GAME. OWN THE GAME.</Text>
+        <Text style={styles.footer}>{t.slogan}</Text>
       </ScrollView>
     </SafeAreaView>
   );
