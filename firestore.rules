@@ -2,11 +2,20 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function xpFor(correctAnswers) {
+      return correctAnswers <= 2 ? 5
+        : correctAnswers <= 4 ? 10
+        : correctAnswers <= 6 ? 20
+        : correctAnswers <= 8 ? 30
+        : correctAnswers == 9 ? 40
+        : 50;
+    }
+
     match /users/{userId} {
       // A user can read only their own profile.
       allow read: if request.auth != null && request.auth.uid == userId;
 
-      // The client may create a new profile, but cannot grant itself XP.
+      // A new profile always starts with zero XP and level 1.
       allow create: if request.auth != null
         && request.auth.uid == userId
         && request.resource.data.keys().hasAll(['nickname', 'xp', 'level', 'createdAt', 'updatedAt'])
@@ -19,16 +28,76 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time;
 
-      // The client may change the nickname, but XP and level remain protected.
+      // XP can increase only in the same atomic transaction that creates
+      // the corresponding quiz result. The result ID is recorded on profile
+      // to make the award auditable and prevent reusing an existing result.
+      function hasValidXpAward() {
+        let resultId = request.resource.data.lastAwardedResultId;
+        let resultPath = /databases/$(database)/documents/users/$(userId)/results/$(resultId);
+        let result = getAfter(resultPath).data;
+
+        return resultId is string
+          && !exists(resultPath)
+          && existsAfter(resultPath)
+          && result.mode in ['player', 'club', 'career', 'stadium']
+          && result.verification == 'unverified'
+          && result.correctAnswers is int
+          && result.correctAnswers >= 0
+          && result.correctAnswers <= 10
+          && result.totalQuestions == 10
+          && request.resource.data.xp == resource.data.xp + xpFor(result.correctAnswers)
+          && request.resource.data.level is int
+          && (
+            request.resource.data.level == resource.data.level
+            || (
+              request.resource.data.level == resource.data.level + 1
+              && request.resource.data.xp >= request.resource.data.level * 100
+            )
+          );
+      }
+
       allow update: if request.auth != null
         && request.auth.uid == userId
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nickname', 'updatedAt'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'nickname', 'xp', 'level', 'updatedAt', 'lastAwardedResultId'
+        ])
         && request.resource.data.nickname is string
         && request.resource.data.nickname.size() > 0
         && request.resource.data.nickname.size() <= 24
-        && request.resource.data.updatedAt == request.time;
+        && request.resource.data.updatedAt == request.time
+        && (
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+            'xp', 'level', 'lastAwardedResultId'
+          ])
+          || hasValidXpAward()
+        );
 
       allow delete: if false;
+
+      match /results/{resultId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+
+        allow create: if request.auth != null
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasAll([
+            'mode', 'points', 'correctAnswers', 'totalQuestions', 'verification', 'completedAt'
+          ])
+          && request.resource.data.keys().hasOnly([
+            'mode', 'points', 'correctAnswers', 'totalQuestions', 'verification', 'completedAt'
+          ])
+          && request.resource.data.mode in ['player', 'club', 'career', 'stadium']
+          && request.resource.data.points is int
+          && request.resource.data.points >= 0
+          && request.resource.data.points <= 2000
+          && request.resource.data.correctAnswers is int
+          && request.resource.data.correctAnswers >= 0
+          && request.resource.data.correctAnswers <= 10
+          && request.resource.data.totalQuestions == 10
+          && request.resource.data.verification == 'unverified'
+          && request.resource.data.completedAt == request.time;
+
+        allow update, delete: if false;
+      }
     }
   }
 }
