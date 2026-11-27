@@ -161,6 +161,24 @@ export async function setUserCountry(uid: string, countryCode: string): Promise<
 /** Keeps the public leaderboard projection in the same transaction as the private profile. */
 export async function syncLeaderboardEntry(transaction: Transaction, uid: string, profile: Pick<UserProfile, 'nickname' | 'nicknameKey' | 'countryCode' | 'xp' | 'level'>): Promise<void> {
   const leaderboardRef = doc(db, 'leaderboard', uid);
-  await transaction.get(leaderboardRef);
-  transaction.set(leaderboardRef, { uid, nickname: profile.nickname, nicknameKey: profile.nicknameKey, countryCode: profile.countryCode, xp: profile.xp, level: profile.level, updatedAt: serverTimestamp() });
+  const snapshot = await transaction.get(leaderboardRef);
+  const current = snapshot.exists() ? snapshot.data() : null;
+  const changed = !current
+    || current.nickname !== profile.nickname
+    || current.nicknameKey !== profile.nicknameKey
+    || current.countryCode !== profile.countryCode
+    || current.xp !== profile.xp
+    || current.level !== profile.level;
+
+  if (changed) {
+    transaction.set(leaderboardRef, {
+      uid,
+      nickname: profile.nickname,
+      nicknameKey: profile.nicknameKey,
+      countryCode: profile.countryCode,
+      xp: profile.xp,
+      level: profile.level,
+      updatedAt: serverTimestamp(),
+    });
+  }
 }
