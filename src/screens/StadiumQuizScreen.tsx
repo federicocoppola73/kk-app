@@ -185,8 +185,8 @@ export default function StadiumQuizScreen({ locale, onBack }: Props) {
             <StadiumIllustration />
 
             <View style={styles.cluesPanel}>
-              {clues.slice(0, revealStage + 1).map((clue) => (
-                <View key={clue.label} style={styles.clueRow}>
+              {clues.map((clue, index) => (
+                <View key={clue.label} style={[styles.clueRow, index > revealStage && styles.clueHidden]}>
                   <Text style={styles.clueIcon}>{clue.icon}</Text>
                   <Text style={styles.clueLabel}>{clue.label}</Text>
                   <Text style={styles.clueValue} numberOfLines={2}>{clue.value}</Text>
@@ -292,10 +292,11 @@ const styles = StyleSheet.create({
   standBottom: { position: 'absolute', bottom: 8, left: 36, right: 36, height: 12, borderWidth: 4, borderColor: '#47749B', borderTopWidth: 0, borderBottomLeftRadius: 20, borderBottomRightRadius: 20 },
   illustrationCaption: { position: 'absolute', bottom: 3, right: 8, color: '#AFC9E8', fontSize: 6, fontWeight: '900', letterSpacing: 1 },
   cluesPanel: { borderRadius: 15, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', paddingHorizontal: 10, paddingVertical: 4, marginBottom: 7 },
-  clueRow: { minHeight: 32, flexDirection: 'row', alignItems: 'center', paddingVertical: 3, borderBottomWidth: 1, borderBottomColor: '#29415D' },
+  clueRow: { minHeight: 38, flexDirection: 'row', alignItems: 'center', paddingVertical: 3, borderBottomWidth: 1, borderBottomColor: '#29415D' },
   clueIcon: { width: 28, fontSize: 16, textAlign: 'center', marginRight: 5 },
-  clueLabel: { color: colors.muted, fontSize: 8, fontWeight: '900', letterSpacing: 0.3, width: 104 },
-  clueValue: { color: colors.white, fontSize: 11, fontWeight: '800', flex: 1, textAlign: 'right' },
+  clueLabel: { color: colors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 0.3, width: 104 },
+  clueValue: { color: colors.white, fontSize: 13, fontWeight: '800', flex: 1, textAlign: 'right' },
+  clueHidden: { opacity: 0 },
   clueFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 6, paddingBottom: 2 },
   clueCount: { color: colors.muted, fontSize: 9, fontWeight: '800' },
   revealPoints: { color: colors.gold, fontSize: 9, fontWeight: '900' },
