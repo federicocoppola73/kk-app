@@ -199,7 +199,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.midnightNavy },
-  container: { flexGrow: 1, padding: 22, paddingTop: (StatusBar.currentHeight ?? 0) + 12, paddingBottom: 36 },
+  container: { flexGrow: 1, padding: 22, paddingTop: (StatusBar.currentHeight ?? 0) + 12, paddingBottom: 56 },
   back: { alignSelf: 'flex-start', paddingVertical: 8, marginBottom: 24 },
   backText: { color: colors.iceBlue, fontSize: 14, fontWeight: '800' },
   eyebrow: { color: colors.iceBlue, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
