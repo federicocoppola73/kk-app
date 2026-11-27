@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { SupportedLocale } from '../i18n/locales';
 import { colors } from '../theme/colors';
@@ -15,13 +15,15 @@ const copy: Record<SupportedLocale, { ready: string; go: string }> = {
 
 export default function QuizCountdown({ locale, onComplete }: Props) {
   const [count, setCount] = useState<number | 'go' | null>(3);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
     if (count === null) return undefined;
     const timeout = setTimeout(() => {
       if (count === 'go') {
         setCount(null);
-        onComplete();
+        onCompleteRef.current();
       } else if (count === 1) {
         setCount('go');
       } else {
@@ -30,7 +32,7 @@ export default function QuizCountdown({ locale, onComplete }: Props) {
     }, count === 'go' ? 750 : 1000);
 
     return () => clearTimeout(timeout);
-  }, [count, onComplete]);
+  }, [count]);
 
   if (count === null) return null;
 
