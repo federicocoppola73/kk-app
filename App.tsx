@@ -108,6 +108,7 @@ export default function App() {
         nicknameKey: typeof data.nicknameKey === 'string' ? data.nicknameKey : normalizeNickname(typeof data.nickname === 'string' ? data.nickname : (authUser.displayName ?? 'Player')),
         countryCode: typeof data.countryCode === 'string' ? data.countryCode : null,
         xp: typeof data.xp === 'number' ? data.xp : 0,
+        points: typeof data.points === 'number' ? data.points : 0,
         level: typeof data.level === 'number' ? data.level : 1,
       });
     }, (error) => {
@@ -197,7 +198,7 @@ export default function App() {
     return <AuthScreen locale={activeLocale} onAuthenticated={() => setScreen('home')} />;
   }
 
-  if (screen === 'leaderboard') return <LeaderboardScreen locale={activeLocale} uid={authUser.uid} xp={userProfile?.xp ?? 0} countryCode={userProfile?.countryCode ?? null} initialScope={leaderboardScope} onBack={() => setScreen('home')} />;
+  if (screen === 'leaderboard') return <LeaderboardScreen locale={activeLocale} uid={authUser.uid} xp={userProfile?.xp ?? 0} points={userProfile?.points ?? 0} countryCode={userProfile?.countryCode ?? null} initialScope={leaderboardScope} onBack={() => setScreen('home')} />;
   if (screen === 'matchHistory') {
     return <MatchHistoryScreen locale={activeLocale} authUser={authUser} onBack={() => setScreen('profile')} />;
   }
