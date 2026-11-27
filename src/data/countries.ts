@@ -24,7 +24,7 @@ VA VC VE VG VI VN VU
 WF WS
 YE YT
 ZA ZM ZW
-`.trim().split(/\\s+/);
+`.trim().split(/\s+/);
 
 const FALLBACK_NAMES: Record<string, string> = {
   US: 'United States', GB: 'United Kingdom', IT: 'Italy', FR: 'France',
