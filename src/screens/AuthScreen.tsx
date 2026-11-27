@@ -143,6 +143,8 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
                 <>
                   <Text style={styles.fieldLabel}>{copy.nickname}</Text>
                   <TextInput value={nickname} onChangeText={setNickname} placeholder={copy.nickname} placeholderTextColor="#7186A1" autoCapitalize="words" maxLength={24} style={styles.input} />
+                  <Text style={styles.fieldLabel}>{copy.nationality}</Text>
+                  <CountryPicker locale={locale} value={countryCode} onChange={setCountryCode} />
                 </>
               )}
               <Text style={styles.fieldLabel}>{copy.email}</Text>
