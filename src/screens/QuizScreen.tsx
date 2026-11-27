@@ -120,7 +120,7 @@ export default function QuizScreen({ locale, onBack }: Props) {
   const progress = ((questionIndex + 1) / ROUND_LENGTH) * 100;
   const pointsAvailable = POINTS_BY_CLUE[revealStage];
   const clues = getClues(question.player, t, locale);
-  const visibleClues = clues.slice(0, revealStage + 1);
+  const visibleClues = clues;
 
   useEffect(() => {
     if (countdownActive || selectedAnswer !== null || showResult || revealStage >= POINTS_BY_CLUE.length - 1) return;
@@ -182,7 +182,7 @@ export default function QuizScreen({ locale, onBack }: Props) {
             </View>
             <View style={styles.cluesPanel}>
               {visibleClues.map((clue, index) => (
-                <View key={clue.key} style={[styles.clueRow, index === visibleClues.length - 1 && styles.clueRowLast]}>
+                <View key={clue.key} style={[styles.clueRow, index === visibleClues.length - 1 && styles.clueRowLast, index > revealStage && styles.clueHidden]}>
                   <Text style={styles.clueIcon}>{clue.icon}</Text>
                   <Text style={styles.clueLabel}>{clue.label}</Text>
                   <Text style={styles.clueValue} numberOfLines={2}>{clue.value}</Text>
@@ -273,11 +273,12 @@ const styles = StyleSheet.create({
   cluesHeaderText: { color: colors.iceBlue, fontSize: 10, fontWeight: '900', letterSpacing: 1 },
   pointsAvailable: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.5 },
   cluesPanel: { borderRadius: 15, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', paddingHorizontal: 10, paddingVertical: 4, marginBottom: 7 },
-  clueRow: { minHeight: 32, flexDirection: 'row', alignItems: 'center', paddingVertical: 3, borderBottomWidth: 1, borderBottomColor: '#29415D' },
+  clueRow: { minHeight: 38, flexDirection: 'row', alignItems: 'center', paddingVertical: 3, borderBottomWidth: 1, borderBottomColor: '#29415D' },
   clueRowLast: { borderBottomWidth: 0 },
+  clueHidden: { opacity: 0 },
   clueIcon: { width: 28, fontSize: 16, textAlign: 'center', marginRight: 5 },
-  clueLabel: { color: colors.muted, fontSize: 9, fontWeight: '900', letterSpacing: 0.3, width: 104 },
-  clueValue: { color: colors.white, fontSize: 11, fontWeight: '800', flex: 1, textAlign: 'right' },
+  clueLabel: { color: colors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 0.3, width: 104 },
+  clueValue: { color: colors.white, fontSize: 13, fontWeight: '800', flex: 1, textAlign: 'right' },
   revealButton: { alignSelf: 'center', marginTop: 10, marginBottom: 13, borderRadius: 10, borderWidth: 1, borderColor: '#3C6388', backgroundColor: '#1B3A5B', paddingHorizontal: 15, paddingVertical: 9 },
   revealButtonText: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 0.7 },
   allCluesText: { color: '#55D9A2', fontSize: 9, fontWeight: '900', textAlign: 'center', marginTop: 10, marginBottom: 13, letterSpacing: 0.6 },
