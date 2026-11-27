@@ -50,7 +50,7 @@ export default function LeaderboardScreen({ locale, uid, xp, countryCode, initia
     const constraints = scope === 'national'
       ? [where('countryCode', '==', countryCode), where('xp', '>', xp)]
       : [where('xp', '>', xp)];
-    void getCountFromServer(query(collection(db, 'leaderboard'), ...constraints))
+    void getCountFromServer(query(collection(db, 'leaderboard'), ...constraints, orderBy('xp', 'desc')))
       .then(result => { if (active) setOwnRank(result.data().count + 1); })
       .catch(reason => {
         console.warn('Unable to calculate leaderboard position:', reason);
