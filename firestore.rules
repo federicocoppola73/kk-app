@@ -91,7 +91,7 @@ service cloud.firestore {
       function validLegacyProfileMigration() {
         return !resource.data.keys().hasAny(['nicknameKey'])
           && request.resource.data.diff(resource.data).affectedKeys()
-            .hasOnly(['nickname', 'nicknameKey', 'countryCode', 'identityLocked', 'updatedAt'])
+            .hasOnly(['nickname', 'nicknameKey', 'countryCode', 'identityLocked', 'points', 'updatedAt'])
           && request.resource.data.nickname is string
           && request.resource.data.nickname.size() >= 3
           && request.resource.data.nickname.size() <= 24
@@ -99,6 +99,8 @@ service cloud.firestore {
           && request.resource.data.nicknameKey == request.resource.data.nickname.lower()
           && request.resource.data.countryCode == resource.data.get('countryCode', null)
           && request.resource.data.identityLocked is bool
+          && request.resource.data.points is int
+          && request.resource.data.points >= 0
           && request.resource.data.identityLocked == (
             resource.data.get('identityLocked', false)
             || request.auth.token.get('email', null) is string
@@ -113,7 +115,7 @@ service cloud.firestore {
         && request.auth.uid == userId
         && request.resource.data.keys().hasAll([
           'nickname', 'nicknameKey', 'countryCode', 'identityLocked',
-          'xp', 'level', 'createdAt', 'updatedAt'
+          'xp', 'points', 'level', 'createdAt', 'updatedAt'
         ])
         && request.resource.data.keys().hasOnly([
           'nickname', 'nicknameKey', 'countryCode', 'identityLocked',
@@ -130,6 +132,8 @@ service cloud.firestore {
           request.auth.token.get('email', null) is string
         )
         && request.resource.data.xp == 0
+        && request.resource.data.points is int
+        && request.resource.data.points >= 0
         && request.resource.data.level == 1
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time
