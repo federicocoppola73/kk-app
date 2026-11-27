@@ -109,6 +109,7 @@ export async function recordCompletedQuiz(
     transaction.update(profileRef, {
       xp: nextXp,
       level: calculateLevel(nextXp),
+      lastAwardedResultId: resultId,
       updatedAt: serverTimestamp(),
     });
 
