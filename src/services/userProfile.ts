@@ -66,6 +66,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
     }
 
     const updates: Record<string, unknown> = {};
+    if (existing.nickname !== nickname) updates.nickname = nickname;
     if (existing.nicknameKey !== nicknameKey) updates.nicknameKey = nicknameKey;
     if (!Object.prototype.hasOwnProperty.call(existing, 'countryCode')) updates.countryCode = null;
     if (typeof existing.identityLocked !== 'boolean') updates.identityLocked = !user.isAnonymous;
