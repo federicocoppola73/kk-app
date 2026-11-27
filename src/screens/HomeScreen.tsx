@@ -24,7 +24,7 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
             <Text style={styles.kicker}>{t.kicker}</Text>
           </View>
           <View style={styles.actions}>
-            <Pressable onPress={onOpenProfile} accessibilityRole="button" accessibilityLabel={locale === 'it' ? 'Profilo' : 'Profile'} style={styles.profile}>
+            <Pressable onPress={onOpenProfile} accessibilityRole="button" accessibilityLabel={({it:'Profilo',en:'Profile',es:'Perfil',fr:'Profil',de:'Profil'} as const)[locale]} style={styles.profile}>
               <View style={styles.personIcon}>
                 <View style={styles.personHead} />
                 <View style={styles.personBody} />
@@ -56,11 +56,11 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
             </View>
             <Pressable onPress={() => onOpenLeaderboard('global')} accessibilityRole="button" style={styles.stat}>
               <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
-              <Text style={styles.statLabel}>{locale === 'it' ? 'GLOBALE' : 'GLOBAL'}  ›</Text>
+              <Text style={styles.statLabel}>{({it:'GLOBALE',en:'GLOBAL',es:'GLOBAL',fr:'MONDIAL',de:'WELTWEIT'} as const)[locale]}  ›</Text>
             </Pressable>
             <Pressable onPress={() => onOpenLeaderboard('national')} accessibilityRole="button" style={styles.stat}>
               <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
-              <Text style={styles.statLabel}>{(locale === 'it' ? 'NAZIONALE' : 'NATIONAL')}  ›</Text>
+              <Text style={styles.statLabel}>{({it:'NAZIONALE',en:'NATIONAL',es:'NACIONAL',fr:'NATIONAL',de:'NATIONAL'} as const)[locale]}  ›</Text>
             </Pressable>
           </View>
         </View>
