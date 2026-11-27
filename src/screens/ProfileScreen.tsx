@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   cancelButton: { alignItems: 'center', paddingVertical: 10 },
   cancelText: { color: colors.iceBlue, fontSize: 12, fontWeight: '700' },
   success: { color: '#91E3B0', fontSize: 12, lineHeight: 18, marginTop: 12 },
-  error: { color: '#FF8D8D', backgroundColor: '#3A202A', borderRadius: 10, padding: 11, fontSize: 12, textAlign: 'center', marginTop: 12 },
+  error: { color: '#7A3212', backgroundColor: '#FFF0D6', borderWidth: 1, borderColor: '#E8B96A', borderRadius: 10, padding: 11, fontSize: 12, fontWeight: '700', textAlign: 'center', marginTop: 12 },
   disabled: { opacity: 0.6 },
   signOutButton: { minHeight: 46, borderRadius: 11, borderWidth: 1, borderColor: '#A84D5B', alignItems: 'center', justifyContent: 'center', marginTop: 14 },
   signOutText: { color: '#FF9BA5', fontSize: 11, fontWeight: '900', letterSpacing: 0.6 },
