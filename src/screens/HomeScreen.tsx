@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile }: { locale: SupportedLocale; xp: number | null; level: number | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void }) {
+export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile, onOpenLeaderboard, rank }: { locale: SupportedLocale; xp: number | null; level: number | null; rank: number | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void; onOpenLeaderboard: () => void }) {
   const t = translations[locale];
 
   const modes = [
@@ -56,10 +56,10 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
               <Text style={styles.statLabel}>{t.totalXp}</Text>
             </View>
             <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <Text style={styles.statValue}>—</Text>
-              <Text style={styles.statLabel}>{t.globalRank}</Text>
-            </View>
+            <Pressable onPress={onOpenLeaderboard} accessibilityRole="button" style={styles.stat}>
+              <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
+              <Text style={styles.statLabel}>{t.globalRank}  ›</Text>
+            </Pressable>
           </View>
         </View>
 
