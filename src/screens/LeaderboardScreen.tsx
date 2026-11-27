@@ -8,14 +8,14 @@ import { colors } from '../theme/colors';
 
 type Entry = { uid: string; nickname: string; countryCode: string | null; xp: number; level: number };
 type Scope = 'global' | 'national';
-type Props = { locale: SupportedLocale; uid: string; xp: number; countryCode: string | null; onBack: () => void };
+type Props = { locale: SupportedLocale; uid: string; xp: number; countryCode: string | null; initialScope: Scope; onBack: () => void };
 function readEntry(id: string, data: DocumentData): Entry {
   return { uid: id, nickname: typeof data.nickname === 'string' ? data.nickname : 'Player', countryCode: typeof data.countryCode === 'string' ? data.countryCode : null, xp: typeof data.xp === 'number' ? data.xp : 0, level: typeof data.level === 'number' ? data.level : 1 };
 }
 
-export default function LeaderboardScreen({ locale, uid, xp, countryCode, onBack }: Props) {
+export default function LeaderboardScreen({ locale, uid, xp, countryCode, initialScope, onBack }: Props) {
   const it = locale === 'it';
-  const [scope, setScope] = useState<Scope>('global');
+  const [scope, setScope] = useState<Scope>(initialScope);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
