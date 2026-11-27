@@ -22,7 +22,6 @@ const languages: { code: SupportedLocale | null; label: string; nativeLabel: str
 
 export default function SettingsScreen({ locale, selectedLocale, onChangeLocale, onBack }: Props) {
   const t = translations[locale];
-  const italian = locale === 'it';
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" />
