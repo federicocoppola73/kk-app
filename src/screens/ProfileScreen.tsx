@@ -15,6 +15,7 @@ type Props = {
   onBack: () => void;
   onSignOut: () => void;
   onViewAllHistory: () => void;
+  onViewStatistics: () => void;
 };
 
 type MatchResult = {
@@ -34,7 +35,7 @@ const MODE_LABELS: Record<string, { it: string; en: string }> = {
   stadium: { it: 'Stadium Quiz', en: 'Stadium Quiz' },
 };
 
-export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory }: Props) {
+export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory, onViewStatistics }: Props) {
   const italian = locale === 'it';
   const [results, setResults] = useState<MatchResult[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -198,7 +199,12 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
           </View>
         </View>
 
-        <Text style={styles.section}>{labels.statistics}</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.section}>{labels.statistics}</Text>
+          <Pressable onPress={onViewStatistics} style={styles.viewAllButton}>
+            <Text style={styles.viewAllText}>{italian ? 'DETTAGLIO  ›' : 'DETAILS  ›'}</Text>
+          </Pressable>
+        </View>
         <View style={styles.statsGrid}>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>{results.length}</Text>
@@ -307,6 +313,7 @@ const styles = StyleSheet.create({
   accountType: { color: colors.iceBlue, fontSize: 11, fontWeight: '800', marginTop: 4 },
   email: { color: colors.muted, fontSize: 11, marginTop: 5 },
   section: { color: colors.gold, fontSize: 12, fontWeight: '900', letterSpacing: 1, marginBottom: 10, marginTop: 4 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginBottom: 24 },
   statCard: { flexGrow: 1, flexBasis: '30%', minHeight: 82, borderRadius: 13, padding: 12, backgroundColor: colors.surface, borderWidth: 1, borderColor: '#294968', justifyContent: 'center' },
   statValue: { color: colors.white, fontSize: 23, fontWeight: '900' },
