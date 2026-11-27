@@ -142,7 +142,22 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
   const totalCorrectAnswers = results.reduce((sum, result) => sum + result.correctAnswers, 0);
   const totalQuestions = results.reduce((sum, result) => sum + result.totalQuestions, 0);
   const accuracy = totalQuestions > 0 ? Math.round((totalCorrectAnswers / totalQuestions) * 100) : 0;
-  const modeName = (mode: string) => MODE_LABELS[mode]?.[italian ? 'it' : 'en'] ?? mode;\n\n  const saveCountry = async (code: string) => {\n    setCountrySaving(true);\n    setCountryError('');\n    try {\n      await setUserCountry(authUser.uid, code);\n    } catch (reason) {\n      const message = reason instanceof Error ? reason.message : '';\n      setCountryError(message === 'country-already-set'\n        ? (italian ? 'La nazionalità è già stata impostata e non può essere modificata.' : 'Nationality has already been set and cannot be changed.')\n        : labels.countryError);\n    } finally {\n      setCountrySaving(false);\n    }\n  };
+  const modeName = (mode: string) => MODE_LABELS[mode]?.[italian ? 'it' : 'en'] ?? mode;
+
+  const saveCountry = async (code: string) => {
+    setCountrySaving(true);
+    setCountryError('');
+    try {
+      await setUserCountry(authUser.uid, code);
+    } catch (reason) {
+      const message = reason instanceof Error ? reason.message : '';
+      setCountryError(message === 'country-already-set'
+        ? (italian ? 'La nazionalità è già stata impostata e non può essere modificata.' : 'Nationality has already been set and cannot be changed.')
+        : labels.countryError);
+    } finally {
+      setCountrySaving(false);
+    }
+  };
 
   const submitRegistration = async () => {
     setRegistrationError('');
@@ -166,7 +181,9 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
         ? String((reason as { code: unknown }).code)
         : '';
       const message = reason instanceof Error ? reason.message : '';
-      if (message === 'nickname-already-taken') setRegistrationError(italian ? 'Questo nickname è già utilizzato. Scegline un altro.' : 'This nickname is already taken. Choose another one.');\n      else if (message === 'nickname-invalid-length') setRegistrationError(italian ? 'Il nickname deve contenere da 3 a 24 caratteri.' : 'Nickname must contain 3 to 24 characters.');\n      else if (code.includes('email-already-in-use')) setRegistrationError(italian ? 'Questa email è già associata a un account.' : 'This email is already in use.');
+      if (message === 'nickname-already-taken') setRegistrationError(italian ? 'Questo nickname è già utilizzato. Scegline un altro.' : 'This nickname is already taken. Choose another one.');
+      else if (message === 'nickname-invalid-length') setRegistrationError(italian ? 'Il nickname deve contenere da 3 a 24 caratteri.' : 'Nickname must contain 3 to 24 characters.');
+      else if (code.includes('email-already-in-use')) setRegistrationError(italian ? 'Questa email è già associata a un account.' : 'This email is already in use.');
       else if (code.includes('invalid-email')) setRegistrationError(italian ? 'Indirizzo email non valido.' : 'Invalid email address.');
       else if (code.includes('weak-password')) setRegistrationError(italian ? 'La password deve contenere almeno 6 caratteri.' : 'Password must contain at least 6 characters.');
       else if (code.includes('network-request-failed')) setRegistrationError(italian ? 'Connessione assente. Controlla Internet.' : 'Network error. Check your connection.');
@@ -198,7 +215,21 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
           </View>
         </View>
 
-        <Text style={styles.section}>{labels.nationalitySaved}</Text>\n        <View style={styles.infoCard}>\n          {userProfile?.countryCode ? (\n            <Text style={styles.infoText}>{getCountryName(userProfile.countryCode, locale)}</Text>\n          ) : (\n            <>\n              <Text style={styles.hint}>{labels.chooseCountry}</Text>\n              <CountryPicker locale={locale} value={null} onChange={(code) => void saveCountry(code)} />\n              {countrySaving && <ActivityIndicator color={colors.gold} style={{ marginTop: 10 }} />}\n              {!!countryError && <Text style={styles.error}>{countryError}</Text>}\n            </>\n          )}\n        </View>\n\n        <Text style={styles.section}>{labels.progression}</Text>
+        <Text style={styles.section}>{labels.nationalitySaved}</Text>
+        <View style={styles.infoCard}>
+          {userProfile?.countryCode ? (
+            <Text style={styles.infoText}>{getCountryName(userProfile.countryCode, locale)}</Text>
+          ) : (
+            <>
+              <Text style={styles.hint}>{labels.chooseCountry}</Text>
+              <CountryPicker locale={locale} value={null} onChange={(code) => void saveCountry(code)} />
+              {countrySaving && <ActivityIndicator color={colors.gold} style={{ marginTop: 10 }} />}
+              {!!countryError && <Text style={styles.error}>{countryError}</Text>}
+            </>
+          )}
+        </View>
+
+        <Text style={styles.section}>{labels.progression}</Text>
         <View style={styles.statsGrid}>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>{userProfile?.xp.toLocaleString() ?? '—'}</Text>
