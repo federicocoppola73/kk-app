@@ -5,6 +5,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { syncLeaderboardEntry } from './userProfile';
 
 export type QuizMode = 'player' | 'club' | 'career' | 'stadium';
 
@@ -96,6 +97,8 @@ export async function recordCompletedQuiz(
     const profile = profileSnapshot.data();
     const currentXp = typeof profile.xp === 'number' ? profile.xp : 0;
     const nextXp = currentXp + xpAwarded;
+
+    await syncLeaderboardEntry(transaction, uid, { nickname: String(profile.nickname), nicknameKey: String(profile.nicknameKey), countryCode: typeof profile.countryCode === 'string' ? profile.countryCode : null, xp: nextXp, level: calculateLevel(nextXp) });
 
     transaction.set(resultRef, {
       mode,
