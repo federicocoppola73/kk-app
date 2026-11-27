@@ -34,18 +34,16 @@ service cloud.firestore {
       function hasValidXpAward() {
         let resultId = request.resource.data.lastAwardedResultId;
         let resultPath = /databases/$(database)/documents/users/$(userId)/results/$(resultId);
-        let result = getAfter(resultPath).data;
-
         return resultId is string
           && !exists(resultPath)
           && existsAfter(resultPath)
-          && result.mode in ['player', 'club', 'career', 'stadium']
-          && result.verification == 'unverified'
-          && result.correctAnswers is int
-          && result.correctAnswers >= 0
-          && result.correctAnswers <= 10
-          && result.totalQuestions == 10
-          && request.resource.data.xp == resource.data.xp + xpFor(result.correctAnswers)
+          && getAfter(resultPath).data.mode in ['player', 'club', 'career', 'stadium']
+          && getAfter(resultPath).data.verification == 'unverified'
+          && getAfter(resultPath).data.correctAnswers is int
+          && getAfter(resultPath).data.correctAnswers >= 0
+          && getAfter(resultPath).data.correctAnswers <= 10
+          && getAfter(resultPath).data.totalQuestions == 10
+          && request.resource.data.xp == resource.data.xp + xpFor(getAfter(resultPath).data.correctAnswers)
           && request.resource.data.level is int
           && (
             request.resource.data.level == resource.data.level
