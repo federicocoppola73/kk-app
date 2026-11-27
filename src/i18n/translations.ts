@@ -192,7 +192,7 @@ const italian: Translation = {
 
 const spanish: Translation = {
   kicker: 'FÚTBOL • QUIZ Y JUEGOS', overline: 'EL JUEGO EMPIEZA AHORA',
-  headline: '¿CUÁNTO SABES\\nDE FÚTBOL?', subhead: 'Demuestra tus conocimientos. Sube en la clasificación. Domina el juego.',
+  headline: '¿CUÁNTO SABES\nDE FÚTBOL?', subhead: 'Demuestra tus conocimientos. Sube en la clasificación. Domina el juego.',
   rookie: 'NOVATO', totalXp: 'XP TOTALES', globalRank: 'CLASIFICACIÓN GLOBAL',
   chooseChallenge: 'ELIGE TU DESAFÍO', gameModes: '4 MODOS DE JUEGO',
   playerTitle: 'IDENTIFICA AL JUGADOR', playerDetail: 'Adivina el jugador a partir de pistas progresivas',
@@ -238,7 +238,7 @@ const spanish: Translation = {
 
 const french: Translation = {
   kicker: 'FOOTBALL • QUIZ & JEUX', overline: 'LE JEU COMMENCE MAINTENANT',
-  headline: 'CONNAISSEZ-VOUS\\nBIEN LE FOOTBALL ?', subhead: 'Prouvez vos connaissances. Grimpez au classement. Dominez le jeu.',
+  headline: 'CONNAISSEZ-VOUS\nBIEN LE FOOTBALL ?', subhead: 'Prouvez vos connaissances. Grimpez au classement. Dominez le jeu.',
   rookie: 'DÉBUTANT', totalXp: 'XP TOTAUX', globalRank: 'CLASSEMENT MONDIAL',
   chooseChallenge: 'CHOISISSEZ VOTRE DÉFI', gameModes: '4 MODES DE JEU',
   playerTitle: 'IDENTIFIER LE JOUEUR', playerDetail: 'Trouvez le joueur grâce à des indices progressifs',
@@ -284,7 +284,7 @@ const french: Translation = {
 
 const german: Translation = {
   kicker: 'FUSSBALL • QUIZ & GAMING', overline: 'DAS SPIEL BEGINNT JETZT',
-  headline: 'WIE GUT KENNST DU\\nFUSSBALL?', subhead: 'Zeig dein Wissen. Steig in der Rangliste auf. Beherrsche das Spiel.',
+  headline: 'WIE GUT KENNST DU\nFUSSBALL?', subhead: 'Zeig dein Wissen. Steig in der Rangliste auf. Beherrsche das Spiel.',
   rookie: 'NEULING', totalXp: 'GESAMTE XP', globalRank: 'WELTRANGLISTE',
   chooseChallenge: 'WÄHLE DEINE HERAUSFORDERUNG', gameModes: '4 SPIELMODI',
   playerTitle: 'SPIELER ERKENNEN', playerDetail: 'Erkenne den Spieler anhand aufeinanderfolgender Hinweise',
