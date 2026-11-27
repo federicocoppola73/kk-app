@@ -27,7 +27,6 @@ type Props = {
 
 export default function AuthScreen({ locale, onAuthenticated }: Props) {
   const t = translations[locale];
-  const copyByLocale = {
   const [mode, setMode] = useState<Mode>('choice');
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
