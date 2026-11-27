@@ -234,17 +234,6 @@ const spanish: Translation = {
   settingsTitle: 'AJUSTES', settingsBack: 'VOLVER', languageSection: 'IDIOMA',
   languageDescription: 'Elige el idioma de la aplicación. Automático utiliza el idioma de tu dispositivo.',
   audioSection: 'AUDIO', audioComingSoon: 'La música de fondo y los efectos de sonido estarán disponibles en una próxima actualización.',
-  overline:'EL JUEGO EMPIEZA AHORA', subhead:'Demuestra tus conocimientos. Sube en la clasificación. Domina el juego.', totalXp:'XP TOTALES', globalRank:'CLASIFICACIÓN GLOBAL', gameModes:'4 MODOS DE JUEGO',
-  playerDetail:'Adivina al jugador con pistas progresivas', clubDetail:'Adivina el club con pistas progresivas', careerDetail:'Sigue los clubes. Adivina al jugador.', stadiumDetail:'Adivina el estadio con pistas progresivas',
-  proChallenge:'DESAFÍO PRO', stadiumKnowledge:'CONOCIMIENTO DE ESTADIOS', daily:'DIARIO', dailyChallenge:'DESAFÍO DIARIO', preview:'KIT & KICK • VISTA PREVIA 0.2.1', demoLabel:'RONDA DE PRÁCTICA',
-  playerClueCounter:'PISTA', playerClueBirthplace:'LUGAR DE NACIMIENTO', playerClueEra:'ÉPOCA', playerClueFact:'RÉCORD / DATO DE CARRERA', allCluesRevealed:'TODAS LAS PISTAS REVELADAS',
-  stadiumIdRound:'IDENTIFICA EL ESTADIO • 10 PREGUNTAS', clueOpened:'AÑO DE INAUGURACIÓN', clueEvent:'EVENTO DESTACADO', clueLocation:'CIUDAD Y PAÍS',
-  careerIdRound:'TRAYECTORIA • 10 PREGUNTAS', careerClueCounter:'CLUBES REVELADOS', careerDemoNotice:'Versión de práctica: las trayectorias son contenido provisional para pruebas internas. Los puntos y XP son temporales y no se guardan.',
-  clueCity:'CIUDAD', clueColors:'COLORES DEL CLUB', clueStadium:'ESTADIO', clueCounter:'PISTA', pointsAvailable:'PUNTOS DISPONIBLES', revealImage:'REVELAR IMAGEN',
-  correctAnswers:'RESPUESTAS CORRECTAS', seeResults:'VER RESULTADOS', photoPlaceholder:'FOTO DEL JUGADOR', correct:'¡RESPUESTA CORRECTA!', correctWas:'Respuesta correcta:', continue:'CONTINUAR',
-  resultScore:'TU PUNTUACIÓN', earnedXp:'XP CONSEGUIDOS', leaveMatchTitle:'¿Salir del partido?', continuePlaying:'Seguir jugando', settingsBack:'VOLVER', languageSection:'IDIOMA',
-  audioComingSoon:'La música de fondo y los efectos de sonido estarán disponibles en una próxima actualización.',
-
 };
 
 const french: Translation = {
@@ -291,17 +280,6 @@ const french: Translation = {
   settingsTitle: 'PARAMÈTRES', settingsBack: 'RETOUR', languageSection: 'LANGUE',
   languageDescription: 'Choisissez la langue de l’application. Automatique suit la langue de votre appareil.',
   audioSection: 'AUDIO', audioComingSoon: 'La musique de fond et les effets sonores seront disponibles dans une prochaine mise à jour.',
-  overline:'LE JEU COMMENCE MAINTENANT', subhead:'Prouvez vos connaissances. Grimpez au classement. Dominez le jeu.', totalXp:'XP TOTAUX', globalRank:'CLASSEMENT MONDIAL', gameModes:'4 MODES DE JEU',
-  playerDetail:'Trouvez le joueur grâce à des indices progressifs', clubDetail:'Trouvez le club grâce à des indices progressifs', careerDetail:'Suivez les clubs. Devinez le joueur.', stadiumDetail:'Trouvez le stade grâce à des indices progressifs',
-  proChallenge:'DÉFI PRO', stadiumKnowledge:'CONNAISSANCE DES STADES', daily:'QUOTIDIEN', dailyChallenge:'DÉFI QUOTIDIEN', preview:'KIT & KICK • APERÇU 0.2.1', demoLabel:'MANCHE D’ESSAI',
-  playerClueCounter:'INDICE', playerClueBirthplace:'LIEU DE NAISSANCE', playerClueEra:'ÉPOQUE', playerClueFact:'RECORD / FAIT DE CARRIÈRE', allCluesRevealed:'TOUS LES INDICES RÉVÉLÉS',
-  stadiumIdRound:'IDENTIFIER LE STADE • 10 QUESTIONS', clueOpened:'ANNÉE D’OUVERTURE', clueEvent:'ÉVÉNEMENT MARQUANT', clueLocation:'VILLE ET PAYS',
-  careerIdRound:'PARCOURS • 10 QUESTIONS', careerClueCounter:'CLUBS RÉVÉLÉS', careerDemoNotice:'Version d’essai : les parcours sont des contenus provisoires réservés aux tests internes. Les points et XP sont temporaires et ne sont pas enregistrés.',
-  clueCity:'VILLE', clueColors:'COULEURS DU CLUB', clueStadium:'STADE', clueCounter:'INDICE', pointsAvailable:'POINTS DISPONIBLES', revealImage:'RÉVÉLER L’IMAGE',
-  correctAnswers:'BONNES RÉPONSES', seeResults:'VOIR LES RÉSULTATS', photoPlaceholder:'PHOTO DU JOUEUR', correct:'BONNE RÉPONSE !', correctWas:'Bonne réponse :', continue:'CONTINUER',
-  resultScore:'VOTRE SCORE', earnedXp:'XP GAGNÉS', leaveMatchTitle:'Quitter le match ?', continuePlaying:'Continuer à jouer', settingsBack:'RETOUR', languageSection:'LANGUE',
-  audioComingSoon:'La musique de fond et les effets sonores seront disponibles dans une prochaine mise à jour.',
-
 };
 
 const german: Translation = {
@@ -348,17 +326,6 @@ const german: Translation = {
   settingsTitle: 'EINSTELLUNGEN', settingsBack: 'ZURÜCK', languageSection: 'SPRACHE',
   languageDescription: 'Wähle die Sprache der App. Automatisch übernimmt die Sprache deines Geräts.',
   audioSection: 'AUDIO', audioComingSoon: 'Hintergrundmusik und Soundeffekte werden in einem zukünftigen Update verfügbar sein.',
-  overline:'DAS SPIEL BEGINNT JETZT', subhead:'Zeig dein Wissen. Steig in der Rangliste auf. Beherrsche das Spiel.', totalXp:'GESAMTE XP', globalRank:'WELTRANGLISTE', gameModes:'4 SPIELMODI',
-  playerDetail:'Erkenne den Spieler anhand aufeinanderfolgender Hinweise', clubDetail:'Erkenne den Verein anhand aufeinanderfolgender Hinweise', careerDetail:'Folge den Vereinen. Errate den Spieler.', stadiumDetail:'Erkenne das Stadion anhand aufeinanderfolgender Hinweise',
-  proChallenge:'PROFI-CHALLENGE', stadiumKnowledge:'STADIONWISSEN', daily:'TÄGLICH', dailyChallenge:'TÄGLICHE CHALLENGE', preview:'KIT & KICK • VORSCHAU 0.2.1', demoLabel:'PROBERUNDE',
-  playerClueCounter:'HINWEIS', playerClueBirthplace:'GEBURTSORT', playerClueEra:'AKTIVE ZEIT', playerClueFact:'REKORD / KARRIEREFAKT', allCluesRevealed:'ALLE HINWEISE ANGEZEIGT',
-  stadiumIdRound:'STADION ERKENNEN • 10 FRAGEN', clueOpened:'ERÖFFNUNGSJAHR', clueEvent:'BESONDERES EREIGNIS', clueLocation:'STADT UND LAND',
-  careerIdRound:'KARRIEREWEG • 10 FRAGEN', careerClueCounter:'VEREINE ANGEZEIGT', careerDemoNotice:'Testversion: Karrierewege sind vorläufige Inhalte für interne Tests. Punkte und XP sind temporär und werden nicht gespeichert.',
-  clueCity:'STADT', clueColors:'VEREINSFARBEN', clueStadium:'STADION', clueCounter:'HINWEIS', pointsAvailable:'VERFÜGBARE PUNKTE', revealImage:'BILD AUFDECKEN',
-  correctAnswers:'RICHTIGE ANTWORTEN', seeResults:'ERGEBNISSE ANZEIGEN', photoPlaceholder:'SPIELERFOTO', correct:'RICHTIGE ANTWORT!', correctWas:'Richtige Antwort:', continue:'WEITER',
-  resultScore:'DEIN ERGEBNIS', earnedXp:'ERHALTENE XP', leaveMatchTitle:'Spiel verlassen?', continuePlaying:'Weiterspielen', settingsBack:'ZURÜCK', languageSection:'SPRACHE',
-  audioComingSoon:'Hintergrundmusik und Soundeffekte werden in einem zukünftigen Update verfügbar sein.',
-
 };
 
 export const translations: Record<SupportedLocale, Translation> = {
