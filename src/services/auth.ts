@@ -15,6 +15,7 @@ function makeGuestNickname() {
 export async function continueAsGuest(): Promise<void> {
   const credential = await signInAnonymously(auth);
   await updateProfile(credential.user, { displayName: makeGuestNickname() });
+  await ensureUserProfile(credential.user);
 }
 
 export async function signInWithEmail(email: string, password: string): Promise<void> {
