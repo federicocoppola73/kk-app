@@ -45,7 +45,7 @@ service cloud.firestore {
       }
 
       function validGuestNicknameChange() {
-        return request.auth.token.firebase.sign_in_provider == 'anonymous'
+        return !(request.auth.token.email is string)
           && resource.data.identityLocked == false
           && request.resource.data.identityLocked == false
           && request.resource.data.diff(resource.data).affectedKeys()
@@ -62,7 +62,7 @@ service cloud.firestore {
       function validIdentityLock() {
         return resource.data.identityLocked == false
           && request.resource.data.identityLocked == true
-          && request.auth.token.firebase.sign_in_provider != 'anonymous'
+          && request.auth.token.email is string
           && request.resource.data.diff(resource.data).affectedKeys()
             .hasOnly(['identityLocked', 'updatedAt'])
           && request.resource.data.updatedAt == request.time;
