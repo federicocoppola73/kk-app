@@ -92,9 +92,8 @@ export default function App() {
       return;
     }
 
-    // Guest profiles are initialized here after their generated nickname is assigned.
-    // Registered profiles are initialized by the explicit login/registration flow.
-    const shouldInitializeProfile = authUser.isAnonymous && Boolean(authUser.displayName);
+    // Initialize/synchronize every signed-in profile, including accounts created before the leaderboard existed.
+    const shouldInitializeProfile = Boolean(authUser.displayName);
     const profileRef = doc(db, 'users', authUser.uid);
     const unsubscribe = onSnapshot(profileRef, (snapshot) => {
       if (!snapshot.exists()) {
