@@ -5,11 +5,10 @@ import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 import { useQuizExitConfirmation } from '../hooks/useQuizExitConfirmation';
 import { auth } from '../services/firebase';
-import { createQuizResultId, recordCompletedQuiz } from '../services/quizResults';
+import { calculateQuizXp, createQuizResultId, recordCompletedQuiz } from '../services/quizResults';
 import { careerPlayers, type CareerPlayer } from '../data/careerPaths';
 
 const ROUND_LENGTH = 10;
-const XP_PER_CORRECT_ANSWER = 25;
 const REVEAL_INTERVAL_MS = 4000;
 const POINTS = [200, 160, 120, 80, 40];
 
@@ -48,7 +47,6 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
-  const [totalXp, setTotalXp] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const handleBack = useQuizExitConfirmation(locale, showResult, onBack);
   const resultIdRef = useRef<string | null>(null);
@@ -91,7 +89,6 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
     if (selectedAnswer === question.player.id) {
       setCorrectCount((value) => value + 1);
       setTotalPoints((value) => value + potentialPoints);
-      setTotalXp((value) => value + XP_PER_CORRECT_ANSWER);
     }
     if (questionIndex === ROUND_LENGTH - 1) {
       setShowResult(true);
@@ -109,7 +106,6 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
     setSelectedAnswer(null);
     setCorrectCount(0);
     setTotalPoints(0);
-    setTotalXp(0);
     setShowResult(false);
     setRevealStage(1);
   };
@@ -168,7 +164,7 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
             </View>
             {selectedAnswer !== null ? <View style={styles.feedback}>
               <Text style={[styles.feedbackTitle, isCorrect ? styles.correctText : styles.wrongText]}>{isCorrect ? t.correct : t.incorrect}</Text>
-              {!isCorrect ? <Text style={styles.feedbackDetail}>{t.correctWas} {question.player.name}</Text> : <Text style={styles.feedbackDetail}>+{potentialPoints} {t.pointsLabel} • +{XP_PER_CORRECT_ANSWER} XP</Text>}
+              {!isCorrect ? <Text style={styles.feedbackDetail}>{t.correctWas} {question.player.name}</Text> : <Text style={styles.feedbackDetail}>+{potentialPoints} {t.pointsLabel}</Text>}
               <Pressable onPress={continueRound} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{questionIndex === ROUND_LENGTH - 1 ? t.seeResults : t.continue} →</Text></Pressable>
             </View> : null}
           </>
@@ -176,7 +172,7 @@ export default function CareerQuizScreen({ locale, onBack }: Props) {
           <View style={styles.resultPanel}>
             <Text style={styles.resultEyebrow}>KIT & KICK</Text><Text style={styles.resultTitle}>{t.resultTitle}</Text>
             <Text style={styles.resultScoreLabel}>{t.resultScore}</Text><Text style={styles.resultScore}>{correctCount} / {ROUND_LENGTH}</Text>
-            <View style={styles.statsRow}><View style={styles.statCard}><Text style={styles.statValue}>{totalPoints}</Text><Text style={styles.statLabel}>{t.pointsLabel}</Text></View><View style={styles.statCard}><Text style={styles.statValue}>+{totalXp}</Text><Text style={styles.statLabel}>XP</Text></View></View>
+            <View style={styles.statsRow}><View style={styles.statCard}><Text style={styles.statValue}>{totalPoints}</Text><Text style={styles.statLabel}>{t.pointsLabel}</Text></View><View style={styles.statCard}><Text style={styles.statValue}>+{calculateQuizXp(correctCount)}</Text><Text style={styles.statLabel}>XP</Text></View></View>
             <Text style={styles.resultHint}>{t.correctAnswers}: {correctCount} / {ROUND_LENGTH}</Text>
             <Pressable onPress={restart} style={styles.primaryButton}><Text style={styles.primaryButtonText}>{t.playAgain}</Text></Pressable>
             <Pressable onPress={handleBack} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>{t.backHome}</Text></Pressable>
