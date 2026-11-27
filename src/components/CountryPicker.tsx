@@ -15,6 +15,13 @@ export default function CountryPicker({ locale, value, onChange, placeholder }: 
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState('');
   const language = locale;
+  const copy = ({
+    it: { placeholder: 'Seleziona nazionalità (facoltativa)', title: 'SELEZIONA NAZIONALITÀ', search: 'Cerca un Paese…', empty: 'Nessun Paese trovato.' },
+    en: { placeholder: 'Select nationality (optional)', title: 'SELECT NATIONALITY', search: 'Search country…', empty: 'No countries found.' },
+    es: { placeholder: 'Selecciona nacionalidad (opcional)', title: 'SELECCIONAR NACIONALIDAD', search: 'Buscar país…', empty: 'No se encontraron países.' },
+    fr: { placeholder: 'Sélectionner la nationalité (facultatif)', title: 'CHOISIR LA NATIONALITÉ', search: 'Rechercher un pays…', empty: 'Aucun pays trouvé.' },
+    de: { placeholder: 'Nationalität auswählen (optional)', title: 'NATIONALITÄT AUSWÄHLEN', search: 'Land suchen…', empty: 'Keine Länder gefunden.' },
+  } as const)[locale];
   const countries = useMemo(() => COUNTRY_CODES
     .map((code) => ({ code, name: getCountryName(code, language) }))
     .sort((a, b) => a.name.localeCompare(b.name, language)), [language]);
@@ -28,7 +35,7 @@ export default function CountryPicker({ locale, value, onChange, placeholder }: 
     <>
       <Pressable onPress={() => { setSearch(''); setVisible(true); }} style={styles.selector}>
         <Text style={[styles.selectorText, !value && styles.placeholder]}>
-          {selectedName || placeholder || (locale === 'it' ? 'Seleziona nazionalità (facoltativa)' : 'Select nationality (optional)')}
+          {selectedName || placeholder || copy.placeholder}
         </Text>
         <Text style={styles.chevron}>⌄</Text>
       </Pressable>
@@ -36,13 +43,13 @@ export default function CountryPicker({ locale, value, onChange, placeholder }: 
         <View style={styles.overlay}>
           <View style={styles.sheet}>
             <View style={styles.header}>
-              <Text style={styles.title}>{locale === 'it' ? 'SELEZIONA NAZIONALITÀ' : 'SELECT NATIONALITY'}</Text>
+              <Text style={styles.title}>{copy.title}</Text>
               <Pressable onPress={() => setVisible(false)}><Text style={styles.close}>✕</Text></Pressable>
             </View>
             <TextInput
               value={search}
               onChangeText={setSearch}
-              placeholder={locale === 'it' ? 'Cerca un Paese…' : 'Search country…'}
+              placeholder={copy.search}
               placeholderTextColor="#7186A1"
               autoCorrect={false}
               style={styles.search}
@@ -58,7 +65,7 @@ export default function CountryPicker({ locale, value, onChange, placeholder }: 
                   <Text style={styles.countryCode}>{country.code}</Text>
                 </Pressable>
               ))}
-              {filtered.length === 0 && <Text style={styles.empty}>{locale === 'it' ? 'Nessun Paese trovato.' : 'No countries found.'}</Text>}
+              {filtered.length === 0 && <Text style={styles.empty}>{copy.empty}</Text>}
             </ScrollView>
           </View>
         </View>
