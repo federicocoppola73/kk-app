@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile, onOpenLeaderboard, rank }: { locale: SupportedLocale; xp: number | null; level: number | null; rank: number | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void; onOpenLeaderboard: () => void }) {
+export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile, onOpenLeaderboard, rank, nationalRank, countryCode }: { locale: SupportedLocale; xp: number | null; level: number | null; rank: number | null; nationalRank: number | null; countryCode: string | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void; onOpenLeaderboard: () => void }) {
   const t = translations[locale];
 
   const modes = [
@@ -58,7 +58,12 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
             <View style={styles.statDivider} />
             <Pressable onPress={onOpenLeaderboard} accessibilityRole="button" style={styles.stat}>
               <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
-              <Text style={styles.statLabel}>{t.globalRank}  ›</Text>
+              <Text style={styles.statLabel}>{locale === 'it' ? 'GLOBALE' : 'GLOBAL'}  ›</Text>
+            </Pressable>
+            <View style={styles.statDivider} />
+            <Pressable onPress={onOpenLeaderboard} accessibilityRole="button" style={styles.stat}>
+              <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
+              <Text style={styles.statLabel}>{countryCode ?? (locale === 'it' ? 'NAZIONALE' : 'NATIONAL')}  ›</Text>
             </Pressable>
           </View>
         </View>
@@ -124,8 +129,8 @@ const styles = StyleSheet.create({
   overline: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 1.5 },
   headline: { color: colors.white, fontSize: 19, lineHeight: 22, fontWeight: '900', letterSpacing: -0.5, marginTop: 5 },
   subhead: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: 7 },
-  statsRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, paddingTop: 9, borderTopWidth: 1, borderTopColor: '#29435F' },
-  stat: { flex: 1, alignItems: 'center' },
+  statsRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', rowGap: 10, marginTop: 12, paddingTop: 9, borderTopWidth: 1, borderTopColor: '#29435F' },
+  stat: { flex: 1, minWidth: '40%', alignItems: 'center' },
   statValue: { color: colors.white, fontSize: 15, fontWeight: '900' },
   statLabel: { color: colors.muted, fontSize: 8, fontWeight: '800', letterSpacing: 1, marginTop: 5 },
   statDivider: { width: 1, height: 28, backgroundColor: '#29435F' },
