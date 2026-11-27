@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import type { SupportedLocale } from '../i18n/locales';
 import { colors } from '../theme/colors';
+import CountryPicker from '../components/CountryPicker';
 import { continueAsGuest, registerWithEmail, signInWithEmail } from '../services/auth';
 
 type Mode = 'choice' | 'login' | 'register';
@@ -28,6 +29,7 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
   const [mode, setMode] = useState<Mode>('choice');
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
+  const [countryCode, setCountryCode] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -42,6 +44,7 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
     register: italian ? 'CREA ACCOUNT' : 'CREATE ACCOUNT',
     email: italian ? 'EMAIL' : 'EMAIL',
     nickname: italian ? 'NICKNAME' : 'NICKNAME',
+    nationality: italian ? 'NAZIONALITÀ (FACOLTATIVA)' : 'NATIONALITY (OPTIONAL)',
     password: italian ? 'PASSWORD' : 'PASSWORD',
     confirm: italian ? 'CONFERMA PASSWORD' : 'CONFIRM PASSWORD',
     submitLogin: italian ? 'ACCEDI' : 'LOG IN',
@@ -60,6 +63,9 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
     const code = typeof reason === 'object' && reason !== null && 'code' in reason
       ? String((reason as { code: unknown }).code)
       : '';
+    const message = reason instanceof Error ? reason.message : '';
+    if (message === 'nickname-already-taken') return italian ? 'Questo nickname è già utilizzato. Scegline un altro.' : 'This nickname is already taken. Choose another one.';
+    if (message === 'nickname-invalid-length') return italian ? 'Il nickname deve contenere da 3 a 24 caratteri.' : 'Nickname must contain 3 to 24 characters.';
     if (code.includes('invalid-email')) return italian ? 'Indirizzo email non valido.' : 'Invalid email address.';
     if (code.includes('user-not-found') || code.includes('invalid-credential') || code.includes('wrong-password')) return italian ? 'Email o password non corretti.' : 'Incorrect email or password.';
     if (code.includes('email-already-in-use')) return italian ? 'Questa email è già associata a un account.' : 'This email is already in use.';
@@ -92,7 +98,7 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
       return;
     }
     if (mode === 'register') {
-      void run(() => registerWithEmail(email, nickname, password));
+      void run(() => registerWithEmail(email, nickname, password, countryCode));
     } else {
       void run(() => signInWithEmail(email, password));
     }
