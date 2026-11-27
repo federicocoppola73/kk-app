@@ -15,11 +15,12 @@ import StadiumQuizScreen from './src/screens/StadiumQuizScreen';
 import CareerQuizScreen from './src/screens/CareerQuizScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import MatchHistoryScreen from './src/screens/MatchHistoryScreen';
 import { resolveLocale, type SupportedLocale } from './src/i18n/locales';
 
 const LANGUAGE_KEY = '@kit-and-kick/language';
 
-type Screen = 'splash' | 'gate' | 'home' | 'playerQuiz' | 'clubQuiz' | 'stadiumQuiz' | 'careerQuiz' | 'settings' | 'profile';
+type Screen = 'splash' | 'gate' | 'home' | 'playerQuiz' | 'clubQuiz' | 'stadiumQuiz' | 'careerQuiz' | 'settings' | 'profile' | 'matchHistory';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('splash');
@@ -60,6 +61,11 @@ export default function App() {
       // Quiz screens own their exit confirmation and handle this event first.
       if (screen === 'playerQuiz' || screen === 'clubQuiz' || screen === 'stadiumQuiz' || screen === 'careerQuiz') {
         return false;
+      }
+
+      if (screen === 'matchHistory') {
+        setScreen('profile');
+        return true;
       }
 
       if (screen === 'settings' || screen === 'profile') {
@@ -139,8 +145,11 @@ export default function App() {
     return <AuthScreen locale={activeLocale} onAuthenticated={() => setScreen('home')} />;
   }
 
+  if (screen === 'matchHistory') {
+    return <MatchHistoryScreen locale={activeLocale} authUser={authUser} onBack={() => setScreen('profile')} />;
+  }
   if (screen === 'profile') {
-    return <ProfileScreen locale={activeLocale} authUser={authUser} userProfile={userProfile} onBack={() => setScreen('home')} onSignOut={() => { void signOut(auth).catch((error) => console.warn('Unable to sign out:', error)); }} />;
+    return <ProfileScreen locale={activeLocale} authUser={authUser} userProfile={userProfile} onBack={() => setScreen('home')} onViewAllHistory={() => setScreen('matchHistory')} onSignOut={() => { void signOut(auth).catch((error) => console.warn('Unable to sign out:', error)); }} />;
   }
   if (screen === 'settings') {
     return <SettingsScreen locale={activeLocale} selectedLocale={locale} authUser={authUser} onChangeLocale={changeLocale} onBack={() => setScreen('home')} />;
