@@ -34,11 +34,11 @@ type MatchResult = {
   verification: string;
 };
 
-const MODE_LABELS: Record<string, { it: string; en: string }> = {
-  player: { it: 'Player Quiz', en: 'Player Quiz' },
-  club: { it: 'Club Quiz', en: 'Club Quiz' },
-  career: { it: 'Career Path', en: 'Career Path' },
-  stadium: { it: 'Stadium Quiz', en: 'Stadium Quiz' },
+const MODE_LABELS: Record<string, Record<SupportedLocale, string>> = {
+  player:{it:'Player Quiz',en:'Player Quiz',es:'Quiz de jugadores',fr:'Quiz joueurs',de:'Spieler-Quiz'},
+  club:{it:'Club Quiz',en:'Club Quiz',es:'Quiz de clubes',fr:'Quiz des clubs',de:'Vereins-Quiz'},
+  career:{it:'Career Path',en:'Career Path',es:'Trayectoria',fr:'Parcours',de:'Karriereweg'},
+  stadium:{it:'Stadium Quiz',en:'Stadium Quiz',es:'Quiz de estadios',fr:'Quiz des stades',de:'Stadion-Quiz'},
 };
 
 export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory, onViewStatistics, rank, nationalRank, onOpenLeaderboard }: Props) {
@@ -92,52 +92,13 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
     return unsubscribe;
   }, [authUser.uid]);
 
-  const labels = {
-    back: italian ? 'INDIETRO' : 'BACK',
-    title: italian ? 'IL MIO PROFILO' : 'MY PROFILE',
-    guest: italian ? 'Account ospite' : 'Guest account',
-    registered: italian ? 'Account registrato' : 'Registered account',
-    progression: italian ? 'PROGRESSIONE' : 'PROGRESSION',
-    xp: italian ? 'XP TOTALI' : 'TOTAL XP',
-    level: italian ? 'LIVELLO' : 'LEVEL',
-    points: italian ? 'PUNTI TOTALI' : 'TOTAL POINTS',
-    statistics: italian ? 'STATISTICHE' : 'STATISTICS',
-    matches: italian ? 'PARTITE GIOCATE' : 'MATCHES PLAYED',
-    correctAnswers: italian ? 'RISPOSTE CORRETTE' : 'CORRECT ANSWERS',
-    accuracy: italian ? 'PRECISIONE' : 'ACCURACY',
-    rank: italian ? 'POSIZIONE IN CLASSIFICA' : 'LEADERBOARD RANK',
-    history: italian ? 'CRONOLOGIA PARTITE - ULTIME 5' : 'MATCH HISTORY - LAST 5',
-    viewAll: italian ? 'VEDI TUTTE' : 'VIEW ALL',
-    loading: italian ? 'Caricamento cronologia…' : 'Loading match history…',
-    loadError: italian ? 'Impossibile caricare la cronologia. Riprova più tardi.' : 'Unable to load match history. Please try again later.',
-    empty: italian ? 'Non hai ancora completato partite. Gioca una modalità per vedere qui i tuoi risultati.' : 'You have not completed any matches yet. Play a mode to see your results here.',
-    unverified: italian ? 'NON VERIFICATO' : 'UNVERIFIED',
-    correct: italian ? 'corrette' : 'correct',
-    account: italian ? 'ACCOUNT' : 'ACCOUNT',
-    signOut: ({ it: 'ESCI DALL’ACCOUNT', en: 'SIGN OUT', es: 'CERRAR SESIÓN', fr: 'SE DÉCONNECTER', de: 'ABMELDEN' } as const)[locale],
-    signOutConfirmTitle: ({ it: 'Conferma disconnessione', en: 'Confirm sign out', es: 'Confirmar cierre de sesión', fr: 'Confirmer la déconnexion', de: 'Abmelden bestätigen' } as const)[locale],
-    signOutConfirmMessage: ({ it: 'Vuoi davvero uscire dal tuo account?', en: 'Are you sure you want to sign out of your account?', es: '¿Seguro que quieres cerrar sesión en tu cuenta?', fr: 'Voulez-vous vraiment vous déconnecter de votre compte ?', de: 'Möchtest du dich wirklich von deinem Konto abmelden?' } as const)[locale],
-    guestSignOutConfirmMessage: ({ it: 'Stai usando un account ospite. Se esci, potresti non riuscire a recuperare questa identità e i relativi progressi. Vuoi continuare?', en: 'You are using a guest account. If you sign out, you may not be able to recover this identity and its progress. Do you want to continue?', es: 'Estás usando una cuenta de invitado. Si cierras sesión, es posible que no puedas recuperar esta identidad ni su progreso. ¿Quieres continuar?', fr: 'Vous utilisez un compte invité. Si vous vous déconnectez, vous risquez de ne pas pouvoir récupérer cette identité et sa progression. Voulez-vous continuer ?', de: 'Du verwendest ein Gastkonto. Wenn du dich abmeldest, kannst du diese Identität und deinen Fortschritt möglicherweise nicht wiederherstellen. Möchtest du fortfahren?' } as const)[locale],
-    confirmSignOut: ({ it: 'ESCI', en: 'SIGN OUT', es: 'CERRAR SESIÓN', fr: 'SE DÉCONNECTER', de: 'ABMELDEN' } as const)[locale],
-    signOutHint: ({ it: 'Uscendo da un account ospite, non potrai recuperare questa identità automaticamente.', en: 'If you sign out from a guest account, you will not be able to restore this identity automatically.', es: 'Si cierras sesión en una cuenta de invitado, no podrás recuperar esta identidad automáticamente.', fr: 'Si vous vous déconnectez d’un compte invité, vous ne pourrez pas récupérer automatiquement cette identité.', de: 'Wenn du dich von einem Gastkonto abmeldest, kannst du diese Identität nicht automatisch wiederherstellen.' } as const)[locale],
-    player: italian ? 'Giocatore' : 'Player',
-    createAccount: italian ? 'CREA ACCOUNT E CONSERVA L’IDENTITÀ' : 'CREATE ACCOUNT & KEEP IDENTITY',
-    guestInfo: italian ? 'Collega un’email e una password alla tua identità ospite. Il collegamento mantiene lo stesso UID Firebase e i tuoi risultati.' : 'Link an email and password to your guest identity. Linking preserves the same Firebase UID and your results.',
-    nicknameLabel: 'NICKNAME',
-    nationalityLabel: italian ? 'NAZIONALITÀ (FACOLTATIVA)' : 'NATIONALITY (OPTIONAL)',
-    nationalitySaved: italian ? 'NAZIONALITÀ' : 'NATIONALITY',
-    chooseCountry: italian ? 'Aggiungi la nazionalità' : 'Add nationality',
-    countryError: italian ? 'Impossibile salvare la nazionalità. Riprova.' : 'Unable to save nationality. Please try again.',
-    emailLabel: 'EMAIL',
-    passwordLabel: 'PASSWORD',
-    confirmLabel: italian ? 'CONFERMA PASSWORD' : 'CONFIRM PASSWORD',
-    linkAccount: italian ? 'COLLEGA ACCOUNT' : 'LINK ACCOUNT',
-    cancel: ({ it: 'ANNULLA', en: 'CANCEL', es: 'CANCELAR', fr: 'ANNULER', de: 'ABBRECHEN' } as const)[locale],
-    required: italian ? 'Compila tutti i campi.' : 'Please complete all fields.',
-    mismatch: italian ? 'Le password non coincidono.' : 'Passwords do not match.',
-    linked: italian ? 'Account creato e collegato. La tua identità Firebase è stata mantenuta.' : 'Account created and linked. Your Firebase identity has been preserved.',
-    generic: italian ? 'Registrazione non riuscita. Controlla i dati e riprova.' : 'Registration failed. Check your details and try again.',
-  };
+  const labels = ({
+    it:{back:'INDIETRO',title:'IL MIO PROFILO',guest:'Account ospite',registered:'Account registrato',progression:'PROGRESSIONE',xp:'XP TOTALI',level:'LIVELLO',points:'PUNTI TOTALI',statistics:'STATISTICHE',matches:'PARTITE GIOCATE',correctAnswers:'RISPOSTE CORRETTE',accuracy:'PRECISIONE',history:'CRONOLOGIA PARTITE - ULTIME 5',viewAll:'VEDI TUTTE',loading:'Caricamento cronologia…',loadError:'Impossibile caricare la cronologia. Riprova più tardi.',empty:'Non hai ancora completato partite. Gioca una modalità per vedere qui i tuoi risultati.',unverified:'NON VERIFICATO',correct:'corrette',account:'ACCOUNT',signOut:'ESCI DALL’ACCOUNT',signOutConfirmTitle:'Conferma disconnessione',signOutConfirmMessage:'Vuoi davvero uscire dal tuo account?',guestSignOutConfirmMessage:'Stai usando un account ospite. Se esci, potresti non riuscire a recuperare questa identità e i relativi progressi. Vuoi continuare?',confirmSignOut:'ESCI',signOutHint:'Uscendo da un account ospite, non potrai recuperare questa identità automaticamente.',player:'Giocatore',createAccount:'CREA ACCOUNT E CONSERVA L’IDENTITÀ',guestInfo:'Collega un’email e una password alla tua identità ospite. Il collegamento mantiene lo stesso UID Firebase e i tuoi risultati.',nicknameLabel:'NICKNAME',nationalityLabel:'NAZIONALITÀ (FACOLTATIVA)',nationalitySaved:'NAZIONALITÀ',chooseCountry:'Aggiungi la nazionalità',countryError:'Impossibile salvare la nazionalità. Riprova.',emailLabel:'EMAIL',passwordLabel:'PASSWORD',confirmLabel:'CONFERMA PASSWORD',linkAccount:'COLLEGA ACCOUNT',cancel:'ANNULLA',required:'Compila tutti i campi.',mismatch:'Le password non coincidono.',linked:'Account creato e collegato. La tua identità Firebase è stata mantenuta.',generic:'Registrazione non riuscita. Controlla i dati e riprova.',details:'DETTAGLIO',global:'GLOBALE',national:'NAZIONALE',pointsUnit:'pt',footer:'CONOSCI IL GIOCO. DOMINA IL GIOCO.',nicknameTaken:'Questo nickname è già utilizzato. Scegline un altro.',nicknameLength:'Il nickname deve contenere da 3 a 24 caratteri.',emailTaken:'Questa email è già associata a un account.',invalidEmail:'Indirizzo email non valido.',weakPassword:'La password deve contenere almeno 6 caratteri.',network:'Connessione assente. Controlla Internet.',countryLocked:'La nazionalità è già stata impostata e non può essere modificata.'},
+    en:{back:'BACK',title:'MY PROFILE',guest:'Guest account',registered:'Registered account',progression:'PROGRESSION',xp:'TOTAL XP',level:'LEVEL',points:'TOTAL POINTS',statistics:'STATISTICS',matches:'MATCHES PLAYED',correctAnswers:'CORRECT ANSWERS',accuracy:'ACCURACY',history:'MATCH HISTORY - LAST 5',viewAll:'VIEW ALL',loading:'Loading match history…',loadError:'Unable to load match history. Please try again later.',empty:'You have not completed any matches yet. Play a mode to see your results here.',unverified:'UNVERIFIED',correct:'correct',account:'ACCOUNT',signOut:'SIGN OUT',signOutConfirmTitle:'Confirm sign out',signOutConfirmMessage:'Are you sure you want to sign out of your account?',guestSignOutConfirmMessage:'You are using a guest account. If you sign out, you may not be able to recover this identity and its progress. Do you want to continue?',confirmSignOut:'SIGN OUT',signOutHint:'If you sign out from a guest account, you will not be able to restore this identity automatically.',player:'Player',createAccount:'CREATE ACCOUNT & KEEP IDENTITY',guestInfo:'Link an email and password to your guest identity. Linking preserves the same Firebase UID and your results.',nicknameLabel:'NICKNAME',nationalityLabel:'NATIONALITY (OPTIONAL)',nationalitySaved:'NATIONALITY',chooseCountry:'Add nationality',countryError:'Unable to save nationality. Please try again.',emailLabel:'EMAIL',passwordLabel:'PASSWORD',confirmLabel:'CONFIRM PASSWORD',linkAccount:'LINK ACCOUNT',cancel:'CANCEL',required:'Please complete all fields.',mismatch:'Passwords do not match.',linked:'Account created and linked. Your Firebase identity has been preserved.',generic:'Registration failed. Check your details and try again.',details:'DETAILS',global:'GLOBAL',national:'NATIONAL',pointsUnit:'pts',footer:'KNOW THE GAME. OWN THE GAME.',nicknameTaken:'This nickname is already taken. Choose another one.',nicknameLength:'Nickname must contain 3 to 24 characters.',emailTaken:'This email is already in use.',invalidEmail:'Invalid email address.',weakPassword:'Password must be at least 6 characters.',network:'Network error. Check your connection.',countryLocked:'Nationality has already been set and cannot be changed.'},
+    es:{back:'VOLVER',title:'MI PERFIL',guest:'Cuenta de invitado',registered:'Cuenta registrada',progression:'PROGRESO',xp:'XP TOTALES',level:'NIVEL',points:'PUNTOS TOTALES',statistics:'ESTADÍSTICAS',matches:'PARTIDAS JUGADAS',correctAnswers:'RESPUESTAS CORRECTAS',accuracy:'PRECISIÓN',history:'HISTORIAL - ÚLTIMAS 5 PARTIDAS',viewAll:'VER TODAS',loading:'Cargando historial…',loadError:'No se pudo cargar el historial. Inténtalo más tarde.',empty:'Todavía no has completado partidas. Juega un modo para ver aquí tus resultados.',unverified:'NO VERIFICADO',correct:'correctas',account:'CUENTA',signOut:'CERRAR SESIÓN',signOutConfirmTitle:'Confirmar cierre de sesión',signOutConfirmMessage:'¿Seguro que quieres cerrar sesión en tu cuenta?',guestSignOutConfirmMessage:'Estás usando una cuenta de invitado. Si cierras sesión, es posible que no puedas recuperar esta identidad ni su progreso. ¿Quieres continuar?',confirmSignOut:'CERRAR SESIÓN',signOutHint:'Si cierras sesión en una cuenta de invitado, no podrás recuperar esta identidad automáticamente.',player:'Jugador',createAccount:'CREAR CUENTA Y CONSERVAR IDENTIDAD',guestInfo:'Vincula un correo y una contraseña a tu identidad de invitado. Se conservarán el mismo UID de Firebase y tus resultados.',nicknameLabel:'APODO',nationalityLabel:'NACIONALIDAD (OPCIONAL)',nationalitySaved:'NACIONALIDAD',chooseCountry:'Añadir nacionalidad',countryError:'No se pudo guardar la nacionalidad. Inténtalo de nuevo.',emailLabel:'CORREO ELECTRÓNICO',passwordLabel:'CONTRASEÑA',confirmLabel:'CONFIRMAR CONTRASEÑA',linkAccount:'VINCULAR CUENTA',cancel:'CANCELAR',required:'Completa todos los campos.',mismatch:'Las contraseñas no coinciden.',linked:'Cuenta creada y vinculada. Se ha conservado tu identidad de Firebase.',generic:'No se pudo completar el registro. Comprueba los datos e inténtalo de nuevo.',details:'DETALLES',global:'GLOBAL',national:'NACIONAL',pointsUnit:'pts',footer:'CONOCE EL JUEGO. DOMINA EL JUEGO.',nicknameTaken:'Este apodo ya está en uso. Elige otro.',nicknameLength:'El apodo debe tener entre 3 y 24 caracteres.',emailTaken:'Este correo ya está en uso.',invalidEmail:'Dirección de correo no válida.',weakPassword:'La contraseña debe tener al menos 6 caracteres.',network:'Sin conexión. Comprueba Internet.',countryLocked:'La nacionalidad ya está establecida y no se puede cambiar.'},
+    fr:{back:'RETOUR',title:'MON PROFIL',guest:'Compte invité',registered:'Compte enregistré',progression:'PROGRESSION',xp:'XP TOTAUX',level:'NIVEAU',points:'TOTAL DES POINTS',statistics:'STATISTIQUES',matches:'MATCHS JOUÉS',correctAnswers:'BONNES RÉPONSES',accuracy:'PRÉCISION',history:'HISTORIQUE - 5 DERNIERS MATCHS',viewAll:'TOUT VOIR',loading:'Chargement de l’historique…',loadError:'Impossible de charger l’historique. Réessayez plus tard.',empty:'Vous n’avez pas encore terminé de match. Jouez pour voir vos résultats ici.',unverified:'NON VÉRIFIÉ',correct:'correctes',account:'COMPTE',signOut:'SE DÉCONNECTER',signOutConfirmTitle:'Confirmer la déconnexion',signOutConfirmMessage:'Voulez-vous vraiment vous déconnecter de votre compte ?',guestSignOutConfirmMessage:'Vous utilisez un compte invité. En vous déconnectant, vous risquez de ne pas pouvoir récupérer cette identité et sa progression. Voulez-vous continuer ?',confirmSignOut:'SE DÉCONNECTER',signOutHint:'En vous déconnectant d’un compte invité, vous ne pourrez pas récupérer automatiquement cette identité.',player:'Joueur',createAccount:'CRÉER UN COMPTE ET GARDER SON IDENTITÉ',guestInfo:'Associez un e-mail et un mot de passe à votre identité invitée. Le même UID Firebase et vos résultats seront conservés.',nicknameLabel:'PSEUDONYME',nationalityLabel:'NATIONALITÉ (FACULTATIVE)',nationalitySaved:'NATIONALITÉ',chooseCountry:'Ajouter une nationalité',countryError:'Impossible d’enregistrer la nationalité. Réessayez.',emailLabel:'E-MAIL',passwordLabel:'MOT DE PASSE',confirmLabel:'CONFIRMER LE MOT DE PASSE',linkAccount:'LIER LE COMPTE',cancel:'ANNULER',required:'Veuillez remplir tous les champs.',mismatch:'Les mots de passe ne correspondent pas.',linked:'Compte créé et associé. Votre identité Firebase a été conservée.',generic:'Échec de l’inscription. Vérifiez vos informations et réessayez.',details:'DÉTAILS',global:'MONDIAL',national:'NATIONAL',pointsUnit:'pts',footer:'CONNAISSEZ LE JEU. DOMINEZ LE JEU.',nicknameTaken:'Ce pseudonyme est déjà utilisé. Choisissez-en un autre.',nicknameLength:'Le pseudonyme doit contenir entre 3 et 24 caractères.',emailTaken:'Cette adresse e-mail est déjà utilisée.',invalidEmail:'Adresse e-mail invalide.',weakPassword:'Le mot de passe doit contenir au moins 6 caractères.',network:'Connexion indisponible. Vérifiez Internet.',countryLocked:'La nationalité a déjà été définie et ne peut pas être modifiée.'},
+    de:{back:'ZURÜCK',title:'MEIN PROFIL',guest:'Gastkonto',registered:'Registriertes Konto',progression:'FORTSCHRITT',xp:'GESAMTE XP',level:'LEVEL',points:'GESAMTPUNKTE',statistics:'STATISTIKEN',matches:'GESPIELTE PARTIEN',correctAnswers:'RICHTIGE ANTWORTEN',accuracy:'TREFFERQUOTE',history:'SPIELVERLAUF - LETZTE 5',viewAll:'ALLE ANZEIGEN',loading:'Spielverlauf wird geladen…',loadError:'Spielverlauf konnte nicht geladen werden. Bitte später erneut versuchen.',empty:'Du hast noch keine Spiele abgeschlossen. Spiele einen Modus, um hier Ergebnisse zu sehen.',unverified:'NICHT VERIFIZIERT',correct:'richtig',account:'KONTO',signOut:'ABMELDEN',signOutConfirmTitle:'Abmeldung bestätigen',signOutConfirmMessage:'Möchtest du dich wirklich von deinem Konto abmelden?',guestSignOutConfirmMessage:'Du verwendest ein Gastkonto. Wenn du dich abmeldest, kannst du diese Identität und deinen Fortschritt möglicherweise nicht wiederherstellen. Möchtest du fortfahren?',confirmSignOut:'ABMELDEN',signOutHint:'Wenn du dich von einem Gastkonto abmeldest, kannst du diese Identität nicht automatisch wiederherstellen.',player:'Spieler',createAccount:'KONTO ERSTELLEN UND IDENTITÄT BEHALTEN',guestInfo:'Verknüpfe eine E-Mail-Adresse und ein Passwort mit deinem Gastkonto. Deine Firebase-UID und Ergebnisse bleiben erhalten.',nicknameLabel:'SPITZNAME',nationalityLabel:'NATIONALITÄT (OPTIONAL)',nationalitySaved:'NATIONALITÄT',chooseCountry:'Nationalität hinzufügen',countryError:'Nationalität konnte nicht gespeichert werden. Bitte erneut versuchen.',emailLabel:'E-MAIL',passwordLabel:'PASSWORT',confirmLabel:'PASSWORT BESTÄTIGEN',linkAccount:'KONTO VERKNÜPFEN',cancel:'ABBRECHEN',required:'Bitte fülle alle Felder aus.',mismatch:'Die Passwörter stimmen nicht überein.',linked:'Konto erstellt und verknüpft. Deine Firebase-Identität bleibt erhalten.',generic:'Registrierung fehlgeschlagen. Prüfe deine Angaben und versuche es erneut.',details:'DETAILS',global:'WELTWEIT',national:'NATIONAL',pointsUnit:'Pkt.',footer:'KENNE DAS SPIEL. BEHERRSCHE DAS SPIEL.',nicknameTaken:'Dieser Spitzname ist bereits vergeben. Wähle einen anderen.',nicknameLength:'Der Spitzname muss 3 bis 24 Zeichen lang sein.',emailTaken:'Diese E-Mail-Adresse wird bereits verwendet.',invalidEmail:'Ungültige E-Mail-Adresse.',weakPassword:'Das Passwort muss mindestens 6 Zeichen enthalten.',network:'Keine Verbindung. Überprüfe deine Internetverbindung.',countryLocked:'Die Nationalität wurde bereits festgelegt und kann nicht geändert werden.'}
+  } as const)[locale];
 
   const nickname = userProfile?.nickname || authUser.displayName || labels.player;
   const email = authUser.email;
@@ -145,7 +106,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
   const totalCorrectAnswers = results.reduce((sum, result) => sum + result.correctAnswers, 0);
   const totalQuestions = results.reduce((sum, result) => sum + result.totalQuestions, 0);
   const accuracy = totalQuestions > 0 ? Math.round((totalCorrectAnswers / totalQuestions) * 100) : 0;
-  const modeName = (mode: string) => MODE_LABELS[mode]?.[italian ? 'it' : 'en'] ?? mode;
+  const modeName = (mode: string) => MODE_LABELS[mode]?.[locale] ?? mode;
 
   const saveCountry = async (code: string) => {
     setCountrySaving(true);
@@ -154,9 +115,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
       await setUserCountry(authUser.uid, code);
     } catch (reason) {
       const message = reason instanceof Error ? reason.message : '';
-      setCountryError(message === 'country-already-set'
-        ? (italian ? 'La nazionalità è già stata impostata e non può essere modificata.' : 'Nationality has already been set and cannot be changed.')
-        : labels.countryError);
+      setCountryError(message === 'country-already-set' ? labels.countryLocked : labels.countryError);
     } finally {
       setCountrySaving(false);
     }
@@ -184,12 +143,12 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
         ? String((reason as { code: unknown }).code)
         : '';
       const message = reason instanceof Error ? reason.message : '';
-      if (message === 'nickname-already-taken') setRegistrationError(italian ? 'Questo nickname è già utilizzato. Scegline un altro.' : 'This nickname is already taken. Choose another one.');
-      else if (message === 'nickname-invalid-length') setRegistrationError(italian ? 'Il nickname deve contenere da 3 a 24 caratteri.' : 'Nickname must contain 3 to 24 characters.');
-      else if (code.includes('email-already-in-use') || code.includes('credential-already-in-use')) setRegistrationError(italian ? 'Questa email è già associata a un account.' : 'This email is already in use.');
-      else if (code.includes('invalid-email')) setRegistrationError(italian ? 'Indirizzo email non valido.' : 'Invalid email address.');
-      else if (code.includes('weak-password')) setRegistrationError(italian ? 'La password deve contenere almeno 6 caratteri.' : 'Password must contain at least 6 characters.');
-      else if (code.includes('network-request-failed')) setRegistrationError(italian ? 'Connessione assente. Controlla Internet.' : 'Network error. Check your connection.');
+      if (message === 'nickname-already-taken') setRegistrationError(labels.nicknameTaken);
+      else if (message === 'nickname-invalid-length') setRegistrationError(labels.nicknameLength);
+      else if (code.includes('email-already-in-use') || code.includes('credential-already-in-use')) setRegistrationError(labels.emailTaken);
+      else if (code.includes('invalid-email')) setRegistrationError(labels.invalidEmail);
+      else if (code.includes('weak-password')) setRegistrationError(labels.weakPassword);
+      else if (code.includes('network-request-failed')) setRegistrationError(labels.network);
       else setRegistrationError(labels.generic);
     } finally {
       setRegistrationBusy(false);
@@ -251,7 +210,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
         <View style={styles.sectionHeader}>
           <Text style={styles.section}>{labels.statistics}</Text>
           <Pressable onPress={onViewStatistics} style={styles.viewAllButton}>
-            <Text style={styles.viewAllText}>{italian ? 'DETTAGLIO  ›' : 'DETAILS  ›'}</Text>
+            <Text style={styles.viewAllText}>{labels.details + '  ›'}</Text>
           </Pressable>
         </View>
         <View style={styles.statsGrid}>
@@ -269,11 +228,11 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
           </View>
           <Pressable onPress={() => onOpenLeaderboard('global')} style={styles.statCard} accessibilityRole="button">
             <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
-            <Text style={styles.statLabel}>{italian ? 'GLOBALE' : 'GLOBAL'}  ›</Text>
+            <Text style={styles.statLabel}>{labels.global}  ›</Text>
           </Pressable>
           <Pressable onPress={() => onOpenLeaderboard('national')} style={styles.statCard} accessibilityRole="button">
             <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
-            <Text style={styles.statLabel}>{italian ? 'NAZIONALE' : 'NATIONAL'}  ›</Text>
+            <Text style={styles.statLabel}>{labels.national}  ›</Text>
           </Pressable>
         </View>
 
@@ -289,11 +248,11 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
             <View key={result.id} style={styles.matchCard}>
               <View style={styles.matchTop}>
                 <Text style={styles.matchMode}>{modeName(result.mode)}</Text>
-                <Text style={styles.matchPoints}>{result.points} {italian ? 'pt' : 'pts'}</Text>
+                <Text style={styles.matchPoints}>{result.points} {labels.pointsUnit}</Text>
               </View>
               <Text style={styles.matchMeta}>
                 {result.correctAnswers}/{result.totalQuestions} {labels.correct}
-                {result.completedAt ? `  ·  ${result.completedAt.toLocaleDateString(italian ? 'it-IT' : 'en-GB')}` : ''}
+                {result.completedAt ? `  ·  ${result.completedAt.toLocaleDateString(locale === 'en' ? 'en-GB' : locale)}` : ''}
               </Text>
               <Text style={styles.verification}>{labels.unverified}</Text>
             </View>
@@ -362,7 +321,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
           </Pressable>
         </View>
 
-        <Text style={styles.footer}>KNOW THE GAME. OWN THE GAME.</Text>
+        <Text style={styles.footer}>{labels.footer}</Text>
       </ScrollView>
     </SafeAreaView>
   );
