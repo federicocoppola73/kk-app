@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Image, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { onAuthStateChanged, type User } from 'firebase/auth';
+import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { getLocales } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,11 +14,12 @@ import ClubQuizScreen from './src/screens/ClubQuizScreen';
 import StadiumQuizScreen from './src/screens/StadiumQuizScreen';
 import CareerQuizScreen from './src/screens/CareerQuizScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 import { resolveLocale, type SupportedLocale } from './src/i18n/locales';
 
 const LANGUAGE_KEY = '@kit-and-kick/language';
 
-type Screen = 'splash' | 'gate' | 'home' | 'playerQuiz' | 'clubQuiz' | 'stadiumQuiz' | 'careerQuiz' | 'settings';
+type Screen = 'splash' | 'gate' | 'home' | 'playerQuiz' | 'clubQuiz' | 'stadiumQuiz' | 'careerQuiz' | 'settings' | 'profile';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('splash');
@@ -61,7 +62,7 @@ export default function App() {
         return false;
       }
 
-      if (screen === 'settings') {
+      if (screen === 'settings' || screen === 'profile') {
         setScreen('home');
         return true;
       }
@@ -138,6 +139,9 @@ export default function App() {
     return <AuthScreen locale={activeLocale} onAuthenticated={() => setScreen('home')} />;
   }
 
+  if (screen === 'profile') {
+    return <ProfileScreen locale={activeLocale} authUser={authUser} userProfile={userProfile} onBack={() => setScreen('home')} onSignOut={() => { void signOut(auth).catch((error) => console.warn('Unable to sign out:', error)); }} />;
+  }
   if (screen === 'settings') {
     return <SettingsScreen locale={activeLocale} selectedLocale={locale} authUser={authUser} onChangeLocale={changeLocale} onBack={() => setScreen('home')} />;
   }
@@ -153,7 +157,7 @@ export default function App() {
   if (screen === 'careerQuiz') {
     return <CareerQuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
   }
-  return <HomeScreen locale={activeLocale} xp={userProfile?.xp ?? null} level={userProfile?.level ?? null} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} />;
+  return <HomeScreen locale={activeLocale} xp={userProfile?.xp ?? null} level={userProfile?.level ?? null} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} onOpenProfile={() => setScreen('profile')} />;
 }
 
 const styles = StyleSheet.create({
