@@ -1,10 +1,10 @@
 import React from 'react';
-import { Image, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings }: { locale: SupportedLocale; xp: number | null; level: number | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void }) {
+export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile }: { locale: SupportedLocale; xp: number | null; level: number | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void }) {
   const t = translations[locale];
 
   const modes = [
@@ -23,9 +23,14 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
             <Text style={styles.brand}>KIT <Text style={styles.brandAccent}>&</Text> KICK</Text>
             <Text style={styles.kicker}>{t.kicker}</Text>
           </View>
-          <Pressable onPress={onOpenSettings} accessibilityRole="button" accessibilityLabel={t.settingsTitle} style={styles.profile}>
-            <Image source={{ uri: "https://raw.githubusercontent.com/federicocoppola73/kk-data/main/assets/brand/icon.png" }} style={styles.profileImage} resizeMode="contain" accessibilityLabel="Kit & Kick settings" />
-          </Pressable>
+          <View style={styles.actions}>
+            <Pressable onPress={onOpenProfile} accessibilityRole="button" accessibilityLabel={locale === 'it' ? 'Profilo' : 'Profile'} style={styles.profile}>
+              <Text style={styles.profileGlyph}>P</Text>
+            </Pressable>
+            <Pressable onPress={onOpenSettings} accessibilityRole="button" accessibilityLabel={t.settingsTitle} style={styles.settings}>
+              <Text style={styles.settingsGlyph}>⚙</Text>
+            </Pressable>
+          </View>
         </View>
 
         <View style={styles.hero}>
@@ -97,8 +102,11 @@ const styles = StyleSheet.create({
   brand: { color: colors.white, fontSize: 22, fontWeight: '900', letterSpacing: 1.5 },
   brandAccent: { color: colors.iceBlue },
   kicker: { color: colors.muted, fontSize: 9, fontWeight: '800', letterSpacing: 1.8, marginTop: 3 },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   profile: { width: 42, height: 42, borderRadius: 14, borderWidth: 1, borderColor: colors.electricBlue, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
-  profileImage: { width: 34, height: 34 },
+  profileGlyph: { color: colors.iceBlue, fontSize: 18, fontWeight: '900' },
+  settings: { width: 42, height: 42, borderRadius: 14, borderWidth: 1, borderColor: '#294968', backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
+  settingsGlyph: { color: colors.white, fontSize: 22 },
   hero: { backgroundColor: '#102746', borderRadius: 22, borderWidth: 1, borderColor: '#1D4268', padding: 14, marginBottom: 13 },
   overline: { color: colors.iceBlue, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
   headline: { color: colors.white, fontSize: 24, lineHeight: 27, fontWeight: '900', letterSpacing: -0.7, marginTop: 8 },
