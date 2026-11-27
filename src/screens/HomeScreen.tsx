@@ -54,11 +54,11 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
               <Text style={styles.statValue}>{xp === null ? '—' : xp.toLocaleString()} XP</Text>
               <Text style={styles.statLabel}>{t.totalXp}</Text>
             </View>
-            <Pressable onPress={onOpenLeaderboard} accessibilityRole="button" style={styles.stat}>
+            <Pressable onPress={() => onOpenLeaderboard('global')} accessibilityRole="button" style={styles.stat}>
               <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
               <Text style={styles.statLabel}>{locale === 'it' ? 'GLOBALE' : 'GLOBAL'}  ›</Text>
             </Pressable>
-            <Pressable onPress={onOpenLeaderboard} accessibilityRole="button" style={styles.stat}>
+            <Pressable onPress={() => onOpenLeaderboard('national')} accessibilityRole="button" style={styles.stat}>
               <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
               <Text style={styles.statLabel}>{countryCode ?? (locale === 'it' ? 'NAZIONALE' : 'NATIONAL')}  ›</Text>
             </Pressable>
