@@ -21,11 +21,11 @@ const MODE_LABELS: Record<string, Record<SupportedLocale, string>> = {
 
 export default function MatchHistoryScreen({ locale, authUser, onBack }: Props) {
   const labels = ({
-    it:{ back:'INDIETRO',title:'CRONOLOGIA PARTITE',loading:'Caricamento cronologia…',error:'Impossibile caricare la cronologia. Riprova più tardi.',empty:'Non hai ancora completato partite.',correct:'corrette',unverified:'NON VERIFICATO',points:'pt' },
-    en:{ back:'BACK',title:'MATCH HISTORY',loading:'Loading match history…',error:'Unable to load match history. Please try again later.',empty:'You have not completed any matches yet.',correct:'correct',unverified:'UNVERIFIED',points:'pts' },
-    es:{ back:'VOLVER',title:'HISTORIAL DE PARTIDAS',loading:'Cargando historial…',error:'No se pudo cargar el historial. Inténtalo más tarde.',empty:'Todavía no has completado ninguna partida.',correct:'correctas',unverified:'NO VERIFICADO',points:'pts' },
-    fr:{ back:'RETOUR',title:'HISTORIQUE DES MATCHS',loading:'Chargement de l’historique…',error:'Impossible de charger l’historique. Réessayez plus tard.',empty:'Vous n’avez pas encore terminé de match.',correct:'correctes',unverified:'NON VÉRIFIÉ',points:'pts' },
-    de:{ back:'ZURÜCK',title:'SPIELVERLAUF',loading:'Spielverlauf wird geladen…',error:'Spielverlauf konnte nicht geladen werden. Bitte später erneut versuchen.',empty:'Du hast noch keine Spiele abgeschlossen.',correct:'richtig',unverified:'NICHT VERIFIZIERT',points:'Pkt.' }
+    it:{ back:'INDIETRO',title:'CRONOLOGIA PARTITE',loading:'Caricamento cronologia…',error:'Impossibile caricare la cronologia. Riprova più tardi.',empty:'Non hai ancora completato partite.',correct:'corrette',unverified:'NON VERIFICATO',points:'pt',footer:'CONOSCI IL GIOCO. DOMINA IL GIOCO.' },
+    en:{ back:'BACK',title:'MATCH HISTORY',loading:'Loading match history…',error:'Unable to load match history. Please try again later.',empty:'You have not completed any matches yet.',correct:'correct',unverified:'UNVERIFIED',points:'pts',footer:'KNOW THE GAME. OWN THE GAME.' },
+    es:{ back:'VOLVER',title:'HISTORIAL DE PARTIDAS',loading:'Cargando historial…',error:'No se pudo cargar el historial. Inténtalo más tarde.',empty:'Todavía no has completado ninguna partida.',correct:'correctas',unverified:'NO VERIFICADO',points:'pts',footer:'CONOCE EL JUEGO. DOMINA EL JUEGO.' },
+    fr:{ back:'RETOUR',title:'HISTORIQUE DES MATCHS',loading:'Chargement de l’historique…',error:'Impossible de charger l’historique. Réessayez plus tard.',empty:'Vous n’avez pas encore terminé de match.',correct:'correctes',unverified:'NON VÉRIFIÉ',points:'pts',footer:'CONNAISSEZ LE JEU. DOMINEZ LE JEU.' },
+    de:{ back:'ZURÜCK',title:'SPIELVERLAUF',loading:'Spielverlauf wird geladen…',error:'Spielverlauf konnte nicht geladen werden. Bitte später erneut versuchen.',empty:'Du hast noch keine Spiele abgeschlossen.',correct:'richtig',unverified:'NICHT VERIFIZIERT',points:'Pkt.',footer:'KENNE DAS SPIEL. BEHERRSCHE DAS SPIEL.' }
   } as const)[locale];
   const [results, setResults] = useState<MatchResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +86,7 @@ export default function MatchHistoryScreen({ locale, authUser, onBack }: Props) 
               <Text style={styles.verification}>{labels.unverified}</Text>
             </View>
           ))}
-        <Text style={styles.footer}>KNOW THE GAME. OWN THE GAME.</Text>
+        <Text style={styles.footer}>{labels.footer}</Text>
       </ScrollView>
     </SafeAreaView>
   );
