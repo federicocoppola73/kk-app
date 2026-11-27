@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { User } from 'firebase/auth';
 import { collection, onSnapshot, orderBy, query, Timestamp } from 'firebase/firestore';
 import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { db } from '../services/firebase';
 import type { UserProfile } from '../services/userProfile';
+import { registerWithEmail } from '../services/auth';
 
 type Props = {
   locale: SupportedLocale;
@@ -38,6 +39,14 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
   const [results, setResults] = useState<MatchResult[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState(false);
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [nickname, setNickname] = useState(authUser.displayName?.startsWith('Guest_') ? '' : authUser.displayName ?? '');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [registrationError, setRegistrationError] = useState('');
+  const [registrationBusy, setRegistrationBusy] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   useEffect(() => {
     setHistoryLoading(true);
@@ -96,12 +105,55 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
     signOut: italian ? 'ESCI DALL’ACCOUNT' : 'SIGN OUT',
     signOutHint: italian ? 'Uscendo da un account ospite, non potrai recuperare questa identità automaticamente.' : 'If you sign out from a guest account, you will not be able to restore this identity automatically.',
     player: italian ? 'Giocatore' : 'Player',
+    createAccount: italian ? 'CREA ACCOUNT E CONSERVA L’IDENTITÀ' : 'CREATE ACCOUNT & KEEP IDENTITY',
+    guestInfo: italian ? 'Collega un’email e una password alla tua identità ospite. Il collegamento mantiene lo stesso UID Firebase e i tuoi risultati.' : 'Link an email and password to your guest identity. Linking preserves the same Firebase UID and your results.',
+    nicknameLabel: 'NICKNAME',
+    emailLabel: 'EMAIL',
+    passwordLabel: 'PASSWORD',
+    confirmLabel: italian ? 'CONFERMA PASSWORD' : 'CONFIRM PASSWORD',
+    linkAccount: italian ? 'COLLEGA ACCOUNT' : 'LINK ACCOUNT',
+    cancel: italian ? 'ANNULLA' : 'CANCEL',
+    required: italian ? 'Compila tutti i campi.' : 'Please complete all fields.',
+    mismatch: italian ? 'Le password non coincidono.' : 'Passwords do not match.',
+    linked: italian ? 'Account creato e collegato. La tua identità Firebase è stata mantenuta.' : 'Account created and linked. Your Firebase identity has been preserved.',
+    generic: italian ? 'Registrazione non riuscita. Controlla i dati e riprova.' : 'Registration failed. Check your details and try again.',
   };
 
   const nickname = userProfile?.nickname || authUser.displayName || labels.player;
   const email = authUser.email;
   const totalPoints = results.reduce((sum, result) => sum + result.points, 0);
   const modeName = (mode: string) => MODE_LABELS[mode]?.[italian ? 'it' : 'en'] ?? mode;
+
+  const submitRegistration = async () => {
+    setRegistrationError('');
+    if (!nickname.trim() || !email.trim() || !password || !confirmPassword) {
+      setRegistrationError(labels.required);
+      return;
+    }
+    if (password !== confirmPassword) {
+      setRegistrationError(labels.mismatch);
+      return;
+    }
+    setRegistrationBusy(true);
+    try {
+      await registerWithEmail(email, nickname, password);
+      setRegistrationSuccess(true);
+      setShowRegistration(false);
+      setPassword('');
+      setConfirmPassword('');
+    } catch (reason) {
+      const code = typeof reason === 'object' && reason !== null && 'code' in reason
+        ? String((reason as { code: unknown }).code)
+        : '';
+      if (code.includes('email-already-in-use')) setRegistrationError(italian ? 'Questa email è già associata a un account.' : 'This email is already in use.');
+      else if (code.includes('invalid-email')) setRegistrationError(italian ? 'Indirizzo email non valido.' : 'Invalid email address.');
+      else if (code.includes('weak-password')) setRegistrationError(italian ? 'La password deve contenere almeno 6 caratteri.' : 'Password must contain at least 6 characters.');
+      else if (code.includes('network-request-failed')) setRegistrationError(italian ? 'Connessione assente. Controlla Internet.' : 'Network error. Check your connection.');
+      else setRegistrationError(labels.generic);
+    } finally {
+      setRegistrationBusy(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -185,7 +237,37 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
         <View style={styles.infoCard}>
           <Text style={styles.infoText}>{authUser.isAnonymous ? labels.guest : labels.registered}</Text>
           {!!email && <Text style={styles.email}>{email}</Text>}
-          {authUser.isAnonymous && <Text style={styles.hint}>{labels.signOutHint}</Text>}
+          {authUser.isAnonymous && (
+            <>
+              <Text style={styles.hint}>{labels.guestInfo}</Text>
+              {registrationSuccess ? (
+                <Text style={styles.success}>{labels.linked}</Text>
+              ) : !showRegistration ? (
+                <Pressable onPress={() => { setRegistrationError(''); setShowRegistration(true); }} style={styles.createAccountButton}>
+                  <Text style={styles.createAccountText}>{labels.createAccount}</Text>
+                </Pressable>
+              ) : (
+                <View style={styles.registrationForm}>
+                  <Text style={styles.fieldLabel}>{labels.nicknameLabel}</Text>
+                  <TextInput value={nickname} onChangeText={setNickname} placeholder={labels.nicknameLabel} placeholderTextColor="#7186A1" autoCapitalize="words" maxLength={24} style={styles.input} />
+                  <Text style={styles.fieldLabel}>{labels.emailLabel}</Text>
+                  <TextInput value={email} onChangeText={setEmail} placeholder="name@example.com" placeholderTextColor="#7186A1" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} style={styles.input} />
+                  <Text style={styles.fieldLabel}>{labels.passwordLabel}</Text>
+                  <TextInput value={password} onChangeText={setPassword} placeholder="••••••••" placeholderTextColor="#7186A1" secureTextEntry style={styles.input} />
+                  <Text style={styles.fieldLabel}>{labels.confirmLabel}</Text>
+                  <TextInput value={confirmPassword} onChangeText={setConfirmPassword} placeholder="••••••••" placeholderTextColor="#7186A1" secureTextEntry style={styles.input} />
+                  <Pressable disabled={registrationBusy} onPress={() => void submitRegistration()} style={[styles.createAccountButton, registrationBusy && styles.disabled]}>
+                    {registrationBusy ? <ActivityIndicator color={colors.midnightNavy} /> : <Text style={styles.createAccountText}>{labels.linkAccount}</Text>}
+                  </Pressable>
+                  <Pressable disabled={registrationBusy} onPress={() => { setShowRegistration(false); setRegistrationError(''); }} style={styles.cancelButton}>
+                    <Text style={styles.cancelText}>{labels.cancel}</Text>
+                  </Pressable>
+                </View>
+              )}
+              {!!registrationError && <Text accessibilityRole="alert" style={styles.error}>{registrationError}</Text>}
+              <Text style={styles.hint}>{labels.signOutHint}</Text>
+            </>
+          )}
           <Pressable onPress={onSignOut} style={styles.signOutButton}>
             <Text style={styles.signOutText}>{labels.signOut}</Text>
           </Pressable>
@@ -227,6 +309,16 @@ const styles = StyleSheet.create({
   verification: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 0.8, marginTop: 8 },
   infoText: { color: colors.white, fontSize: 12, lineHeight: 18 },
   hint: { color: colors.muted, fontSize: 10, lineHeight: 15, marginTop: 10 },
+  createAccountButton: { minHeight: 48, borderRadius: 12, backgroundColor: colors.gold, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12, marginTop: 12 },
+  createAccountText: { color: colors.midnightNavy, fontSize: 11, fontWeight: '900', letterSpacing: 0.4, textAlign: 'center' },
+  registrationForm: { gap: 8, marginTop: 12 },
+  fieldLabel: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1, marginTop: 4 },
+  input: { minHeight: 47, borderRadius: 12, borderWidth: 1, borderColor: '#294968', backgroundColor: colors.surface, color: colors.white, paddingHorizontal: 14, fontSize: 14 },
+  cancelButton: { alignItems: 'center', paddingVertical: 10 },
+  cancelText: { color: colors.iceBlue, fontSize: 12, fontWeight: '700' },
+  success: { color: '#91E3B0', fontSize: 12, lineHeight: 18, marginTop: 12 },
+  error: { color: '#FF8D8D', backgroundColor: '#3A202A', borderRadius: 10, padding: 11, fontSize: 12, textAlign: 'center', marginTop: 12 },
+  disabled: { opacity: 0.6 },
   signOutButton: { minHeight: 46, borderRadius: 11, borderWidth: 1, borderColor: '#A84D5B', alignItems: 'center', justifyContent: 'center', marginTop: 14 },
   signOutText: { color: '#FF9BA5', fontSize: 11, fontWeight: '900', letterSpacing: 0.6 },
   footer: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 1.2, textAlign: 'center', marginTop: 8, paddingTop: 20 },
