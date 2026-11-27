@@ -91,7 +91,7 @@ service cloud.firestore {
           && request.resource.data.identityLocked is bool
           && request.resource.data.identityLocked == (
             resource.data.get('identityLocked', false)
-            || request.auth.token.firebase.sign_in_provider != 'anonymous'
+            || request.auth.token.email is string
           )
           && nicknameReservationMatches()
           && request.resource.data.updatedAt == request.time;
@@ -117,7 +117,7 @@ service cloud.firestore {
         && request.resource.data.countryCode == null
         && request.resource.data.identityLocked is bool
         && request.resource.data.identityLocked == (
-          request.auth.token.firebase.sign_in_provider != 'anonymous'
+          request.auth.token.email is string
         )
         && request.resource.data.xp == 0
         && request.resource.data.level == 1
