@@ -7,6 +7,9 @@ import type { SupportedLocale } from '../i18n/locales';
 import { db } from '../services/firebase';
 import type { UserProfile } from '../services/userProfile';
 import { registerWithEmail } from '../services/auth';
+import CountryPicker from '../components/CountryPicker';
+import { getCountryName } from '../data/countries';
+import { setUserCountry } from '../services/userProfile';
 
 type Props = {
   locale: SupportedLocale;
@@ -42,6 +45,9 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
   const [historyError, setHistoryError] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false);
   const [registrationNickname, setRegistrationNickname] = useState(authUser.displayName?.startsWith('Guest_') ? '' : authUser.displayName ?? '');
+  const [registrationCountryCode, setRegistrationCountryCode] = useState<string | null>(null);
+  const [countrySaving, setCountrySaving] = useState(false);
+  const [countryError, setCountryError] = useState('');
   const [registrationEmail, setRegistrationEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -115,6 +121,10 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
     createAccount: italian ? 'CREA ACCOUNT E CONSERVA L’IDENTITÀ' : 'CREATE ACCOUNT & KEEP IDENTITY',
     guestInfo: italian ? 'Collega un’email e una password alla tua identità ospite. Il collegamento mantiene lo stesso UID Firebase e i tuoi risultati.' : 'Link an email and password to your guest identity. Linking preserves the same Firebase UID and your results.',
     nicknameLabel: 'NICKNAME',
+    nationalityLabel: italian ? 'NAZIONALITÀ (FACOLTATIVA)' : 'NATIONALITY (OPTIONAL)',
+    nationalitySaved: italian ? 'NAZIONALITÀ' : 'NATIONALITY',
+    chooseCountry: italian ? 'Aggiungi la nazionalità' : 'Add nationality',
+    countryError: italian ? 'Impossibile salvare la nazionalità. Riprova.' : 'Unable to save nationality. Please try again.',
     emailLabel: 'EMAIL',
     passwordLabel: 'PASSWORD',
     confirmLabel: italian ? 'CONFERMA PASSWORD' : 'CONFIRM PASSWORD',
@@ -132,7 +142,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
   const totalCorrectAnswers = results.reduce((sum, result) => sum + result.correctAnswers, 0);
   const totalQuestions = results.reduce((sum, result) => sum + result.totalQuestions, 0);
   const accuracy = totalQuestions > 0 ? Math.round((totalCorrectAnswers / totalQuestions) * 100) : 0;
-  const modeName = (mode: string) => MODE_LABELS[mode]?.[italian ? 'it' : 'en'] ?? mode;
+  const modeName = (mode: string) => MODE_LABELS[mode]?.[italian ? 'it' : 'en'] ?? mode;\n\n  const saveCountry = async (code: string) => {\n    setCountrySaving(true);\n    setCountryError('');\n    try {\n      await setUserCountry(authUser.uid, code);\n    } catch (reason) {\n      const message = reason instanceof Error ? reason.message : '';\n      setCountryError(message === 'country-already-set'\n        ? (italian ? 'La nazionalità è già stata impostata e non può essere modificata.' : 'Nationality has already been set and cannot be changed.')\n        : labels.countryError);\n    } finally {\n      setCountrySaving(false);\n    }\n  };
 
   const submitRegistration = async () => {
     setRegistrationError('');
@@ -146,7 +156,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
     }
     setRegistrationBusy(true);
     try {
-      await registerWithEmail(registrationEmail, registrationNickname, password);
+      await registerWithEmail(registrationEmail, registrationNickname, password, registrationCountryCode ?? userProfile?.countryCode ?? null);
       setRegistrationSuccess(true);
       setShowRegistration(false);
       setPassword('');
@@ -155,7 +165,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
       const code = typeof reason === 'object' && reason !== null && 'code' in reason
         ? String((reason as { code: unknown }).code)
         : '';
-      if (code.includes('email-already-in-use')) setRegistrationError(italian ? 'Questa email è già associata a un account.' : 'This email is already in use.');
+      if (message === 'nickname-already-taken') setRegistrationError(italian ? 'Questo nickname è già utilizzato. Scegline un altro.' : 'This nickname is already taken. Choose another one.');\n      else if (message === 'nickname-invalid-length') setRegistrationError(italian ? 'Il nickname deve contenere da 3 a 24 caratteri.' : 'Nickname must contain 3 to 24 characters.');\n      else if (code.includes('email-already-in-use')) setRegistrationError(italian ? 'Questa email è già associata a un account.' : 'This email is already in use.');
       else if (code.includes('invalid-email')) setRegistrationError(italian ? 'Indirizzo email non valido.' : 'Invalid email address.');
       else if (code.includes('weak-password')) setRegistrationError(italian ? 'La password deve contenere almeno 6 caratteri.' : 'Password must contain at least 6 characters.');
       else if (code.includes('network-request-failed')) setRegistrationError(italian ? 'Connessione assente. Controlla Internet.' : 'Network error. Check your connection.');
@@ -187,7 +197,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
           </View>
         </View>
 
-        <Text style={styles.section}>{labels.progression}</Text>
+        <Text style={styles.section}>{labels.nationalitySaved}</Text>\n        <View style={styles.infoCard}>\n          {userProfile?.countryCode ? (\n            <Text style={styles.infoText}>{getCountryName(userProfile.countryCode, locale)}</Text>\n          ) : (\n            <>\n              <Text style={styles.hint}>{labels.chooseCountry}</Text>\n              <CountryPicker locale={locale} value={null} onChange={(code) => void saveCountry(code)} />\n              {countrySaving && <ActivityIndicator color={colors.gold} style={{ marginTop: 10 }} />}\n              {!!countryError && <Text style={styles.error}>{countryError}</Text>}\n            </>\n          )}\n        </View>\n\n        <Text style={styles.section}>{labels.progression}</Text>
         <View style={styles.statsGrid}>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>{userProfile?.xp.toLocaleString() ?? '—'}</Text>
