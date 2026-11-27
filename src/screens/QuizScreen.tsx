@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { colors } from '../theme/colors';
+import QuizCountdown from '../components/QuizCountdown';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 import { useQuizExitConfirmation } from '../hooks/useQuizExitConfirmation';
@@ -88,6 +89,8 @@ export default function QuizScreen({ locale, onBack }: Props) {
   const handleBack = useQuizExitConfirmation(locale, showResult, onBack);
   const resultIdRef = useRef<string | null>(null);
   const [revealStage, setRevealStage] = useState(0);
+  const [countdownKey, setCountdownKey] = useState(0);
+  const [countdownActive, setCountdownActive] = useState(true);
 
   useEffect(() => {
     if (!showResult) return;
@@ -120,12 +123,14 @@ export default function QuizScreen({ locale, onBack }: Props) {
   const visibleClues = clues.slice(0, revealStage + 1);
 
   useEffect(() => {
-    if (selectedAnswer !== null || showResult || revealStage >= POINTS_BY_CLUE.length - 1) return;
+    if (countdownActive || selectedAnswer !== null || showResult || revealStage >= POINTS_BY_CLUE.length - 1) return;
     const timeout = setTimeout(() => setRevealStage((stage) => Math.min(stage + 1, 4)), REVEAL_INTERVAL_MS);
     return () => clearTimeout(timeout);
-  }, [questionIndex, selectedAnswer, showResult, revealStage]);
+  }, [questionIndex, selectedAnswer, showResult, revealStage, countdownActive]);
 
   const restart = () => {
+    setCountdownActive(true);
+    setCountdownKey((value) => value + 1);
     setQuestions(createRound());
     resultIdRef.current = null;
     setQuestionIndex(0);
@@ -246,6 +251,7 @@ export default function QuizScreen({ locale, onBack }: Props) {
         )}
         <Text style={styles.demoNotice}>{t.playerDemoNotice}</Text>
       </ScrollView>
+      <QuizCountdown key={countdownKey} locale={locale} onComplete={() => setCountdownActive(false)} />
     </SafeAreaView>
   );
 }
