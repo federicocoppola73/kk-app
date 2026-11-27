@@ -139,6 +139,7 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
               <Pressable onPress={() => { setError(''); setMode('choice'); }} style={styles.backButton}>
                 <Text style={styles.backText}>‹  {copy.back}</Text>
               </Pressable>
+              {!!error && <Text accessibilityRole="alert" style={styles.error}>{error}</Text>}
               {mode === 'register' && (
                 <>
                   <Text style={styles.fieldLabel}>{copy.nickname}</Text>
@@ -166,7 +167,7 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
             </View>
           )}
 
-          {!!error && <Text accessibilityRole="alert" style={styles.error}>{error}</Text>}
+          {mode === 'choice' && !!error && <Text accessibilityRole="alert" style={styles.error}>{error}</Text>}
           <Text style={styles.footer}>{copy.footer}</Text>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
   brand: { color: colors.white, fontSize: 25, fontWeight: '900', letterSpacing: 2 },
   brandAccent: { color: colors.iceBlue },
   kicker: { color: colors.muted, fontSize: 9, fontWeight: '800', letterSpacing: 2, marginTop: 5 },
-  hero: { alignItems: 'center', marginTop: 30, marginBottom: 28 },
+  hero: { alignItems: 'center', marginTop: 24, marginBottom: 20 },
   ballMark: { width: 66, height: 66, borderRadius: 22, backgroundColor: '#142F4D', borderWidth: 1, borderColor: '#28527A', alignItems: 'center', justifyContent: 'center', marginBottom: 22 },
   ball: { fontSize: 32 },
   eyebrow: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
@@ -196,15 +197,15 @@ const styles = StyleSheet.create({
   outlineButton: { minHeight: 52, borderRadius: 14, borderWidth: 1, borderColor: colors.iceBlue, alignItems: 'center', justifyContent: 'center' },
   outlineText: { color: colors.iceBlue, fontSize: 13, fontWeight: '900', letterSpacing: 0.8 },
   note: { color: colors.muted, fontSize: 11, lineHeight: 17, textAlign: 'center', marginTop: 3 },
-  form: { gap: 9, marginTop: 2 },
-  backButton: { alignSelf: 'flex-start', paddingVertical: 5, marginBottom: 5 },
+  form: { gap: 7, marginTop: 2 },
+  backButton: { alignSelf: 'flex-start', paddingVertical: 3, marginBottom: 2 },
   backText: { color: colors.iceBlue, fontSize: 12, fontWeight: '800' },
   fieldLabel: { color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 1, marginTop: 4 },
-  input: { minHeight: 49, borderRadius: 12, borderWidth: 1, borderColor: '#294968', backgroundColor: colors.surface, color: colors.white, paddingHorizontal: 14, fontSize: 14 },
-  formSubmit: { marginTop: 12 },
+  input: { minHeight: 45, borderRadius: 12, borderWidth: 1, borderColor: '#294968', backgroundColor: colors.surface, color: colors.white, paddingHorizontal: 14, fontSize: 14 },
+  formSubmit: { marginTop: 8 },
   switchButton: { alignItems: 'center', paddingVertical: 10 },
   switchText: { color: colors.iceBlue, fontSize: 12, fontWeight: '700' },
-  error: { color: '#7A3212', backgroundColor: '#FFF0D6', borderWidth: 1, borderColor: '#E8B96A', borderRadius: 10, padding: 11, fontSize: 12, fontWeight: '700', textAlign: 'center', marginTop: 14 },
+  error: { color: '#7A3212', backgroundColor: '#FFF0D6', borderWidth: 1, borderColor: '#E8B96A', borderRadius: 10, paddingVertical: 8, paddingHorizontal: 10, fontSize: 12, lineHeight: 16, fontWeight: '700', textAlign: 'center', marginTop: 2, marginBottom: 3 },
   footer: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 1.4, textAlign: 'center', marginTop: 30 },
   pressed: { opacity: 0.82 },
   disabled: { opacity: 0.6 },
