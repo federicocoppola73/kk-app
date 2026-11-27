@@ -21,7 +21,7 @@ type Props = {
   onViewStatistics: () => void;
   rank: number | null;
   nationalRank: number | null;
-  onOpenLeaderboard: () => void;
+  onOpenLeaderboard: (scope: 'global' | 'national') => void;
 };
 
 type MatchResult = {
@@ -267,11 +267,11 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
             <Text style={styles.statValue}>{accuracy}%</Text>
             <Text style={styles.statLabel}>{labels.accuracy}</Text>
           </View>
-          <Pressable onPress={onOpenLeaderboard} style={styles.statCard} accessibilityRole="button">
+          <Pressable onPress={() => onOpenLeaderboard('global')} style={styles.statCard} accessibilityRole="button">
             <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
             <Text style={styles.statLabel}>{italian ? 'POSIZIONE GLOBALE' : 'GLOBAL RANK'}  ›</Text>
           </Pressable>
-          <Pressable onPress={onOpenLeaderboard} style={styles.statCard} accessibilityRole="button">
+          <Pressable onPress={() => onOpenLeaderboard('national')} style={styles.statCard} accessibilityRole="button">
             <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
             <Text style={styles.statLabel}>{italian ? 'POSIZIONE NAZIONALE' : 'NATIONAL RANK'}  ›</Text>
           </Pressable>
