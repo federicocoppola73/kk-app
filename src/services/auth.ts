@@ -58,6 +58,9 @@ export async function registerWithEmail(
   const linked = await linkWithCredential(currentUser, credential);
 
   await updateProfile(linked.user, { displayName: normalizedNickname });
+  // Refresh claims so Firestore can distinguish a linked account from a guest.
+  await linked.user.getIdToken(true);
+  await ensureUserProfile(linked.user);
   if (normalizedCountry) {
     await setUserCountry(linked.user.uid, normalizedCountry);
   }
