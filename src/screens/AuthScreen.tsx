@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import type { SupportedLocale } from '../i18n/locales';
 import { colors } from '../theme/colors';
+import { translations } from '../i18n/translations';
 import CountryPicker from '../components/CountryPicker';
 import { continueAsGuest, registerWithEmail, signInWithEmail } from '../services/auth';
 
@@ -25,7 +26,8 @@ type Props = {
 };
 
 export default function AuthScreen({ locale, onAuthenticated }: Props) {
-  const italian = locale === 'it';
+  const t = translations[locale];
+  const copyByLocale = {
   const [mode, setMode] = useState<Mode>('choice');
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
@@ -35,43 +37,28 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const copy = {
-    eyebrow: italian ? 'BENVENUTO NEL GIOCO' : 'WELCOME TO THE GAME',
-    title: italian ? 'ENTRA IN PARTITA.' : 'GET IN THE GAME.',
-    subtitle: italian ? 'Accedi per salvare i tuoi progressi e scalare la classifica.' : 'Sign in to save your progress and climb the leaderboard.',
-    guest: italian ? 'CONTINUA COME OSPITE' : 'CONTINUE AS GUEST',
-    login: italian ? 'ACCEDI' : 'LOG IN',
-    register: italian ? 'CREA ACCOUNT' : 'CREATE ACCOUNT',
-    email: italian ? 'EMAIL' : 'EMAIL',
-    nickname: italian ? 'NICKNAME' : 'NICKNAME',
-    nationality: italian ? 'NAZIONALITÀ (FACOLTATIVA)' : 'NATIONALITY (OPTIONAL)',
-    password: italian ? 'PASSWORD' : 'PASSWORD',
-    confirm: italian ? 'CONFERMA PASSWORD' : 'CONFIRM PASSWORD',
-    submitLogin: italian ? 'ACCEDI' : 'LOG IN',
-    submitRegister: italian ? 'CREA ACCOUNT' : 'CREATE ACCOUNT',
-    back: italian ? 'INDIETRO' : 'BACK',
-    switchLogin: italian ? 'Hai già un account? Accedi' : 'Already have an account? Log in',
-    switchRegister: italian ? 'Non hai un account? Registrati' : "Don't have an account? Sign up",
-    guestNote: italian ? 'Potrai creare un account in seguito e conservare i tuoi progressi.' : 'You can create an account later and keep your progress.',
-    footer: 'KNOW THE GAME. OWN THE GAME.',
-    passwordMismatch: italian ? 'Le password non coincidono.' : 'Passwords do not match.',
-    required: italian ? 'Compila tutti i campi richiesti.' : 'Please complete all required fields.',
-    genericError: italian ? 'Operazione non riuscita. Controlla i dati e riprova.' : 'Something went wrong. Check your details and try again.',
-  };
+  const copyByLocale = {
+    it: { eyebrow:'BENVENUTO NEL GIOCO', title:'ENTRA IN PARTITA.', subtitle:'Accedi per salvare i tuoi progressi e scalare la classifica.', guest:'CONTINUA COME OSPITE', login:'ACCEDI', register:'CREA ACCOUNT', email:'EMAIL', nickname:'NICKNAME', nationality:'NAZIONALITÀ (FACOLTATIVA)', password:'PASSWORD', confirm:'CONFERMA PASSWORD', submitLogin:'ACCEDI', submitRegister:'CREA ACCOUNT', back:'INDIETRO', switchLogin:'Hai già un account? Accedi', switchRegister:'Non hai un account? Registrati', guestNote:'Potrai creare un account in seguito e conservare i tuoi progressi.', footer:'CONOSCI IL GIOCO. DOMINA IL GIOCO.', passwordMismatch:'Le password non coincidono.', required:'Compila tutti i campi richiesti.', genericError:'Operazione non riuscita. Controlla i dati e riprova.' },
+    en: { eyebrow:'WELCOME TO THE GAME', title:'GET IN THE GAME.', subtitle:'Sign in to save your progress and climb the leaderboard.', guest:'CONTINUE AS GUEST', login:'LOG IN', register:'CREATE ACCOUNT', email:'EMAIL', nickname:'NICKNAME', nationality:'NATIONALITY (OPTIONAL)', password:'PASSWORD', confirm:'CONFIRM PASSWORD', submitLogin:'LOG IN', submitRegister:'CREATE ACCOUNT', back:'BACK', switchLogin:'Already have an account? Log in', switchRegister:"Don't have an account? Sign up", guestNote:'You can create an account later and keep your progress.', footer:'KNOW THE GAME. OWN THE GAME.', passwordMismatch:'Passwords do not match.', required:'Please complete all required fields.', genericError:'Something went wrong. Check your details and try again.' },
+    es: { eyebrow:'TE DAMOS LA BIENVENIDA', title:'ENTRA EN EL JUEGO.', subtitle:'Inicia sesión para guardar tu progreso y subir en la clasificación.', guest:'CONTINUAR COMO INVITADO', login:'INICIAR SESIÓN', register:'CREAR CUENTA', email:'CORREO ELECTRÓNICO', nickname:'APODO', nationality:'NACIONALIDAD (OPCIONAL)', password:'CONTRASEÑA', confirm:'CONFIRMAR CONTRASEÑA', submitLogin:'INICIAR SESIÓN', submitRegister:'CREAR CUENTA', back:'VOLVER', switchLogin:'¿Ya tienes una cuenta? Inicia sesión', switchRegister:'¿No tienes cuenta? Regístrate', guestNote:'Puedes crear una cuenta más adelante y conservar tu progreso.', footer:'CONOCE EL JUEGO. DOMINA EL JUEGO.', passwordMismatch:'Las contraseñas no coinciden.', required:'Completa todos los campos obligatorios.', genericError:'No se pudo completar la operación. Comprueba los datos e inténtalo de nuevo.' },
+    fr: { eyebrow:'BIENVENUE DANS LE JEU', title:'ENTREZ DANS LE JEU.', subtitle:'Connectez-vous pour sauvegarder votre progression et grimper au classement.', guest:'CONTINUER EN INVITÉ', login:'SE CONNECTER', register:'CRÉER UN COMPTE', email:'E-MAIL', nickname:'PSEUDONYME', nationality:'NATIONALITÉ (FACULTATIVE)', password:'MOT DE PASSE', confirm:'CONFIRMER LE MOT DE PASSE', submitLogin:'SE CONNECTER', submitRegister:'CRÉER UN COMPTE', back:'RETOUR', switchLogin:'Vous avez déjà un compte ? Connectez-vous', switchRegister:'Pas encore de compte ? Inscrivez-vous', guestNote:'Vous pourrez créer un compte plus tard et conserver votre progression.', footer:'CONNAISSEZ LE JEU. DOMINEZ LE JEU.', passwordMismatch:'Les mots de passe ne correspondent pas.', required:'Veuillez remplir tous les champs obligatoires.', genericError:'Échec de l’opération. Vérifiez vos informations et réessayez.' },
+    de: { eyebrow:'WILLKOMMEN IM SPIEL', title:'SEI DABEI.', subtitle:'Melde dich an, um deinen Fortschritt zu speichern und in der Rangliste aufzusteigen.', guest:'ALS GAST FORTFAHREN', login:'ANMELDEN', register:'KONTO ERSTELLEN', email:'E-MAIL', nickname:'SPITZNAME', nationality:'NATIONALITÄT (OPTIONAL)', password:'PASSWORT', confirm:'PASSWORT BESTÄTIGEN', submitLogin:'ANMELDEN', submitRegister:'KONTO ERSTELLEN', back:'ZURÜCK', switchLogin:'Du hast bereits ein Konto? Anmelden', switchRegister:'Noch kein Konto? Registrieren', guestNote:'Du kannst später ein Konto erstellen und deinen Fortschritt behalten.', footer:'KENNE DAS SPIEL. BEHERRSCHE DAS SPIEL.', passwordMismatch:'Die Passwörter stimmen nicht überein.', required:'Bitte fülle alle Pflichtfelder aus.', genericError:'Der Vorgang ist fehlgeschlagen. Prüfe deine Angaben und versuche es erneut.' }
+  } as const;
+  const copy = { ...copyByLocale[locale], footer: t.slogan };
 
   const friendlyError = (reason: unknown) => {
     const code = typeof reason === 'object' && reason !== null && 'code' in reason
       ? String((reason as { code: unknown }).code)
       : '';
     const message = reason instanceof Error ? reason.message : '';
-    if (message === 'nickname-already-taken') return italian ? 'Questo nickname è già utilizzato. Scegline un altro.' : 'This nickname is already taken. Choose another one.';
-    if (message === 'nickname-invalid-length') return italian ? 'Il nickname deve contenere da 3 a 24 caratteri.' : 'Nickname must contain 3 to 24 characters.';
-    if (code.includes('invalid-email')) return italian ? 'Indirizzo email non valido.' : 'Invalid email address.';
-    if (code.includes('user-not-found') || code.includes('invalid-credential') || code.includes('wrong-password')) return italian ? 'Email o password non corretti.' : 'Incorrect email or password.';
-    if (code.includes('email-already-in-use') || code.includes('credential-already-in-use')) return italian ? 'Questa email è già associata a un account.' : 'This email is already in use.';
-    if (code.includes('weak-password')) return italian ? 'La password deve contenere almeno 6 caratteri.' : 'Password must be at least 6 characters.';
-    if (code.includes('network-request-failed')) return italian ? 'Connessione assente. Controlla Internet.' : 'Network error. Check your connection.';
-    if (code.includes('operation-not-allowed')) return italian ? 'Questo metodo di accesso non è attivo in Firebase.' : 'This sign-in method is not enabled in Firebase.';
+    if (message === 'nickname-already-taken') return ({ it:'Questo nickname è già utilizzato. Scegline un altro.', en:'This nickname is already taken. Choose another one.', es:'Este apodo ya está en uso. Elige otro.', fr:'Ce pseudonyme est déjà utilisé. Choisissez-en un autre.', de:'Dieser Spitzname ist bereits vergeben. Wähle einen anderen.' } as const)[locale];
+    if (message === 'nickname-invalid-length') return ({ it:'Il nickname deve contenere da 3 a 24 caratteri.', en:'Nickname must contain 3 to 24 characters.', es:'El apodo debe tener entre 3 y 24 caracteres.', fr:'Le pseudonyme doit contenir entre 3 et 24 caractères.', de:'Der Spitzname muss 3 bis 24 Zeichen lang sein.' } as const)[locale];
+    if (code.includes('invalid-email')) return ({ it:'Indirizzo email non valido.', en:'Invalid email address.', es:'Dirección de correo no válida.', fr:'Adresse e-mail invalide.', de:'Ungültige E-Mail-Adresse.' } as const)[locale];
+    if (code.includes('user-not-found') || code.includes('invalid-credential') || code.includes('wrong-password')) return ({ it:'Email o password non corretti.', en:'Incorrect email or password.', es:'Correo o contraseña incorrectos.', fr:'E-mail ou mot de passe incorrect.', de:'E-Mail-Adresse oder Passwort falsch.' } as const)[locale];
+    if (code.includes('email-already-in-use') || code.includes('credential-already-in-use')) return ({ it:'Questa email è già associata a un account.', en:'This email is already in use.', es:'Este correo ya está asociado a una cuenta.', fr:'Cette adresse e-mail est déjà utilisée.', de:'Diese E-Mail-Adresse wird bereits verwendet.' } as const)[locale];
+    if (code.includes('weak-password')) return ({ it:'La password deve contenere almeno 6 caratteri.', en:'Password must be at least 6 characters.', es:'La contraseña debe tener al menos 6 caracteres.', fr:'Le mot de passe doit contenir au moins 6 caractères.', de:'Das Passwort muss mindestens 6 Zeichen enthalten.' } as const)[locale];
+    if (code.includes('network-request-failed')) return ({ it:'Connessione assente. Controlla Internet.', en:'Network error. Check your connection.', es:'Sin conexión. Comprueba tu conexión a Internet.', fr:'Connexion indisponible. Vérifiez votre accès à Internet.', de:'Keine Verbindung. Überprüfe deine Internetverbindung.' } as const)[locale];
+    if (code.includes('operation-not-allowed')) return ({ it:'Questo metodo di accesso non è attivo in Firebase.', en:'This sign-in method is not enabled in Firebase.', es:'Este método de acceso no está habilitado en Firebase.', fr:'Cette méthode de connexion n’est pas activée dans Firebase.', de:'Diese Anmeldemethode ist in Firebase nicht aktiviert.' } as const)[locale];
     return copy.genericError;
   };
 
@@ -111,7 +98,7 @@ export default function AuthScreen({ locale, onAuthenticated }: Props) {
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <View style={styles.brandRow}>
             <Text style={styles.brand}>KIT <Text style={styles.brandAccent}>&</Text> KICK</Text>
-            <Text style={styles.kicker}>FOOTBALL QUIZ & GAMING</Text>
+            <Text style={styles.kicker}>{t.kicker}</Text>
           </View>
 
           <View style={styles.hero}>
