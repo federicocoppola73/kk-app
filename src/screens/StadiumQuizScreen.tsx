@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   clueRow: { minHeight: 32, flexDirection: 'row', alignItems: 'center', paddingVertical: 3, borderBottomWidth: 1, borderBottomColor: '#29415D' },
   clueIcon: { width: 28, fontSize: 16, textAlign: 'center', marginRight: 5 },
   clueLabel: { color: colors.muted, fontSize: 8, fontWeight: '900', letterSpacing: 0.3, width: 104 },
-  clueValue: { color: colors.white, fontSize: 10, fontWeight: '800', flex: 1, textAlign: 'right' },
+  clueValue: { color: colors.white, fontSize: 11, fontWeight: '800', flex: 1, textAlign: 'right' },
   clueFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 6, paddingBottom: 2 },
   clueCount: { color: colors.muted, fontSize: 9, fontWeight: '800' },
   revealPoints: { color: colors.gold, fontSize: 9, fontWeight: '900' },
