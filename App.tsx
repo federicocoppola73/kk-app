@@ -32,7 +32,9 @@ export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
-    const splashTimer = setTimeout(() => setScreen('gate'), 5000);
+    const splashTimer = setTimeout(() => {
+      setScreen(auth.currentUser ? 'home' : 'gate');
+    }, 5000);
     return () => clearTimeout(splashTimer);
   }, []);
 
@@ -42,7 +44,7 @@ export default function App() {
       setAuthReady(true);
       setScreen((current) => {
         if (current === 'splash') return current;
-        if (user && current === 'gate') return 'home';
+        if (user && !user.isAnonymous && current === 'gate') return 'home';
         if (!user && current === 'home') return 'gate';
         return current;
       });
@@ -148,7 +150,7 @@ export default function App() {
     );
   }
 
-  if (!authUser) {
+  if (!authUser || (screen === 'gate' && authUser.isAnonymous)) {
     return <AuthScreen locale={activeLocale} onAuthenticated={() => setScreen('home')} />;
   }
 
