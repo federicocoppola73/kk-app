@@ -181,8 +181,8 @@ export default function ClubQuizScreen({ locale, onBack }: Props) {
             <Text style={styles.question}>{t.clubQuestionPrompt}</Text>
 
             <View style={styles.cluesPanel}>
-              {clues.slice(0, revealStage + 1).map((clue) => (
-                <View key={clue.label} style={styles.clueRow}>
+              {clues.map((clue, index) => (
+                <View key={clue.label} style={[styles.clueRow, index > revealStage && styles.clueHidden]}>
                   <Text style={styles.clueIcon}>{clue.icon}</Text>
                   <Text style={styles.clueLabel}>{clue.label}</Text>
                   <Text style={styles.clueValue} numberOfLines={1}>{clue.value}</Text>
@@ -305,10 +305,11 @@ const styles = StyleSheet.create({
   progressFill: { height: 5, borderRadius: 5, backgroundColor: colors.electricBlue },
   question: { color: colors.white, fontSize: 20, lineHeight: 24, fontWeight: '900', marginBottom: 8 },
   cluesPanel: { borderRadius: 16, borderWidth: 1, borderColor: '#294968', backgroundColor: '#102746', paddingHorizontal: 12, paddingVertical: 5, marginBottom: 8 },
-  clueRow: { minHeight: 34, flexDirection: 'row', alignItems: 'center', paddingVertical: 4, borderBottomWidth: 1, borderBottomColor: '#29415D' },
+  clueRow: { minHeight: 40, flexDirection: 'row', alignItems: 'center', paddingVertical: 4, borderBottomWidth: 1, borderBottomColor: '#29415D' },
   clueIcon: { width: 30, fontSize: 17, textAlign: 'center', marginRight: 7 },
-  clueLabel: { color: colors.muted, fontSize: 9, fontWeight: '900', letterSpacing: 0.4, width: 112 },
-  clueValue: { color: colors.white, fontSize: 12, fontWeight: '800', flex: 1, textAlign: 'right' },
+  clueLabel: { color: colors.muted, fontSize: 10, fontWeight: '900', letterSpacing: 0.4, width: 112 },
+  clueValue: { color: colors.white, fontSize: 14, fontWeight: '800', flex: 1, textAlign: 'right' },
+  clueHidden: { opacity: 0 },
   clueFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 7, paddingBottom: 3 },
   clueCount: { color: colors.muted, fontSize: 9, fontWeight: '800' },
   revealControls: { alignItems: 'center', marginBottom: 8 },
