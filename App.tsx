@@ -6,7 +6,7 @@ import { getLocales } from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import appConfig from './app.json';
 import { auth, db } from './src/services/firebase';
-import { ensureUserProfile, type UserProfile } from './src/services/userProfile';
+import { ensureUserProfile, normalizeNickname, type UserProfile } from './src/services/userProfile';
 import HomeScreen from './src/screens/HomeScreen';
 import AuthScreen from './src/screens/AuthScreen';
 import QuizScreen from './src/screens/QuizScreen';
@@ -96,6 +96,8 @@ export default function App() {
       const data = snapshot.data();
       setUserProfile({
         nickname: typeof data.nickname === 'string' ? data.nickname : (authUser.displayName ?? 'Player'),
+        nicknameKey: typeof data.nicknameKey === 'string' ? data.nicknameKey : normalizeNickname(typeof data.nickname === 'string' ? data.nickname : (authUser.displayName ?? 'Player')),
+        countryCode: typeof data.countryCode === 'string' ? data.countryCode : null,
         xp: typeof data.xp === 'number' ? data.xp : 0,
         level: typeof data.level === 'number' ? data.level : 1,
       });
