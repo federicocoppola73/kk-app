@@ -65,12 +65,15 @@ export async function ensureUserProfile(user: User): Promise<void> {
       return;
     }
 
+    // The profile exists here; read its data after the missing-profile branch
+    // so TypeScript can safely treat it as a non-null object.
+    const currentProfile = snapshot.data();
     const updates: Record<string, unknown> = {};
-    if (existing.nickname !== nickname) updates.nickname = nickname;
-    if (existing.nicknameKey !== nicknameKey) updates.nicknameKey = nicknameKey;
-    if (!Object.prototype.hasOwnProperty.call(existing, 'countryCode')) updates.countryCode = null;
-    if (typeof existing.identityLocked !== 'boolean') updates.identityLocked = !user.isAnonymous;
-    else if (!user.isAnonymous && existing.identityLocked === false) updates.identityLocked = true;
+    if (currentProfile.nickname !== nickname) updates.nickname = nickname;
+    if (currentProfile.nicknameKey !== nicknameKey) updates.nicknameKey = nicknameKey;
+    if (!Object.prototype.hasOwnProperty.call(currentProfile, 'countryCode')) updates.countryCode = null;
+    if (typeof currentProfile.identityLocked !== 'boolean') updates.identityLocked = !user.isAnonymous;
+    else if (!user.isAnonymous && currentProfile.identityLocked === false) updates.identityLocked = true;
 
     if (Object.keys(updates).length > 0) {
       updates.updatedAt = serverTimestamp();
