@@ -93,6 +93,8 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
     points: italian ? 'PUNTI TOTALI' : 'TOTAL POINTS',
     statistics: italian ? 'STATISTICHE' : 'STATISTICS',
     matches: italian ? 'PARTITE GIOCATE' : 'MATCHES PLAYED',
+    correctAnswers: italian ? 'RISPOSTE CORRETTE' : 'CORRECT ANSWERS',
+    accuracy: italian ? 'PRECISIONE' : 'ACCURACY',
     rank: italian ? 'POSIZIONE IN CLASSIFICA' : 'LEADERBOARD RANK',
     history: italian ? 'CRONOLOGIA PARTITE - ULTIME 5' : 'MATCH HISTORY - LAST 5',
     viewAll: italian ? 'VEDI TUTTE' : 'VIEW ALL',
@@ -122,6 +124,9 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
   const nickname = userProfile?.nickname || authUser.displayName || labels.player;
   const email = authUser.email;
   const totalPoints = results.reduce((sum, result) => sum + result.points, 0);
+  const totalCorrectAnswers = results.reduce((sum, result) => sum + result.correctAnswers, 0);
+  const totalQuestions = results.reduce((sum, result) => sum + result.totalQuestions, 0);
+  const accuracy = totalQuestions > 0 ? Math.round((totalCorrectAnswers / totalQuestions) * 100) : 0;
   const modeName = (mode: string) => MODE_LABELS[mode]?.[italian ? 'it' : 'en'] ?? mode;
 
   const submitRegistration = async () => {
@@ -198,6 +203,14 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
           <View style={styles.statCard}>
             <Text style={styles.statValue}>{results.length}</Text>
             <Text style={styles.statLabel}>{labels.matches}</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{totalCorrectAnswers.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>{labels.correctAnswers}</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{accuracy}%</Text>
+            <Text style={styles.statLabel}>{labels.accuracy}</Text>
           </View>
           <View style={styles.statCard}>
             <Text style={styles.statValue}>—</Text>
