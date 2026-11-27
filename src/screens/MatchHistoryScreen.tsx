@@ -12,15 +12,21 @@ type MatchResult = {
   totalQuestions: number; completedAt: Date | null;
 };
 
-const MODES: Record<string, { it: string; en: string }> = {
-  player: { it: 'Player Quiz', en: 'Player Quiz' },
-  club: { it: 'Club Quiz', en: 'Club Quiz' },
-  career: { it: 'Career Path', en: 'Career Path' },
-  stadium: { it: 'Stadium Quiz', en: 'Stadium Quiz' },
+const MODE_LABELS: Record<string, Record<SupportedLocale, string>> = {
+  player: { it:'Giocatore', en:'Player', es:'Jugador', fr:'Joueur', de:'Spieler' },
+  club: { it:'Club', en:'Club', es:'Club', fr:'Club', de:'Verein' },
+  career: { it:'Carriera', en:'Career Path', es:'Trayectoria', fr:'Parcours', de:'Karriereweg' },
+  stadium: { it:'Stadio', en:'Stadium', es:'Estadio', fr:'Stade', de:'Stadion' },
 };
 
 export default function MatchHistoryScreen({ locale, authUser, onBack }: Props) {
-  const italian = locale === 'it';
+  const labels = ({
+    it:{ back:'INDIETRO',title:'CRONOLOGIA PARTITE',loading:'Caricamento cronologia…',error:'Impossibile caricare la cronologia. Riprova più tardi.',empty:'Non hai ancora completato partite.',correct:'corrette',unverified:'NON VERIFICATO',points:'pt' },
+    en:{ back:'BACK',title:'MATCH HISTORY',loading:'Loading match history…',error:'Unable to load match history. Please try again later.',empty:'You have not completed any matches yet.',correct:'correct',unverified:'UNVERIFIED',points:'pts' },
+    es:{ back:'VOLVER',title:'HISTORIAL DE PARTIDAS',loading:'Cargando historial…',error:'No se pudo cargar el historial. Inténtalo más tarde.',empty:'Todavía no has completado ninguna partida.',correct:'correctas',unverified:'NO VERIFICADO',points:'pts' },
+    fr:{ back:'RETOUR',title:'HISTORIQUE DES MATCHS',loading:'Chargement de l’historique…',error:'Impossible de charger l’historique. Réessayez plus tard.',empty:'Vous n’avez pas encore terminé de match.',correct:'correctes',unverified:'NON VÉRIFIÉ',points:'pts' },
+    de:{ back:'ZURÜCK',title:'SPIELVERLAUF',loading:'Spielverlauf wird geladen…',error:'Spielverlauf konnte nicht geladen werden. Bitte später erneut versuchen.',empty:'Du hast noch keine Spiele abgeschlossen.',correct:'richtig',unverified:'NICHT VERIFIZIERT',points:'Pkt.' }
+  } as const)[locale];
   const [results, setResults] = useState<MatchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -53,16 +59,7 @@ export default function MatchHistoryScreen({ locale, authUser, onBack }: Props) 
     });
   }, [authUser.uid]);
 
-  const labels = {
-    back: italian ? 'INDIETRO' : 'BACK',
-    title: italian ? 'CRONOLOGIA PARTITE' : 'MATCH HISTORY',
-    loading: italian ? 'Caricamento cronologia…' : 'Loading match history…',
-    error: italian ? 'Impossibile caricare la cronologia. Riprova più tardi.' : 'Unable to load match history. Please try again later.',
-    empty: italian ? 'Non hai ancora completato partite.' : 'You have not completed any matches yet.',
-    correct: italian ? 'corrette' : 'correct',
-    unverified: italian ? 'NON VERIFICATO' : 'UNVERIFIED',
-  };
-  const modeName = (mode: string) => MODES[mode]?.[italian ? 'it' : 'en'] ?? mode;
+  const modeName = (mode: string) => MODE_LABELS[mode]?.[locale] ?? mode;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -80,11 +77,11 @@ export default function MatchHistoryScreen({ locale, authUser, onBack }: Props) 
             <View key={result.id} style={styles.matchCard}>
               <View style={styles.matchTop}>
                 <Text style={styles.matchMode}>{modeName(result.mode)}</Text>
-                <Text style={styles.matchPoints}>{result.points} {italian ? 'pt' : 'pts'}</Text>
+                <Text style={styles.matchPoints}>{result.points} {labels.points}</Text>
               </View>
               <Text style={styles.matchMeta}>
                 {result.correctAnswers}/{result.totalQuestions} {labels.correct}
-                {result.completedAt ? `  ·  ${result.completedAt.toLocaleDateString(italian ? 'it-IT' : 'en-GB')}` : ''}
+                {result.completedAt ? `  ·  ${result.completedAt.toLocaleDateString(locale === 'en' ? 'en-GB' : locale)}` : ''}
               </Text>
               <Text style={styles.verification}>{labels.unverified}</Text>
             </View>
