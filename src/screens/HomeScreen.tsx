@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
@@ -37,8 +37,13 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
         </View>
 
         <View style={styles.hero}>
-          <Text style={styles.overline}>{t.overline}</Text>
-          <Text style={styles.headline}>{t.headline}</Text>
+          <View style={styles.heroIntro}>
+            <Image source={require('../../assets/brand/icon.png')} style={styles.heroLogo} resizeMode="contain" />
+            <View style={styles.heroCopy}>
+              <Text style={styles.overline}>{t.overline}</Text>
+              <Text style={styles.headline}>{t.headline}</Text>
+            </View>
+          </View>
           <Text style={styles.subhead}>{t.subhead}</Text>
           <View style={styles.statsRow}>
             <View style={styles.stat}>
@@ -113,8 +118,11 @@ const styles = StyleSheet.create({
   settings: { width: 42, height: 42, borderRadius: 14, borderWidth: 1, borderColor: '#294968', backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
   settingsGlyph: { color: colors.white, fontSize: 22 },
   hero: { backgroundColor: '#102746', borderRadius: 22, borderWidth: 1, borderColor: '#1D4268', padding: 14, marginBottom: 13 },
-  overline: { color: colors.iceBlue, fontSize: 10, fontWeight: '900', letterSpacing: 2 },
-  headline: { color: colors.white, fontSize: 24, lineHeight: 27, fontWeight: '900', letterSpacing: -0.7, marginTop: 8 },
+  heroIntro: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  heroLogo: { width: 76, height: 76, borderRadius: 16 },
+  heroCopy: { flex: 1 },
+  overline: { color: colors.iceBlue, fontSize: 9, fontWeight: '900', letterSpacing: 1.5 },
+  headline: { color: colors.white, fontSize: 19, lineHeight: 22, fontWeight: '900', letterSpacing: -0.5, marginTop: 5 },
   subhead: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: 7 },
   statsRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12, paddingTop: 9, borderTopWidth: 1, borderTopColor: '#29435F' },
   stat: { flex: 1, alignItems: 'center' },
