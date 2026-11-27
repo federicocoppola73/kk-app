@@ -33,7 +33,10 @@ export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [globalRank, setGlobalRank] = useState<number | null>(null);
   const [nationalRank, setNationalRank] = useState<number | null>(null);
+  const [globalPointsRank, setGlobalPointsRank] = useState<number | null>(null);
+  const [nationalPointsRank, setNationalPointsRank] = useState<number | null>(null);
   const [leaderboardScope, setLeaderboardScope] = useState<'global' | 'national'>('global');
+  const [leaderboardMetric, setLeaderboardMetric] = useState<'xp' | 'points'>('xp');
 
   useEffect(() => {
     const splashTimer = setTimeout(() => {
@@ -163,6 +166,37 @@ export default function App() {
   }, [authUser?.uid, userProfile?.xp, userProfile?.countryCode]);
 
   useEffect(() => {
+    if (!authUser || !userProfile) { setGlobalPointsRank(null); return; }
+    let active = true;
+    const higherPoints = query(collection(db, 'leaderboard'), where('points', '>', userProfile.points), orderBy('points', 'desc'));
+    void getCountFromServer(higherPoints).then(result => {
+      if (active) setGlobalPointsRank(result.data().count + 1);
+    }).catch(error => {
+      console.warn('Unable to calculate global points rank:', error);
+      if (active) setGlobalPointsRank(null);
+    });
+    return () => { active = false; };
+  }, [authUser?.uid, userProfile?.points]);
+
+  useEffect(() => {
+    if (!authUser || !userProfile?.countryCode) { setNationalPointsRank(null); return; }
+    let active = true;
+    const higherPointsInCountry = query(
+      collection(db, 'leaderboard'),
+      where('countryCode', '==', userProfile.countryCode),
+      where('points', '>', userProfile.points),
+      orderBy('points', 'desc'),
+    );
+    void getCountFromServer(higherPointsInCountry).then(result => {
+      if (active) setNationalPointsRank(result.data().count + 1);
+    }).catch(error => {
+      console.warn('Unable to calculate national points rank:', error);
+      if (active) setNationalPointsRank(null);
+    });
+    return () => { active = false; };
+  }, [authUser?.uid, userProfile?.points, userProfile?.countryCode]);
+
+  useEffect(() => {
     AsyncStorage.getItem(LANGUAGE_KEY)
       .then((saved) => {
         if (saved === 'auto' || saved === null) setLocale(null);
@@ -182,7 +216,7 @@ export default function App() {
   };
 
   const activeLocale = locale ?? resolveLocale(getLocales()[0]?.languageCode);
-  const openLeaderboard = (scope: 'global' | 'national') => { setLeaderboardScope(scope); setScreen('leaderboard'); };
+  const openLeaderboard = (metric: 'xp' | 'points', scope: 'global' | 'national') => { setLeaderboardMetric(metric); setLeaderboardScope(scope); setScreen('leaderboard'); };
 
   if (screen === 'splash' || !settingsLoaded || !authReady) {
     return (
@@ -198,12 +232,12 @@ export default function App() {
     return <AuthScreen locale={activeLocale} onAuthenticated={() => setScreen('home')} />;
   }
 
-  if (screen === 'leaderboard') return <LeaderboardScreen locale={activeLocale} uid={authUser.uid} xp={userProfile?.xp ?? 0} points={userProfile?.points ?? 0} countryCode={userProfile?.countryCode ?? null} initialScope={leaderboardScope} onBack={() => setScreen('home')} />;
+  if (screen === 'leaderboard') return <LeaderboardScreen locale={activeLocale} uid={authUser.uid} xp={userProfile?.xp ?? 0} points={userProfile?.points ?? 0} countryCode={userProfile?.countryCode ?? null} initialScope={leaderboardScope} initialMetric={leaderboardMetric} onBack={() => setScreen('home')} />;
   if (screen === 'matchHistory') {
     return <MatchHistoryScreen locale={activeLocale} authUser={authUser} onBack={() => setScreen('profile')} />;
   }
   if (screen === 'profile') {
-    return <ProfileScreen locale={activeLocale} authUser={authUser} userProfile={userProfile} onBack={() => setScreen('home')} onViewAllHistory={() => setScreen('matchHistory')} onViewStatistics={() => setScreen('statistics')} rank={globalRank} nationalRank={nationalRank} onOpenLeaderboard={openLeaderboard} onSignOut={() => { void signOut(auth).catch((error) => console.warn('Unable to sign out:', error)); }} />;
+    return <ProfileScreen locale={activeLocale} authUser={authUser} userProfile={userProfile} onBack={() => setScreen('home')} onViewAllHistory={() => setScreen('matchHistory')} onViewStatistics={() => setScreen('statistics')} rank={globalRank} nationalRank={nationalRank} pointsGlobalRank={globalPointsRank} pointsNationalRank={nationalPointsRank} onOpenLeaderboard={openLeaderboard} onSignOut={() => { void signOut(auth).catch((error) => console.warn('Unable to sign out:', error)); }} />;
   }
   if (screen === 'statistics') {
     return <StatisticsScreen locale={activeLocale} authUser={authUser} onBack={() => setScreen('profile')} />;
@@ -223,7 +257,7 @@ export default function App() {
   if (screen === 'careerQuiz') {
     return <CareerQuizScreen locale={activeLocale} onBack={() => setScreen('home')} />;
   }
-  return <HomeScreen locale={activeLocale} xp={userProfile?.xp ?? null} level={userProfile?.level ?? null} rank={globalRank} nationalRank={nationalRank} countryCode={userProfile?.countryCode ?? null} onOpenLeaderboard={openLeaderboard} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} onOpenProfile={() => setScreen('profile')} />;
+  return <HomeScreen locale={activeLocale} xp={userProfile?.xp ?? null} level={userProfile?.level ?? null} rank={globalRank} nationalRank={nationalRank} pointsGlobalRank={globalPointsRank} pointsNationalRank={nationalPointsRank} countryCode={userProfile?.countryCode ?? null} onOpenLeaderboard={openLeaderboard} onStartPlayerQuiz={() => setScreen('playerQuiz')} onStartClubQuiz={() => setScreen('clubQuiz')} onStartStadiumQuiz={() => setScreen('stadiumQuiz')} onStartCareerQuiz={() => setScreen('careerQuiz')} onOpenSettings={() => setScreen('settings')} onOpenProfile={() => setScreen('profile')} />;
 }
 
 const styles = StyleSheet.create({
