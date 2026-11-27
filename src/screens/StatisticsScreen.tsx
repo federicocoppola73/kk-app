@@ -10,16 +10,22 @@ type Props = { locale: SupportedLocale; authUser: User; onBack: () => void };
 type ModeStats = { matches: number; correctAnswers: number; totalQuestions: number };
 
 const MODES = [
-  { id: 'player', it: 'PLAYER QUIZ', en: 'PLAYER QUIZ' },
-  { id: 'club', it: 'CLUB QUIZ', en: 'CLUB QUIZ' },
-  { id: 'career', it: 'CAREER PATH', en: 'CAREER PATH' },
-  { id: 'stadium', it: 'STADIUM QUIZ', en: 'STADIUM QUIZ' },
+  { id:'player', labels:{it:'GIOCATORE',en:'PLAYER',es:'JUGADOR',fr:'JOUEUR',de:'SPIELER'} },
+  { id:'club', labels:{it:'CLUB',en:'CLUB',es:'CLUB',fr:'CLUB',de:'VEREIN'} },
+  { id:'career', labels:{it:'CARRIERA',en:'CAREER PATH',es:'TRAYECTORIA',fr:'PARCOURS',de:'KARRIEREWEG'} },
+  { id:'stadium', labels:{it:'STADIO',en:'STADIUM',es:'ESTADIO',fr:'STADE',de:'STADION'} },
 ] as const;
 
 const EMPTY_STATS = (): ModeStats => ({ matches: 0, correctAnswers: 0, totalQuestions: 0 });
 
 export default function StatisticsScreen({ locale, authUser, onBack }: Props) {
-  const italian = locale === 'it';
+  const labels = ({
+    it:{back:'INDIETRO',title:'DETTAGLIO STATISTICHE',subtitle:'Le tue prestazioni, modalità per modalità.',matches:'PARTITE',correct:'RISPOSTE CORRETTE',accuracy:'PRECISIONE',loading:'Caricamento statistiche…',error:'Impossibile caricare le statistiche. Riprova più tardi.',empty:'Completa una partita per iniziare a vedere le tue statistiche.',footer:'CONOSCI IL GIOCO. DOMINA IL GIOCO.'},
+    en:{back:'BACK',title:'STATISTICS DETAILS',subtitle:'Your performance, broken down by game mode.',matches:'MATCHES',correct:'CORRECT ANSWERS',accuracy:'ACCURACY',loading:'Loading statistics…',error:'Unable to load statistics. Please try again later.',empty:'Complete a match to start seeing your statistics.',footer:'KNOW THE GAME. OWN THE GAME.'},
+    es:{back:'VOLVER',title:'DETALLE DE ESTADÍSTICAS',subtitle:'Tu rendimiento desglosado por modo de juego.',matches:'PARTIDAS',correct:'RESPUESTAS CORRECTAS',accuracy:'PRECISIÓN',loading:'Cargando estadísticas…',error:'No se pudieron cargar las estadísticas. Inténtalo más tarde.',empty:'Completa una partida para empezar a ver tus estadísticas.',footer:'CONOCE EL JUEGO. DOMINA EL JUEGO.'},
+    fr:{back:'RETOUR',title:'DÉTAIL DES STATISTIQUES',subtitle:'Vos performances, mode de jeu par mode de jeu.',matches:'MATCHS',correct:'BONNES RÉPONSES',accuracy:'PRÉCISION',loading:'Chargement des statistiques…',error:'Impossible de charger les statistiques. Réessayez plus tard.',empty:'Terminez un match pour commencer à consulter vos statistiques.',footer:'CONNAISSEZ LE JEU. DOMINEZ LE JEU.'},
+    de:{back:'ZURÜCK',title:'STATISTIKEN IM DETAIL',subtitle:'Deine Leistung nach Spielmodus aufgeschlüsselt.',matches:'SPIELE',correct:'RICHTIGE ANTWORTEN',accuracy:'TREFFERQUOTE',loading:'Statistiken werden geladen…',error:'Statistiken konnten nicht geladen werden. Bitte später erneut versuchen.',empty:'Schließe ein Spiel ab, um deine Statistiken zu sehen.',footer:'KENNE DAS SPIEL. BEHERRSCHE DAS SPIEL.'}
+  } as const)[locale];
   const [stats, setStats] = useState<Record<string, ModeStats>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -55,19 +61,6 @@ export default function StatisticsScreen({ locale, authUser, onBack }: Props) {
     });
   }, [authUser.uid]);
 
-  const labels = {
-    back: italian ? 'INDIETRO' : 'BACK',
-    title: italian ? 'DETTAGLIO STATISTICHE' : 'STATISTICS DETAILS',
-    subtitle: italian ? 'Le tue prestazioni, modalità per modalità.' : 'Your performance, broken down by game mode.',
-    matches: italian ? 'PARTITE' : 'MATCHES',
-    correct: italian ? 'RISPOSTE CORRETTE' : 'CORRECT ANSWERS',
-    accuracy: italian ? 'PRECISIONE' : 'ACCURACY',
-    loading: italian ? 'Caricamento statistiche…' : 'Loading statistics…',
-    error: italian ? 'Impossibile caricare le statistiche. Riprova più tardi.' : 'Unable to load statistics. Please try again later.',
-    empty: italian ? 'Completa una partita per iniziare a vedere le tue statistiche.' : 'Complete a match to start seeing your statistics.',
-    footer: 'KNOW THE GAME. OWN THE GAME.',
-  };
-
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar barStyle="light-content" />
@@ -92,7 +85,7 @@ export default function StatisticsScreen({ locale, authUser, onBack }: Props) {
                 : 0;
               return (
                 <View key={mode.id} style={styles.modeCard}>
-                  <Text style={styles.modeTitle}>{italian ? mode.it : mode.en}</Text>
+                  <Text style={styles.modeTitle}>{mode.labels[locale]}</Text>
                   <View style={styles.metrics}>
                     <View style={styles.metric}>
                       <Text style={styles.metricValue}>{item.matches}</Text>
