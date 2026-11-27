@@ -8,7 +8,7 @@ import { colors } from '../theme/colors';
 type Entry = { uid: string; nickname: string; countryCode: string | null; xp: number; points: number; level: number };
 type Metric = 'xp' | 'points';
 type Scope = 'global' | 'national';
-type Props = { locale: SupportedLocale; uid: string; xp: number; points: number; countryCode: string | null; initialScope: Scope; onBack: () => void };
+type Props = { locale: SupportedLocale; uid: string; xp: number; points: number; countryCode: string | null; initialScope: Scope; initialMetric: Metric; onBack: () => void };
 function readEntry(id: string, data: DocumentData): Entry {
   return { uid: id, nickname: typeof data.nickname === 'string' ? data.nickname : 'Player', countryCode: typeof data.countryCode === 'string' ? data.countryCode : null, xp: typeof data.xp === 'number' ? data.xp : 0, points: typeof data.points === 'number' ? data.points : 0, level: typeof data.level === 'number' ? data.level : 1 };
 }
