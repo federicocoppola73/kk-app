@@ -66,8 +66,8 @@ export default function LeaderboardScreen({ locale, uid, xp, countryCode, initia
     : (it ? 'CLASSIFICA NAZIONALE' : 'NATIONAL LEADERBOARD');
   const subtitle = scope === 'global'
     ? (it ? 'I migliori 50 giocatori · XP totali' : 'Top 50 players · lifetime XP')
-    : countryName
-      ? (it ? `I migliori 50 in ${countryName} · XP totali` : `Top 50 in ${countryName} · lifetime XP`)
+    : countryCode
+      ? (it ? 'I migliori 50 giocatori del tuo Paese · XP totali' : 'Top 50 players in your country · lifetime XP')
       : (it ? 'Imposta la nazionalità nel profilo per partecipare' : 'Set your nationality in Profile to participate');
 
   return <SafeAreaView style={styles.safe}>
@@ -82,7 +82,7 @@ export default function LeaderboardScreen({ locale, uid, xp, countryCode, initia
           <Text style={[styles.tabText, scope === 'global' && styles.activeTabText]}>{it ? 'GLOBALE' : 'GLOBAL'}</Text>
         </Pressable>
         <Pressable onPress={() => setScope('national')} style={[styles.tab, scope === 'national' && styles.activeTab]}>
-          <Text style={[styles.tabText, scope === 'national' && styles.activeTabText]}>{countryCode ?? (it ? 'NAZIONALE' : 'NATIONAL')}</Text>
+          <Text style={[styles.tabText, scope === 'national' && styles.activeTabText]}>{it ? 'NAZIONALE' : 'NATIONAL'}</Text>
         </Pressable>
       </View>
 
