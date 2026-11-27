@@ -87,6 +87,10 @@ export default function App() {
       return;
     }
 
+    // Anonymous sign-in briefly exposes a user before continueAsGuest assigns
+    // its generated display name and creates the corresponding Firestore profile.
+    if (authUser.isAnonymous && !authUser.displayName) return;
+
     const profileRef = doc(db, 'users', authUser.uid);
     const unsubscribe = onSnapshot(profileRef, (snapshot) => {
       if (!snapshot.exists()) {
