@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import type { SupportedLocale } from '../i18n/locales';
 import { colors } from '../theme/colors';
 
-type Props = { locale: SupportedLocale };
+type Props = { locale: SupportedLocale; onComplete: () => void };
 
 const copy: Record<SupportedLocale, { ready: string; go: string }> = {
   it: { ready: 'PREPARATI', go: 'PARTENZA!' },
@@ -13,7 +13,7 @@ const copy: Record<SupportedLocale, { ready: string; go: string }> = {
   de: { ready: 'MACH DICH BEREIT', go: 'LOS!' },
 };
 
-export default function QuizCountdown({ locale }: Props) {
+export default function QuizCountdown({ locale, onComplete }: Props) {
   const [count, setCount] = useState<number | 'go' | null>(3);
 
   useEffect(() => {
@@ -21,6 +21,7 @@ export default function QuizCountdown({ locale }: Props) {
     const timeout = setTimeout(() => {
       if (count === 'go') {
         setCount(null);
+        onComplete();
       } else if (count === 1) {
         setCount('go');
       } else {
@@ -29,7 +30,7 @@ export default function QuizCountdown({ locale }: Props) {
     }, count === 'go' ? 750 : 1000);
 
     return () => clearTimeout(timeout);
-  }, [count]);
+  }, [count, onComplete]);
 
   if (count === null) return null;
 
