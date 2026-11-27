@@ -20,6 +20,7 @@ type Props = {
   onViewAllHistory: () => void;
   onViewStatistics: () => void;
   rank: number | null;
+  nationalRank: number | null;
   onOpenLeaderboard: () => void;
 };
 
@@ -40,7 +41,7 @@ const MODE_LABELS: Record<string, { it: string; en: string }> = {
   stadium: { it: 'Stadium Quiz', en: 'Stadium Quiz' },
 };
 
-export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory, onViewStatistics, rank, onOpenLeaderboard }: Props) {
+export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory, onViewStatistics, rank, nationalRank, onOpenLeaderboard }: Props) {
   const italian = locale === 'it';
   const [results, setResults] = useState<MatchResult[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -268,7 +269,11 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
           </View>
           <Pressable onPress={onOpenLeaderboard} style={styles.statCard} accessibilityRole="button">
             <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
-            <Text style={styles.statLabel}>{labels.rank}  ›</Text>
+            <Text style={styles.statLabel}>{italian ? 'POSIZIONE GLOBALE' : 'GLOBAL RANK'}  ›</Text>
+          </Pressable>
+          <Pressable onPress={onOpenLeaderboard} style={styles.statCard} accessibilityRole="button">
+            <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
+            <Text style={styles.statLabel}>{italian ? 'POSIZIONE NAZIONALE' : 'NATIONAL RANK'}  ›</Text>
           </Pressable>
         </View>
 
