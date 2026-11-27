@@ -4,7 +4,7 @@ import { colors } from '../theme/colors';
 import type { SupportedLocale } from '../i18n/locales';
 import { translations } from '../i18n/translations';
 
-export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile, onOpenLeaderboard, rank, nationalRank, countryCode }: { locale: SupportedLocale; xp: number | null; level: number | null; rank: number | null; nationalRank: number | null; countryCode: string | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void; onOpenLeaderboard: (scope: 'global' | 'national') => void }) {
+export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onStartClubQuiz, onStartStadiumQuiz, onStartCareerQuiz, onOpenSettings, onOpenProfile, onOpenLeaderboard, rank, nationalRank, pointsGlobalRank, pointsNationalRank, countryCode }: { locale: SupportedLocale; xp: number | null; level: number | null; rank: number | null; nationalRank: number | null; pointsGlobalRank: number | null; pointsNationalRank: number | null; countryCode: string | null; onStartPlayerQuiz: () => void; onStartClubQuiz: () => void; onStartStadiumQuiz: () => void; onStartCareerQuiz: () => void; onOpenSettings: () => void; onOpenProfile: () => void; onOpenLeaderboard: (metric: 'xp' | 'points', scope: 'global' | 'national') => void }) {
   const t = translations[locale];
 
   const modes = [
@@ -54,14 +54,28 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
               <Text style={styles.statValue}>{xp === null ? '—' : xp.toLocaleString()} XP</Text>
               <Text style={styles.statLabel}>{t.totalXp}</Text>
             </View>
-            <Pressable onPress={() => onOpenLeaderboard('global')} accessibilityRole="button" style={styles.stat}>
-              <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
-              <Text style={styles.statLabel}>{({it:'GLOBALE',en:'GLOBAL',es:'GLOBAL',fr:'MONDIAL',de:'WELTWEIT'} as const)[locale]}  ›</Text>
-            </Pressable>
-            <Pressable onPress={() => onOpenLeaderboard('national')} accessibilityRole="button" style={styles.stat}>
-              <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
-              <Text style={styles.statLabel}>{({it:'NAZIONALE',en:'NATIONAL',es:'NACIONAL',fr:'NATIONAL',de:'NATIONAL'} as const)[locale]}  ›</Text>
-            </Pressable>
+            <View style={styles.rankBlock}>
+              <Text style={styles.rankMetric}>XP</Text>
+              <Pressable onPress={() => onOpenLeaderboard('xp', 'global')} style={styles.rankCell} accessibilityRole="button">
+                <Text style={styles.rankValue}>{rank === null ? '—' : `#${rank}`}</Text>
+                <Text style={styles.statLabel}>{({it:'GLOBALE',en:'GLOBAL',es:'GLOBAL',fr:'MONDIAL',de:'WELTWEIT'} as const)[locale]}  ›</Text>
+              </Pressable>
+              <Pressable onPress={() => onOpenLeaderboard('xp', 'national')} style={styles.rankCell} accessibilityRole="button">
+                <Text style={styles.rankValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
+                <Text style={styles.statLabel}>{({it:'NAZIONALE',en:'NATIONAL',es:'NACIONAL',fr:'NATIONAL',de:'NATIONAL'} as const)[locale]}  ›</Text>
+              </Pressable>
+            </View>
+            <View style={styles.rankBlock}>
+              <Text style={styles.rankMetric}>{({it:'PUNTI',en:'POINTS',es:'PUNTOS',fr:'POINTS',de:'PUNKTE'} as const)[locale]}</Text>
+              <Pressable onPress={() => onOpenLeaderboard('points', 'global')} style={styles.rankCell} accessibilityRole="button">
+                <Text style={styles.rankValue}>{pointsGlobalRank === null ? '—' : `#${pointsGlobalRank}`}</Text>
+                <Text style={styles.statLabel}>{({it:'GLOBALE',en:'GLOBAL',es:'GLOBAL',fr:'MONDIAL',de:'WELTWEIT'} as const)[locale]}  ›</Text>
+              </Pressable>
+              <Pressable onPress={() => onOpenLeaderboard('points', 'national')} style={styles.rankCell} accessibilityRole="button">
+                <Text style={styles.rankValue}>{pointsNationalRank === null ? '—' : `#${pointsNationalRank}`}</Text>
+                <Text style={styles.statLabel}>{({it:'NAZIONALE',en:'NATIONAL',es:'NACIONAL',fr:'NATIONAL',de:'NATIONAL'} as const)[locale]}  ›</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
 
@@ -130,6 +144,10 @@ const styles = StyleSheet.create({
   stat: { flexGrow: 1, flexBasis: '45%', minWidth: '45%', alignItems: 'center', paddingVertical: 4 },
   statValue: { color: colors.white, fontSize: 15, fontWeight: '900' },
   statLabel: { color: colors.muted, fontSize: 8, fontWeight: '800', letterSpacing: 1, marginTop: 5 },
+  rankBlock: { width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 5 },
+  rankMetric: { width: 52, color: colors.gold, fontSize: 10, fontWeight: '900', letterSpacing: 0.8 },
+  rankCell: { flex: 1, alignItems: 'center', paddingVertical: 2 },
+  rankValue: { color: colors.white, fontSize: 15, fontWeight: '900' },
   statDivider: { width: 1, height: 28, backgroundColor: '#29435F' },
   sectionHeading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
   sectionTitle: { color: colors.white, fontSize: 13, fontWeight: '900', letterSpacing: 0.7 },
