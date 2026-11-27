@@ -44,7 +44,6 @@ export default function App() {
       setAuthReady(true);
       setScreen((current) => {
         if (current === 'splash') return current;
-        if (user && !user.isAnonymous && current === 'gate') return 'home';
         if (!user && current === 'home') return 'gate';
         return current;
       });
@@ -89,8 +88,9 @@ export default function App() {
       return;
     }
 
-    // Keep the profile listener active while guest sign-in assigns its generated nickname.
-    const shouldInitializeProfile = !(authUser.isAnonymous && !authUser.displayName);
+    // Guest profiles are initialized here after their generated nickname is assigned.
+    // Registered profiles are initialized by the explicit login/registration flow.
+    const shouldInitializeProfile = authUser.isAnonymous && Boolean(authUser.displayName);
     const profileRef = doc(db, 'users', authUser.uid);
     const unsubscribe = onSnapshot(profileRef, (snapshot) => {
       if (!snapshot.exists()) {
