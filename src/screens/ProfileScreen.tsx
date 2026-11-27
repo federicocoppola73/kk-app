@@ -13,6 +13,7 @@ type Props = {
   userProfile: UserProfile | null;
   onBack: () => void;
   onSignOut: () => void;
+  onViewAllHistory: () => void;
 };
 
 type MatchResult = {
@@ -32,7 +33,7 @@ const MODE_LABELS: Record<string, { it: string; en: string }> = {
   stadium: { it: 'Stadium Quiz', en: 'Stadium Quiz' },
 };
 
-export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut }: Props) {
+export default function ProfileScreen({ locale, authUser, userProfile, onBack, onSignOut, onViewAllHistory }: Props) {
   const italian = locale === 'it';
   const [results, setResults] = useState<MatchResult[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -84,7 +85,8 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
     statistics: italian ? 'STATISTICHE' : 'STATISTICS',
     matches: italian ? 'PARTITE GIOCATE' : 'MATCHES PLAYED',
     rank: italian ? 'POSIZIONE IN CLASSIFICA' : 'LEADERBOARD RANK',
-    history: italian ? 'CRONOLOGIA PARTITE' : 'MATCH HISTORY',
+    history: italian ? 'CRONOLOGIA PARTITE - ULTIME 5' : 'MATCH HISTORY - LAST 5',
+    viewAll: italian ? 'VEDI TUTTE' : 'VIEW ALL',
     loading: italian ? 'Caricamento cronologia…' : 'Loading match history…',
     loadError: italian ? 'Impossibile caricare la cronologia. Riprova più tardi.' : 'Unable to load match history. Please try again later.',
     empty: italian ? 'Non hai ancora completato partite. Gioca una modalità per vedere qui i tuoi risultati.' : 'You have not completed any matches yet. Play a mode to see your results here.',
@@ -159,7 +161,7 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
         ) : results.length === 0 ? (
           <View style={styles.infoCard}><Text style={styles.infoText}>{labels.empty}</Text></View>
         ) : (
-          results.map((result) => (
+          results.slice(0, 5).map((result) => (
             <View key={result.id} style={styles.matchCard}>
               <View style={styles.matchTop}>
                 <Text style={styles.matchMode}>{modeName(result.mode)}</Text>
@@ -172,6 +174,11 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
               <Text style={styles.verification}>{labels.unverified}</Text>
             </View>
           ))
+        )}
+        {!historyLoading && !historyError && results.length > 5 && (
+          <Pressable onPress={onViewAllHistory} style={styles.viewAllButton}>
+            <Text style={styles.viewAllText}>{labels.viewAll}  ›</Text>
+          </Pressable>
         )}
 
         <Text style={styles.section}>{labels.account}</Text>
@@ -210,6 +217,8 @@ const styles = StyleSheet.create({
   statValue: { color: colors.white, fontSize: 23, fontWeight: '900' },
   statLabel: { color: colors.muted, fontSize: 9, fontWeight: '800', letterSpacing: 0.6, marginTop: 6 },
   infoCard: { padding: 15, borderRadius: 14, backgroundColor: '#102746', borderWidth: 1, borderColor: '#294968', marginBottom: 12 },
+  viewAllButton: { alignSelf: 'flex-end', paddingVertical: 10, paddingHorizontal: 4, marginBottom: 22 },
+  viewAllText: { color: colors.iceBlue, fontSize: 11, fontWeight: '900', letterSpacing: 0.8 },
   matchCard: { padding: 14, borderRadius: 14, backgroundColor: '#102746', borderWidth: 1, borderColor: '#294968', marginBottom: 9 },
   matchTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   matchMode: { color: colors.white, fontSize: 13, fontWeight: '900' },
