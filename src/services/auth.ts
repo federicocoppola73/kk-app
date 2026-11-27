@@ -57,9 +57,6 @@ export async function registerWithEmail(
       // The nickname reservation and profile creation happen in one Firestore transaction.
       // If the nickname is taken, no profile/reservation is written.
       await ensureUserProfile(credential.user);
-      if (normalizedCountry) {
-        await setUserCountry(credential.user.uid, normalizedCountry);
-      }
     } catch (error) {
       // Roll back the newly created Auth account if identity setup failed before
       // the profile was created. Never leave a half-registered Auth user behind.
@@ -69,6 +66,9 @@ export async function registerWithEmail(
         console.warn('Unable to roll back incomplete account registration:', cleanupError);
       }
       throw error;
+    }
+    if (normalizedCountry) {
+      await setUserCountry(credential.user.uid, normalizedCountry);
     }
     return;
   }
