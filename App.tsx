@@ -150,7 +150,7 @@ export default function App() {
     );
   }
 
-  if (!authUser || (screen === 'gate' && authUser.isAnonymous)) {
+  if (!authUser || screen === 'gate') {
     return <AuthScreen locale={activeLocale} onAuthenticated={() => setScreen('home')} />;
   }
 
