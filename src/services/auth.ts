@@ -32,13 +32,13 @@ export async function registerWithEmail(
   countryCode: string | null = null,
 ): Promise<void> {
   const normalizedEmail = email.trim();
-  const normalizedNickname = nickname.trim().normalize('NFKC').replace(/\\s+/g, ' ');
+  const normalizedNickname = nickname.trim().normalize('NFKC').replace(/\s+/g, ' ');
   const normalizedCountry = countryCode?.trim().toUpperCase() || null;
 
   if (normalizedNickname.length < 3 || normalizedNickname.length > 24) {
     throw new Error('nickname-invalid-length');
   }
-  if (/[\\/\\u0000-\\u001F\\u007F]/.test(normalizedNickname)) {
+  if (/[\/\u0000-\u001F\u007F]/.test(normalizedNickname)) {
     throw new Error('nickname-invalid-characters');
   }
   if (normalizedCountry && !/^[A-Z]{2}$/.test(normalizedCountry)) {
