@@ -14,17 +14,17 @@ export function normalizeNickname(value: string): string {
   return value.trim().normalize('NFKC').toLowerCase().replace(/\s+/g, ' ');
 }
 
-function validateNickname(value: string): string {
+function cleanNickname(value: string): string {
   const nickname = value.trim().normalize('NFKC').replace(/\s+/g, ' ');
-  const key = normalizeNickname(nickname);
+  if (nickname.length < 3 || nickname.length > 24) throw new Error('nickname-invalid-length');
+  if (/[\/\u0000-\u001F\u007F]/.test(nickname)) throw new Error('nickname-invalid-characters');
+  return nickname;
+}
 
-  if (nickname.length < 3 || nickname.length > 24) {
-    throw new Error('nickname-invalid-length');
-  }
-  if (/[\/\u0000-\u001F\u007F]/.test(nickname)) {
-    throw new Error('nickname-invalid-characters');
-  }
-  return key;
+function cleanCountryCode(value: string): string {
+  const code = value.trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(code)) throw new Error('country-code-invalid');
+  return code;
 }
 
 export async function ensureUserProfile(user: User): Promise<void> {
@@ -34,11 +34,12 @@ export async function ensureUserProfile(user: User): Promise<void> {
   await runTransaction(db, async (transaction) => {
     const snapshot = await transaction.get(profileRef);
     const existing = snapshot.exists() ? snapshot.data() : null;
-    // Once assigned, the Firestore nickname is the permanent public identity.
-    const nickname = typeof existing?.nickname === 'string' && existing.nickname.trim()
-      ? existing.nickname.trim()
-      : fallbackNickname;
-    const nicknameKey = validateNickname(nickname);
+    const nickname = cleanNickname(
+      typeof existing?.nickname === 'string' && existing.nickname.trim()
+        ? existing.nickname
+        : fallbackNickname,
+    );
+    const nicknameKey = normalizeNickname(nickname);
     const reservationRef = doc(db, 'nicknames', nicknameKey);
     const reservation = await transaction.get(reservationRef);
 
@@ -47,11 +48,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
     }
 
     if (!reservation.exists()) {
-      transaction.set(reservationRef, {
-        uid: user.uid,
-        nickname,
-        createdAt: serverTimestamp(),
-      });
+      transaction.set(reservationRef, { uid: user.uid, nickname, createdAt: serverTimestamp() });
     }
 
     if (!snapshot.exists()) {
@@ -59,6 +56,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
         nickname,
         nicknameKey,
         countryCode: null,
+        identityLocked: !user.isAnonymous,
         xp: 0,
         level: 1,
         createdAt: serverTimestamp(),
@@ -70,6 +68,8 @@ export async function ensureUserProfile(user: User): Promise<void> {
     const updates: Record<string, unknown> = {};
     if (existing.nicknameKey !== nicknameKey) updates.nicknameKey = nicknameKey;
     if (!Object.prototype.hasOwnProperty.call(existing, 'countryCode')) updates.countryCode = null;
+    if (typeof existing.identityLocked !== 'boolean') updates.identityLocked = !user.isAnonymous;
+    else if (!user.isAnonymous && existing.identityLocked === false) updates.identityLocked = true;
 
     if (Object.keys(updates).length > 0) {
       updates.updatedAt = serverTimestamp();
@@ -78,12 +78,56 @@ export async function ensureUserProfile(user: User): Promise<void> {
   });
 }
 
-export async function setUserCountry(uid: string, countryCode: string): Promise<void> {
-  const normalizedCountryCode = countryCode.trim().toUpperCase();
-  if (!/^[A-Z]{2}$/.test(normalizedCountryCode)) {
-    throw new Error('country-code-invalid');
-  }
+/**
+ * Guest identities receive a temporary nickname. During conversion, replace it
+ * once with the permanent registration nickname before linking email/password.
+ */
+export async function prepareGuestIdentity(
+  uid: string,
+  nicknameInput: string,
+): Promise<void> {
+  const nickname = cleanNickname(nicknameInput);
+  const nicknameKey = normalizeNickname(nickname);
+  const profileRef = doc(db, 'users', uid);
 
+  await runTransaction(db, async (transaction) => {
+    const profileSnapshot = await transaction.get(profileRef);
+    if (!profileSnapshot.exists()) throw new Error('profile-not-found');
+    const profile = profileSnapshot.data();
+    if (profile.identityLocked === true) throw new Error('identity-already-locked');
+
+    const newReservationRef = doc(db, 'nicknames', nicknameKey);
+    const newReservation = await transaction.get(newReservationRef);
+    const oldKey = typeof profile.nicknameKey === 'string'
+      ? profile.nicknameKey
+      : normalizeNickname(typeof profile.nickname === 'string' ? profile.nickname : '');
+    const oldReservationRef = oldKey && oldKey !== nicknameKey ? doc(db, 'nicknames', oldKey) : null;
+    const oldReservation = oldReservationRef ? await transaction.get(oldReservationRef) : null;
+
+    if (newReservation.exists() && newReservation.data().uid !== uid) {
+      throw new Error('nickname-already-taken');
+    }
+
+    if (!newReservation.exists()) {
+      transaction.set(newReservationRef, { uid, nickname, createdAt: serverTimestamp() });
+    } else if (newReservation.data().nickname !== nickname) {
+      transaction.update(newReservationRef, { nickname });
+    }
+
+    if (oldReservationRef && oldReservation?.exists() && oldReservation.data().uid === uid) {
+      transaction.delete(oldReservationRef);
+    }
+
+    transaction.update(profileRef, {
+      nickname,
+      nicknameKey,
+      updatedAt: serverTimestamp(),
+    });
+  });
+}
+
+export async function setUserCountry(uid: string, countryCode: string): Promise<void> {
+  const normalizedCountryCode = cleanCountryCode(countryCode);
   const profileRef = doc(db, 'users', uid);
 
   await runTransaction(db, async (transaction) => {
@@ -92,6 +136,7 @@ export async function setUserCountry(uid: string, countryCode: string): Promise<
 
     const currentCountry = snapshot.data().countryCode;
     if (typeof currentCountry === 'string' && currentCountry.length > 0) {
+      if (currentCountry === normalizedCountryCode) return;
       throw new Error('country-already-set');
     }
 
