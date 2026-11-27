@@ -44,6 +44,14 @@ service cloud.firestore {
           && request.resource.data.updatedAt == request.time;
       }
 
+      function validPointsMigration() {
+        return !resource.data.keys().hasAny(['points'])
+          && request.resource.data.points is int
+          && request.resource.data.points >= 0
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['points', 'updatedAt'])
+          && request.resource.data.updatedAt == request.time;
+      }
+
       function validGuestNicknameChange() {
         return !(request.auth.token.get('email', null) is string)
           && resource.data.identityLocked == false
@@ -129,6 +137,7 @@ service cloud.firestore {
         && request.auth.uid == userId
         && (
           validXpAward()
+          || validPointsMigration()
           || validGuestNicknameChange()
           || validIdentityLock()
           || validCountrySelection()
