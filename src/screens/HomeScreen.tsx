@@ -50,17 +50,14 @@ export default function HomeScreen({ locale, xp, level, onStartPlayerQuiz, onSta
               <Text style={styles.statValue}>LVL {level === null ? '--' : String(level).padStart(2, '0')}</Text>
               <Text style={styles.statLabel}>{t.rookie}</Text>
             </View>
-            <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValue}>{xp === null ? '—' : xp.toLocaleString()} XP</Text>
               <Text style={styles.statLabel}>{t.totalXp}</Text>
             </View>
-            <View style={styles.statDivider} />
             <Pressable onPress={onOpenLeaderboard} accessibilityRole="button" style={styles.stat}>
               <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
               <Text style={styles.statLabel}>{locale === 'it' ? 'GLOBALE' : 'GLOBAL'}  ›</Text>
             </Pressable>
-            <View style={styles.statDivider} />
             <Pressable onPress={onOpenLeaderboard} accessibilityRole="button" style={styles.stat}>
               <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
               <Text style={styles.statLabel}>{countryCode ?? (locale === 'it' ? 'NAZIONALE' : 'NATIONAL')}  ›</Text>
@@ -130,7 +127,7 @@ const styles = StyleSheet.create({
   headline: { color: colors.white, fontSize: 19, lineHeight: 22, fontWeight: '900', letterSpacing: -0.5, marginTop: 5 },
   subhead: { color: colors.muted, fontSize: 12, lineHeight: 17, marginTop: 7 },
   statsRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', rowGap: 10, marginTop: 12, paddingTop: 9, borderTopWidth: 1, borderTopColor: '#29435F' },
-  stat: { flex: 1, minWidth: '40%', alignItems: 'center' },
+  stat: { flexGrow: 1, flexBasis: '45%', minWidth: '45%', alignItems: 'center', paddingVertical: 4 },
   statValue: { color: colors.white, fontSize: 15, fontWeight: '900' },
   statLabel: { color: colors.muted, fontSize: 8, fontWeight: '800', letterSpacing: 1, marginTop: 5 },
   statDivider: { width: 1, height: 28, backgroundColor: '#29435F' },
