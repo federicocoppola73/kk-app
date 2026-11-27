@@ -269,11 +269,11 @@ export default function ProfileScreen({ locale, authUser, userProfile, onBack, o
           </View>
           <Pressable onPress={() => onOpenLeaderboard('global')} style={styles.statCard} accessibilityRole="button">
             <Text style={styles.statValue}>{rank === null ? '—' : `#${rank}`}</Text>
-            <Text style={styles.statLabel}>{italian ? 'POSIZIONE GLOBALE' : 'GLOBAL RANK'}  ›</Text>
+            <Text style={styles.statLabel}>{italian ? 'GLOBALE' : 'GLOBAL'}  ›</Text>
           </Pressable>
           <Pressable onPress={() => onOpenLeaderboard('national')} style={styles.statCard} accessibilityRole="button">
             <Text style={styles.statValue}>{nationalRank === null ? '—' : `#${nationalRank}`}</Text>
-            <Text style={styles.statLabel}>{italian ? 'POSIZIONE NAZIONALE' : 'NATIONAL RANK'}  ›</Text>
+            <Text style={styles.statLabel}>{italian ? 'NAZIONALE' : 'NATIONAL'}  ›</Text>
           </Pressable>
         </View>
 
